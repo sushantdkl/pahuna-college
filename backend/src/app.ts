@@ -4,6 +4,7 @@ import userRoutes from "./routes/user.route";
 
 const app: Application = express();
 
+// The app file owns global middleware and mounts auth routes; route files keep endpoint mapping separate from business logic.
 app.use(
   cors({
     origin: "*",
@@ -22,6 +23,7 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
+// Sprint 2 auth endpoints are grouped under /api/v1/auth before being handled by the user route/controller layers.
 app.use("/api/v1/auth", userRoutes);
 
 app.use((req: Request, res: Response) => {

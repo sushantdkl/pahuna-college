@@ -4,6 +4,7 @@ import { connectToMongoDB } from "./src/database/mongodb";
 
 const startServer = async () => {
   try {
+    // Sprint 2 auth depends on MongoDB being available before Express accepts requests.
     await connectToMongoDB();
 
     app.listen(PORT, () => {
