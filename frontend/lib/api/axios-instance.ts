@@ -4,6 +4,7 @@ const API_BASE_URL = API_ORIGIN.endsWith("/api/v1")
   ? API_ORIGIN
   : `${API_ORIGIN.replace(/\/$/, "")}/api/v1`;
 
+// Shared response shape mirrors the Express ApiResponseHelper used by the backend.
 export type ApiResponse<T> = {
   success: boolean;
   message: string;
@@ -14,6 +15,7 @@ export async function apiPost<T>(
   path: string,
   body: Record<string, unknown>,
 ): Promise<ApiResponse<T>> {
+  // All auth requests pass through this helper so base URL and error handling stay consistent.
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: "POST",
     headers: {
