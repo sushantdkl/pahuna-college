@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { registerAction } from "@/lib/actions/auth-actions";
+import { registerSchema } from "@/schemas/auth.schema";
 
 export default function RegisterPage() {
   const [role, setRole] = useState("Traveler");
@@ -13,22 +15,40 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const hasValues =
-      fullName.trim().length > 0 &&
-      email.trim().length > 0 &&
-      password.trim().length > 0 &&
-      confirmPassword.trim().length > 0;
-    const matches = password === confirmPassword;
+    setStatus("idle");
+    setMessage("");
 
-    if (!hasValues) {
-      setStatus("idle");
+    // The component validates form state before calling the action layer.
+    const parsedData = registerSchema.safeParse({
+      fullName,
+      email,
+      password,
+      confirmPassword,
+    });
+
+    if (!parsedData.success) {
+      setStatus("error");
+      setMessage(parsedData.error.issues[0]?.message || "Invalid register data");
       return;
     }
 
-    setStatus(matches ? "success" : "error");
+    setIsSubmitting(true);
+
+    try {
+      const response = await registerAction(parsedData.data);
+      setStatus("success");
+      setMessage(response.message || "Account created successfully");
+    } catch (error) {
+      setStatus("error");
+      setMessage(error instanceof Error ? error.message : "Registration failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -294,21 +314,22 @@ export default function RegisterPage() {
 
           {status === "error" ? (
             <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-              Passwords do not match
+              {message}
             </div>
           ) : null}
 
           {status === "success" ? (
             <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-              Account created successfully
+              {message}
             </div>
           ) : null}
 
             <button
               type="submit"
+              disabled={isSubmitting}
               className="w-full rounded-xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:bg-emerald-600"
             >
-              Create Account
+              {isSubmitting ? "Creating..." : "Create Account"}
             </button>
 
             <div className="flex items-center gap-4 text-[10px] font-semibold text-zinc-400">
