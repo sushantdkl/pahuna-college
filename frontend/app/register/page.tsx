@@ -23,6 +23,7 @@ export default function RegisterPage() {
     setStatus("idle");
     setMessage("");
 
+    // The component validates form state before calling the action layer.
     const parsedData = registerSchema.safeParse({
       fullName,
       email,

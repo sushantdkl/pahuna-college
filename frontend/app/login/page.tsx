@@ -42,6 +42,7 @@ export default function LoginPage() {
         throw new Error("Auth data was not returned by the server");
       }
 
+      // Store both auth_token and user_data before redirecting so the dashboard can read session context.
       storeAuthCookies(token, user);
       setStatus("success");
       setMessage(response.message || "Signed in successfully");
