@@ -3,6 +3,7 @@ import { MONGODB_URL } from "../configs/constant";
 
 export const connectToMongoDB = async (): Promise<void> => {
   try {
+    // All repository calls use this shared Mongoose connection to reach the Pahuna users collection.
     await mongoose.connect(MONGODB_URL);
     console.log("MongoDB connected successfully");
   } catch (error) {
