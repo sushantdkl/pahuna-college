@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { UserType } from "../types/user.type";
 
+// IUser combines the validated auth shape with MongoDB document metadata.
 export interface IUser extends UserType, Document {
   _id: mongoose.Types.ObjectId;
   createdAt: Date;
@@ -26,6 +27,7 @@ const UserMongoSchema: Schema<IUser> = new Schema(
       trim: true,
     },
     password: {
+      // This field stores only the hashed password created in the service layer.
       type: String,
       required: true,
     },
