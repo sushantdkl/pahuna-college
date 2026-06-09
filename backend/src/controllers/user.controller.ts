@@ -9,6 +9,7 @@ const userService = new UserService();
 export class UserController {
   async createUser(req: Request, res: Response) {
     try {
+      // Controller-level parsing rejects invalid request bodies before service business rules run.
       const userData = CreateUserDTO.safeParse(req.body);
 
       if (!userData.success) {
@@ -19,6 +20,7 @@ export class UserController {
         );
       }
 
+      // The service returns a password-free user object for the API response.
       const user = await userService.createUser(userData.data);
 
       return ApiResponseHelper.success(
@@ -37,6 +39,7 @@ export class UserController {
 
   async loginUser(req: Request, res: Response) {
     try {
+      // Login accepts only email and password; any extra auth checks remain in the service layer.
       const parsedData = LoginUserDTO.safeParse(req.body);
 
       if (!parsedData.success) {
@@ -47,6 +50,7 @@ export class UserController {
         );
       }
 
+      // Successful login returns both the JWT and safe user data for frontend storage.
       const { user, token } = await userService.loginUser(parsedData.data);
 
       return ApiResponseHelper.success(
