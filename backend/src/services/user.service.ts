@@ -40,12 +40,14 @@ export class UserService {
   }
 
   async loginUser(loginData: LoginUserDTO) {
+    // Login starts by finding the account attached to the submitted email address.
     const user = await userRepository.getUserByEmail(loginData.email);
 
     if (!user) {
       throw new HttpException(400, "Invalid email or password");
     }
 
+    // bcrypt compares the submitted password against the stored hash without revealing the original password.
     const isPasswordValid = await bcryptjs.compare(
       loginData.password,
       user.password,
@@ -55,6 +57,7 @@ export class UserService {
       throw new HttpException(400, "Invalid email or password");
     }
 
+    // JWT is issued only after password verification succeeds, then used by the frontend for authenticated requests.
     const token = jwt.sign(
       {
         id: user._id,
