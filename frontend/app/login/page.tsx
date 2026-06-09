@@ -3,18 +3,55 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { loginAction } from "@/lib/actions/auth-actions";
+import { storeAuthCookies } from "@/lib/cookies";
+import { loginSchema } from "@/schemas/auth.schema";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [role, setRole] = useState("Traveler");
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const hasValues = email.trim().length > 0 && password.trim().length > 0;
-    setStatus(hasValues ? "success" : "error");
+    setStatus("idle");
+    setMessage("");
+
+    const parsedData = loginSchema.safeParse({ email, password });
+
+    if (!parsedData.success) {
+      setStatus("error");
+      setMessage(parsedData.error.issues[0]?.message || "Invalid login data");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await loginAction(parsedData.data);
+      const token = response.data?.token;
+      const user = response.data?.user;
+
+      if (!token || !user) {
+        throw new Error("Auth data was not returned by the server");
+      }
+
+      storeAuthCookies(token, user);
+      setStatus("success");
+      setMessage(response.message || "Signed in successfully");
+      router.push("/dashboard");
+    } catch (error) {
+      setStatus("error");
+      setMessage(error instanceof Error ? error.message : "Login failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -191,21 +228,22 @@ export default function LoginPage() {
 
             {status === "error" ? (
               <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-                Invalid email or password
+                {message}
               </div>
             ) : null}
 
             {status === "success" ? (
               <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-                Signed in successfully
+                {message}
               </div>
             ) : null}
 
             <button
               type="submit"
+              disabled={isSubmitting}
               className="w-full rounded-xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:bg-emerald-600"
             >
-              Sign In
+              {isSubmitting ? "Signing in..." : "Sign In"}
             </button>
 
             <div className="flex items-center gap-4 text-[10px] font-semibold text-zinc-400">
