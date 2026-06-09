@@ -10,6 +10,7 @@ const userRepository = new UserMongoRepository();
 
 export class UserService {
   private toPublicUser(user: IUser) {
+    // Auth responses expose only profile fields; the hashed password never leaves the backend.
     return {
       id: user._id,
       fullName: user.fullName,
@@ -20,12 +21,14 @@ export class UserService {
   }
 
   async createUser(userData: CreateUserDTO) {
+    // Duplicate email validation prevents two users from sharing the same login identity.
     const existingEmail = await userRepository.getUserByEmail(userData.email);
 
     if (existingEmail) {
       throw new HttpException(400, "Email already exists");
     }
 
+    // Password hashing protects users if database records are ever exposed.
     const hashedPassword = await bcryptjs.hash(userData.password, 10);
 
     const user = await userRepository.createUser({
