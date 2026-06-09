@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// Shared user validation keeps DTOs and model-facing types aligned for Sprint 2 auth requests.
 export const UserSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email address"),
@@ -11,4 +12,5 @@ export const UserSchema = z.object({
   role: z.enum(["admin", "user"]).default("user"),
 });
 
+// UserType is inferred from Zod so TypeScript follows the same rules used at runtime.
 export type UserType = z.infer<typeof UserSchema>;
