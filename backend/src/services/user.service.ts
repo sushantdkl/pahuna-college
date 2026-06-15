@@ -14,6 +14,18 @@ import { UserMongoRepository } from "../repositories/user.repository";
 const userRepository = new UserMongoRepository();
 
 export class UserService {
+  private async isPasswordMatch(password: string, savedPassword: string) {
+    const isBcryptHash = savedPassword.startsWith("$2a$")
+      || savedPassword.startsWith("$2b$")
+      || savedPassword.startsWith("$2y$");
+
+    if (isBcryptHash) {
+      return bcryptjs.compare(password, savedPassword);
+    }
+
+    return password === savedPassword;
+  }
+
   private toPublicUser(user: IUser) {
     // Auth responses expose only profile fields; the hashed password never leaves the backend.
     return {
@@ -57,7 +69,7 @@ export class UserService {
     }
 
     // bcrypt compares the submitted password against the stored hash without revealing the original password.
-    const isPasswordValid = await bcryptjs.compare(
+    const isPasswordValid = await this.isPasswordMatch(
       loginData.password,
       user.password,
     );
@@ -118,7 +130,7 @@ export class UserService {
   }
 
   async updatePassword(user: IUser, passwordData: UpdatePasswordDTO) {
-    const isPasswordValid = await bcryptjs.compare(
+    const isPasswordValid = await this.isPasswordMatch(
       passwordData.currentPassword,
       user.password,
     );
