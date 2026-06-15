@@ -35,11 +35,17 @@ async function apiRequest<T>(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
+  const requestBody: BodyInit | undefined = options.body instanceof FormData
+    ? options.body
+    : options.body
+      ? JSON.stringify(options.body)
+      : undefined;
+
   // All auth requests pass through this helper so base URL and error handling stay consistent.
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: options.method,
     headers,
-    body: isFormData ? options.body : JSON.stringify(options.body),
+    body: requestBody,
   });
 
   const data = (await response.json()) as ApiResponse<T>;
