@@ -21,6 +21,10 @@ export function getCookie(name: string) {
 
 export function storeAuthCookies(token: string, user: AuthUser) {
   setCookie("auth_token", token);
+  storeUserCookie(user);
+}
+
+export function storeUserCookie(user: AuthUser) {
   setCookie("user_data", JSON.stringify(user));
 }
 
