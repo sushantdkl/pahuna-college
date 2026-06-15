@@ -18,3 +18,21 @@ export const LoginUserDTO = UserSchema.pick({
 });
 
 export type LoginUserDTO = z.infer<typeof LoginUserDTO>;
+
+export const UpdateUserDTO = UserSchema.pick({
+  fullName: true,
+  email: true,
+  phoneNumber: true,
+  location: true,
+  bio: true,
+  profileImage: true,
+}).partial();
+
+export type UpdateUserDTO = z.infer<typeof UpdateUserDTO>;
+
+export const UpdatePasswordDTO = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string().min(6, "New password must be at least 6 characters long"),
+});
+
+export type UpdatePasswordDTO = z.infer<typeof UpdatePasswordDTO>;
