@@ -1,12 +1,20 @@
-import type { LoginFormData, RegisterFormData } from "@/schemas/auth.schema";
-import { apiPost } from "./axios-instance";
+import type {
+  LoginFormData,
+  PasswordUpdateFormData,
+  RegisterFormData,
+} from "@/schemas/auth.schema";
+import { apiGet, apiPatch, apiPost } from "./axios-instance";
 
 export type AuthUser = {
   id: string;
   fullName: string;
   email: string;
   phoneNumber?: string;
+  location?: string;
+  bio?: string;
+  profileImage?: string;
   role?: string;
+  createdAt?: string;
 };
 
 export type LoginResponse = {
@@ -29,4 +37,19 @@ export async function registerApi(data: RegisterFormData) {
 export async function loginApi(data: LoginFormData) {
   // Login API returns the JWT and public user data that the component stores after success.
   return apiPost<LoginResponse>("/auth/login", data);
+}
+
+export async function whoamiApi() {
+  return apiGet<RegisterResponse>("/auth/whoami", true);
+}
+
+export async function updateProfileApi(data: FormData) {
+  return apiPatch<RegisterResponse>("/auth/update", data, true);
+}
+
+export async function updatePasswordApi(data: PasswordUpdateFormData) {
+  const { confirmPassword, ...payload } = data;
+  void confirmPassword;
+
+  return apiPatch<{ message: string }>("/auth/update-password", payload, true);
 }

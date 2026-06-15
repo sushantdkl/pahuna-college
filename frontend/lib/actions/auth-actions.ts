@@ -1,5 +1,15 @@
-import { loginApi, registerApi } from "@/lib/api/auth";
-import type { LoginFormData, RegisterFormData } from "@/schemas/auth.schema";
+import {
+  loginApi,
+  registerApi,
+  updatePasswordApi,
+  updateProfileApi,
+  whoamiApi,
+} from "@/lib/api/auth";
+import type {
+  LoginFormData,
+  PasswordUpdateFormData,
+  RegisterFormData,
+} from "@/schemas/auth.schema";
 
 // Actions are the bridge from auth components to API helpers, keeping pages free from fetch details.
 export async function registerAction(data: RegisterFormData) {
@@ -8,4 +18,16 @@ export async function registerAction(data: RegisterFormData) {
 
 export async function loginAction(data: LoginFormData) {
   return loginApi(data);
+}
+
+export async function whoamiAction() {
+  return whoamiApi();
+}
+
+export async function updateProfileAction(data: FormData) {
+  return updateProfileApi(data);
+}
+
+export async function updatePasswordAction(data: PasswordUpdateFormData) {
+  return updatePasswordApi(data);
 }

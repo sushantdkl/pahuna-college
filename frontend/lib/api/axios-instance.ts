@@ -1,3 +1,5 @@
+import { getCookie } from "@/lib/cookies";
+
 const API_ORIGIN = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const API_BASE_URL = API_ORIGIN.endsWith("/api/v1")
@@ -11,17 +13,33 @@ export type ApiResponse<T> = {
   data: T | null;
 };
 
-export async function apiPost<T>(
+type ApiRequestOptions = {
+  method: "GET" | "POST" | "PATCH";
+  body?: Record<string, unknown> | FormData;
+  auth?: boolean;
+};
+
+async function apiRequest<T>(
   path: string,
-  body: Record<string, unknown>,
+  options: ApiRequestOptions,
 ): Promise<ApiResponse<T>> {
+  const headers = new Headers();
+  const token = options.auth ? getCookie("auth_token") : null;
+  const isFormData = options.body instanceof FormData;
+
+  if (!isFormData) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
   // All auth requests pass through this helper so base URL and error handling stay consistent.
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
+    method: options.method,
+    headers,
+    body: isFormData ? options.body : JSON.stringify(options.body),
   });
 
   const data = (await response.json()) as ApiResponse<T>;
@@ -31,4 +49,20 @@ export async function apiPost<T>(
   }
 
   return data;
+}
+
+export function apiGet<T>(path: string, auth = false) {
+  return apiRequest<T>(path, { method: "GET", auth });
+}
+
+export function apiPost<T>(path: string, body: Record<string, unknown>) {
+  return apiRequest<T>(path, { method: "POST", body });
+}
+
+export function apiPatch<T>(
+  path: string,
+  body: Record<string, unknown> | FormData,
+  auth = false,
+) {
+  return apiRequest<T>(path, { method: "PATCH", body, auth });
 }
