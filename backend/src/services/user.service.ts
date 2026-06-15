@@ -1,7 +1,12 @@
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { SECRET_KEY } from "../configs/constant";
-import { CreateUserDTO, LoginUserDTO } from "../dtos/user.dto";
+import {
+  CreateUserDTO,
+  LoginUserDTO,
+  UpdatePasswordDTO,
+  UpdateUserDTO,
+} from "../dtos/user.dto";
 import { HttpException } from "../exceptions/http-exception";
 import { IUser } from "../models/user.model";
 import { UserMongoRepository } from "../repositories/user.repository";
@@ -16,7 +21,11 @@ export class UserService {
       fullName: user.fullName,
       email: user.email,
       phoneNumber: user.phoneNumber,
+      location: user.location,
+      bio: user.bio,
+      profileImage: user.profileImage,
       role: user.role,
+      createdAt: user.createdAt,
     };
   }
 
@@ -73,6 +82,62 @@ export class UserService {
     return {
       user: this.toPublicUser(user),
       token,
+    };
+  }
+
+  getCurrentUser(user: IUser) {
+    return this.toPublicUser(user);
+  }
+
+  async updateUserProfile(
+    user: IUser,
+    profileData: UpdateUserDTO,
+    profileImage?: string,
+  ) {
+    if (profileData.email && profileData.email !== user.email) {
+      const existingEmail = await userRepository.getUserByEmailExceptId(
+        profileData.email,
+        user._id.toString(),
+      );
+
+      if (existingEmail) {
+        throw new HttpException(400, "Email already exists");
+      }
+    }
+
+    const updatedUser = await userRepository.update(user._id.toString(), {
+      ...profileData,
+      ...(profileImage ? { profileImage } : {}),
+    });
+
+    if (!updatedUser) {
+      throw new HttpException(404, "User not found");
+    }
+
+    return this.toPublicUser(updatedUser);
+  }
+
+  async updatePassword(user: IUser, passwordData: UpdatePasswordDTO) {
+    const isPasswordValid = await bcryptjs.compare(
+      passwordData.currentPassword,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new HttpException(400, "Current password is incorrect");
+    }
+
+    const hashedPassword = await bcryptjs.hash(passwordData.newPassword, 10);
+    const updatedUser = await userRepository.update(user._id.toString(), {
+      password: hashedPassword,
+    });
+
+    if (!updatedUser) {
+      throw new HttpException(404, "User not found");
+    }
+
+    return {
+      message: "Password updated successfully",
     };
   }
 }
