@@ -98,11 +98,12 @@ export default function AccountSettingsPage() {
 
   const handlePasswordSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const form = event.currentTarget;
     setPasswordStatus("");
     setIsSavingPassword(true);
 
     try {
-      const raw = Object.fromEntries(new FormData(event.currentTarget).entries());
+      const raw = Object.fromEntries(new FormData(form).entries());
       const parsed = passwordUpdateSchema.safeParse(raw);
 
       if (!parsed.success) {
@@ -110,7 +111,7 @@ export default function AccountSettingsPage() {
       }
 
       const response = await updatePasswordAction(parsed.data);
-      event.currentTarget.reset();
+      form.reset();
       setPasswordStatus(response.message || "Password updated successfully");
     } catch (error) {
       setPasswordStatus(error instanceof Error ? error.message : "Password update failed");

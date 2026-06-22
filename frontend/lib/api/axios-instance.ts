@@ -1,10 +1,16 @@
 import { getCookie } from "@/lib/cookies";
 
-const API_ORIGIN = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+function getApiBaseUrl() {
+  const configuredOrigin = process.env.NEXT_PUBLIC_API_URL;
+  const runtimeOrigin = typeof window !== "undefined"
+    ? `${window.location.protocol}//${window.location.hostname}:4000`
+    : "http://localhost:4000";
+  const apiOrigin = configuredOrigin || runtimeOrigin;
 
-const API_BASE_URL = API_ORIGIN.endsWith("/api/v1")
-  ? API_ORIGIN
-  : `${API_ORIGIN.replace(/\/$/, "")}/api/v1`;
+  return apiOrigin.endsWith("/api/v1")
+    ? apiOrigin
+    : `${apiOrigin.replace(/\/$/, "")}/api/v1`;
+}
 
 // Shared response shape mirrors the Express ApiResponseHelper used by the backend.
 export type ApiResponse<T> = {
@@ -41,12 +47,19 @@ async function apiRequest<T>(
       ? JSON.stringify(options.body)
       : undefined;
 
-  // All auth requests pass through this helper so base URL and error handling stay consistent.
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: options.method,
-    headers,
-    body: requestBody,
-  });
+  const apiBaseUrl = getApiBaseUrl();
+  let response: Response;
+
+  try {
+    // All auth requests pass through this helper so base URL and error handling stay consistent.
+    response = await fetch(`${apiBaseUrl}${path}`, {
+      method: options.method,
+      headers,
+      body: requestBody,
+    });
+  } catch {
+    throw new Error(`Cannot connect to the backend API at ${apiBaseUrl}`);
+  }
 
   const data = (await response.json()) as ApiResponse<T>;
 
