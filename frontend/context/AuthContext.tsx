@@ -24,6 +24,13 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+const protectedRoutes = ["/dashboard", "/profile", "/account-settings"];
+
+function isProtectedRoute(pathname: string) {
+  return protectedRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -44,12 +51,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return currentUser;
     } catch {
+      clearAuthCookies();
       setUser(null);
+
+      if (isProtectedRoute(window.location.pathname)) {
+        const redirect = encodeURIComponent(window.location.pathname);
+        router.replace(`/login?redirect=${redirect}`);
+      }
+
       return null;
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [router]);
 
   const logout = useCallback(() => {
     clearAuthCookies();
