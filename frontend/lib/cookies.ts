@@ -7,7 +7,28 @@ function setCookie(name: string, value: string) {
   document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
 }
 
+export function getCookie(name: string) {
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  const cookie = document.cookie
+    .split("; ")
+    .find((value) => value.startsWith(`${name}=`));
+
+  return cookie ? decodeURIComponent(cookie.split("=")[1]) : null;
+}
+
 export function storeAuthCookies(token: string, user: AuthUser) {
   setCookie("auth_token", token);
+  storeUserCookie(user);
+}
+
+export function storeUserCookie(user: AuthUser) {
   setCookie("user_data", JSON.stringify(user));
+}
+
+export function clearAuthCookies() {
+  document.cookie = "auth_token=; path=/; max-age=0; SameSite=Lax";
+  document.cookie = "user_data=; path=/; max-age=0; SameSite=Lax";
 }

@@ -8,6 +8,9 @@ export const UserSchema = z.object({
     .string()
     .min(10, "Phone number must be at least 10 digits long")
     .optional(),
+  location: z.string().trim().optional(),
+  bio: z.string().trim().max(500, "Bio must be 500 characters or less").optional(),
+  profileImage: z.string().trim().optional(),
   password: z.string().min(6, "Password must be at least 6 character long"),
   role: z.enum(["admin", "user"]).default("user"),
 });

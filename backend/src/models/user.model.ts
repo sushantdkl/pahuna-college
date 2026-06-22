@@ -26,6 +26,19 @@ const UserMongoSchema: Schema<IUser> = new Schema(
       type: String,
       trim: true,
     },
+    location: {
+      type: String,
+      trim: true,
+    },
+    bio: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+    },
+    profileImage: {
+      type: String,
+      trim: true,
+    },
     password: {
       // This field stores only the hashed password created in the service layer.
       type: String,

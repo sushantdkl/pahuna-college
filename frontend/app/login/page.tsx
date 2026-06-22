@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { flushSync } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { loginAction } from "@/lib/actions/auth-actions";
 import { storeAuthCookies } from "@/lib/cookies";
 import { loginSchema } from "@/schemas/auth.schema";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { setUser } = useAuth();
   const [role, setRole] = useState("Traveler");
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -44,9 +47,10 @@ export default function LoginPage() {
 
       // Store both auth_token and user_data before redirecting so the dashboard can read session context.
       storeAuthCookies(token, user);
+      flushSync(() => setUser(user));
       setStatus("success");
       setMessage(response.message || "Signed in successfully");
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Login failed");
