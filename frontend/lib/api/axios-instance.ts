@@ -17,10 +17,16 @@ export type ApiResponse<T> = {
   success: boolean;
   message: string;
   data: T | null;
+  meta?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 };
 
 type ApiRequestOptions = {
-  method: "GET" | "POST" | "PATCH";
+  method: "GET" | "POST" | "PATCH" | "DELETE";
   body?: Record<string, unknown> | FormData;
   auth?: boolean;
 };
@@ -74,8 +80,12 @@ export function apiGet<T>(path: string, auth = false) {
   return apiRequest<T>(path, { method: "GET", auth });
 }
 
-export function apiPost<T>(path: string, body: Record<string, unknown>) {
-  return apiRequest<T>(path, { method: "POST", body });
+export function apiPost<T>(
+  path: string,
+  body: Record<string, unknown>,
+  auth = false,
+) {
+  return apiRequest<T>(path, { method: "POST", body, auth });
 }
 
 export function apiPatch<T>(
@@ -84,4 +94,8 @@ export function apiPatch<T>(
   auth = false,
 ) {
   return apiRequest<T>(path, { method: "PATCH", body, auth });
+}
+
+export function apiDelete<T>(path: string, auth = false) {
+  return apiRequest<T>(path, { method: "DELETE", auth });
 }
