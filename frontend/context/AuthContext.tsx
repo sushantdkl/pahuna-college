@@ -20,7 +20,7 @@ type AuthContextValue = {
   loading: boolean;
   isAuthenticated: boolean;
   checkAuth: () => Promise<AuthUser | null>;
-  logout: () => void;
+  logout: (redirectTo?: string) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -30,6 +30,12 @@ function isProtectedRoute(pathname: string) {
   return protectedRoutes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
+}
+
+function loginRouteFor(pathname: string) {
+  return pathname === "/admin" || pathname.startsWith("/admin/")
+    ? "/admin/login"
+    : "/login";
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -56,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (isProtectedRoute(window.location.pathname)) {
         const redirect = encodeURIComponent(window.location.pathname);
-        router.replace(`/login?redirect=${redirect}`);
+        router.replace(`${loginRouteFor(window.location.pathname)}?redirect=${redirect}`);
       }
 
       return null;
@@ -65,10 +71,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [router]);
 
-  const logout = useCallback(() => {
+  const logout = useCallback((redirectTo = "/login") => {
     clearAuthCookies();
     setUser(null);
-    router.push("/login");
+    router.push(redirectTo);
   }, [router]);
 
   useEffect(() => {
