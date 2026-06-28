@@ -24,7 +24,7 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-const protectedRoutes = ["/dashboard", "/profile", "/account-settings"];
+const protectedRoutes = ["/dashboard", "/profile", "/account-settings", "/admin"];
 
 function isProtectedRoute(pathname: string) {
   return protectedRoutes.some(
