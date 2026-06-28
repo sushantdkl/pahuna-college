@@ -1,9 +1,19 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { navItems } from "@/lib/pahuna-content";
 
 export function SiteHeader() {
+  const pathname = usePathname();
+  const { user, loading, logout } = useAuth();
+  const isAdmin = user?.role?.toLowerCase() === "admin";
+  const accountHref = isAdmin ? "/admin" : "/profile";
+  const accountLabel = isAdmin ? "Admin" : "Profile";
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-emerald-900/10 bg-[#fffdf7]/95 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
@@ -17,7 +27,11 @@ export function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-            className="rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-stone-600 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600"
+              className={`rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 ${
+                pathname === item.href || pathname.startsWith(`${item.href}/`)
+                  ? "bg-emerald-50 text-emerald-800"
+                  : "text-stone-600 hover:bg-emerald-50 hover:text-emerald-800"
+              }`}
             >
               {item.label}
             </Link>
@@ -25,12 +39,30 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
-          <Link
-            href="/login"
-            className="hidden rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-stone-700 transition hover:bg-stone-100 sm:inline-flex"
-          >
-            Sign in
-          </Link>
+          {!loading && user ? (
+            <>
+              <Link
+                href={accountHref}
+                className="hidden rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-stone-700 transition hover:bg-stone-100 sm:inline-flex"
+              >
+                {accountLabel}
+              </Link>
+              <button
+                type="button"
+                onClick={() => logout(isAdmin ? "/admin/login" : "/login")}
+                className="hidden rounded-full border border-red-100 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-red-600 transition hover:bg-red-50 sm:inline-flex"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="hidden rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-stone-700 transition hover:bg-stone-100 sm:inline-flex"
+            >
+              Sign in
+            </Link>
+          )}
           <Link
             href="/contact"
             className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-white shadow-lg shadow-emerald-800/15 transition hover:bg-emerald-800"
@@ -44,11 +76,24 @@ export function SiteHeader() {
           <Link
             key={item.href}
             href={item.href}
-            className="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-semibold text-stone-600 shadow-sm transition hover:bg-emerald-50 hover:text-emerald-800"
+            className={`shrink-0 rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition ${
+              pathname === item.href || pathname.startsWith(`${item.href}/`)
+                ? "bg-emerald-700 text-white"
+                : "bg-white text-stone-600 hover:bg-emerald-50 hover:text-emerald-800"
+            }`}
           >
             {item.label}
           </Link>
         ))}
+        {!loading && user ? (
+          <Link href={accountHref} className="shrink-0 rounded-full bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 shadow-sm">
+            {accountLabel}
+          </Link>
+        ) : (
+          <Link href="/login" className="shrink-0 rounded-full bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 shadow-sm">
+            Sign in
+          </Link>
+        )}
       </div>
     </header>
   );
