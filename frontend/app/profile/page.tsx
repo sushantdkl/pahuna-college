@@ -31,7 +31,7 @@ export default function ProfilePage() {
           <div className="ml-auto flex items-center gap-2">
             <Link href="/dashboard" className="rounded-full px-4 py-2 text-xs font-black text-stone-600 hover:bg-stone-100">Dashboard</Link>
             <Link href="/account-settings" className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-black text-white hover:bg-emerald-800">Settings</Link>
-            <button onClick={logout} className="rounded-full border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50">Logout</button>
+            <button onClick={() => logout()} className="rounded-full border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50">Logout</button>
           </div>
         </div>
       </nav>
@@ -60,9 +60,9 @@ export default function ProfilePage() {
                 </div>
               </div>
               <div className="grid gap-3 sm:grid-cols-3 md:min-w-[360px]">
-                <MiniStat value="12" label="Bookings" />
-                <MiniStat value="04" label="Experiences" />
-                <MiniStat value="08" label="Reviews" />
+                <MiniStat value="0" label="Bookings" />
+                <MiniStat value="0" label="Wishlist" />
+                <MiniStat value="0" label="Interested" />
               </div>
             </div>
           </div>
@@ -78,6 +78,7 @@ export default function ProfilePage() {
               <p><strong className="text-stone-900">Email:</strong> {user?.email || "Not available"}</p>
               <p><strong className="text-stone-900">Phone:</strong> {user?.phoneNumber || "Add phone number"}</p>
               <p><strong className="text-stone-900">Location:</strong> {user?.location || "Surkhet / Nepal"}</p>
+              <p><strong className="text-stone-900">Account type:</strong> {user?.role || "user"}</p>
             </div>
           </div>
           <div className="rounded-[28px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
@@ -85,10 +86,30 @@ export default function ProfilePage() {
             <p className="mt-4 text-sm leading-7 text-stone-600">{user?.bio || "Add your traveler introduction from the profile settings form. This page keeps Sprint 3 profile logic connected and styled in the Pahuna theme."}</p>
           </div>
         </aside>
-        <ProfileSettingsPanel />
+        <div className="space-y-6">
+          <ProfileSettingsPanel />
+          <section className="grid gap-5 md:grid-cols-3">
+            <EmptyProfilePanel title="No bookings yet" text="Your confirmed stays and trip bookings will appear here when the backend returns them." href="/stays" action="Explore stays" />
+            <EmptyProfilePanel title="No wishlist items yet" text="Save or like travel ideas after signing in. Browsing remains open to everyone." href="/explore" action="Explore Surkhet" />
+            <EmptyProfilePanel title="No interested adventures yet" text="Mark adventures when that feature is available, or start with a trip plan now." href="/trip-planner" action="Plan a trip" />
+          </section>
+        </div>
       </section>
       <SiteFooter />
     </main>
+  );
+}
+
+function EmptyProfilePanel({ title, text, href, action }: { title: string; text: string; href: string; action: string }) {
+  return (
+    <div className="rounded-[26px] border border-emerald-900/10 bg-white p-5 shadow-lg shadow-emerald-900/5">
+      <div className="h-1.5 w-16 rounded-full bg-amber-400" />
+      <h3 className="mt-5 text-lg font-black text-stone-950">{title}</h3>
+      <p className="mt-3 text-sm leading-6 text-stone-600">{text}</p>
+      <Link href={href} className="mt-5 inline-flex rounded-full border border-emerald-200 px-4 py-2 text-xs font-black text-emerald-800 hover:bg-emerald-50">
+        {action}
+      </Link>
+    </div>
   );
 }
 

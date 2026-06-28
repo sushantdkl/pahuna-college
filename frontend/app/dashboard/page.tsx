@@ -7,34 +7,6 @@ import { resolveImageUrl } from "@/app/_components/profile-forms";
 import { useAuth } from "@/context/AuthContext";
 import { galleryItems, images, quickActions } from "@/lib/pahuna-content";
 
-const savedExperiences = [
-  {
-    title: "Bulbule Lake evening walk",
-    category: "Surkhet",
-    image: images.bulbule,
-    text: "Save this for an easy family-friendly city plan.",
-  },
-  {
-    title: "Kakrebihar heritage stop",
-    category: "Culture",
-    image: images.kakrebihar,
-    text: "A strong first-day cultural stop near Birendranagar.",
-  },
-];
-
-const reviews = [
-  {
-    title: "Valley View Resort",
-    date: "2 weeks ago",
-    text: "Clean stay option for a Surkhet base before moving toward Karnali routes.",
-  },
-  {
-    title: "Bulbule food stop",
-    date: "1 month ago",
-    text: "Good simple food and a calm evening walk around the lake area.",
-  },
-];
-
 export default function DashboardPage() {
   const { user, loading, logout } = useAuth();
   const avatarUrl = resolveImageUrl(user?.profileImage);
@@ -47,7 +19,7 @@ export default function DashboardPage() {
     { label: "Dashboard", href: "/dashboard", active: true },
     { label: "Profile", href: "/profile" },
     { label: "Account Settings", href: "/account-settings" },
-    ...(user?.role === "admin" ? [{ label: "Admin Users", href: "/admin/users" }] : []),
+    ...(user?.role?.toLowerCase() === "admin" ? [{ label: "Admin", href: "/admin" }] : []),
     { label: "Explore Surkhet", href: "/explore" },
   ];
 
@@ -71,7 +43,7 @@ export default function DashboardPage() {
           <Link href="/profile" className="rounded-2xl bg-emerald-700 px-4 py-2 text-xs font-black text-white hover:bg-emerald-800">
             Profile
           </Link>
-          <button onClick={logout} className="rounded-2xl border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50">
+          <button onClick={() => logout()} className="rounded-2xl border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50">
             Logout
           </button>
         </>
@@ -108,9 +80,9 @@ export default function DashboardPage() {
           </article>
 
           <div className="grid gap-4 md:grid-cols-3">
-            <StatCard value="12" label="Bookings" />
-            <StatCard value="04" label="Experiences" />
-            <StatCard value="08" label="Reviews Written" />
+            <StatCard value="0" label="Bookings" />
+            <StatCard value="0" label="Wishlist Items" />
+            <StatCard value="0" label="Interested Trips" />
           </div>
 
           <section className="rounded-[28px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
@@ -134,26 +106,10 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          <section>
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-2xl font-black">Saved Experiences</h2>
-              <Link href="/gallery" className="text-sm font-black text-emerald-700 hover:text-emerald-900">View All</Link>
-            </div>
-            <div className="grid gap-5 md:grid-cols-2">
-              {savedExperiences.map((item) => (
-                <article key={item.title} className="overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
-                  <div className="relative h-52">
-                    <Image src={item.image} alt={item.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
-                    <span className="absolute right-4 top-4 rounded-full bg-white px-3 py-2 text-xs font-black text-red-500 shadow">Saved</span>
-                  </div>
-                  <div className="p-5">
-                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-emerald-700">{item.category}</p>
-                    <h3 className="mt-2 text-lg font-black">{item.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-stone-600">{item.text}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
+          <section className="grid gap-5 md:grid-cols-3">
+            <EmptyDashboardCard title="No bookings yet" text="Confirmed stays and trip reservations will appear here once booking APIs return data." href="/hotels" action="Find stays" />
+            <EmptyDashboardCard title="No wishlist items yet" text="Save buttons can connect here when wishlist backend support is available." href="/explore" action="Explore Surkhet" />
+            <EmptyDashboardCard title="No interested adventures yet" text="Start with a route or trip plan before marking an adventure as interested." href="/trip-planner" action="Plan a trip" />
           </section>
         </div>
 
@@ -166,21 +122,10 @@ export default function DashboardPage() {
           </div>
 
           <div className="rounded-[28px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
-            <h2 className="text-lg font-black">Reviews Written</h2>
-            <div className="mt-4 space-y-4">
-              {reviews.map((review) => (
-                <article key={review.title} className="rounded-[22px] border-l-4 border-emerald-600 bg-[#fffaf0] p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="font-black">{review.title}</h3>
-                      <p className="mt-1 text-sm font-black text-amber-500">5.0 / 5.0</p>
-                    </div>
-                    <p className="text-xs font-semibold text-stone-400">{review.date}</p>
-                  </div>
-                  <p className="mt-3 text-sm leading-6 text-stone-600">{review.text}</p>
-                </article>
-              ))}
-            </div>
+            <h2 className="text-lg font-black">Review history</h2>
+            <p className="mt-4 rounded-[22px] border-l-4 border-amber-400 bg-[#fffaf0] p-4 text-sm leading-6 text-stone-600">
+              No reviews yet. Reviews will appear here when a real review flow is connected.
+            </p>
           </div>
 
           <div className="grid gap-3">
@@ -204,6 +149,19 @@ function InfoRow({ label, value }: { label: string; value: string }) {
       <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">{label}</p>
       <p className="mt-1 break-words text-sm font-semibold text-stone-700">{value}</p>
     </div>
+  );
+}
+
+function EmptyDashboardCard({ title, text, href, action }: { title: string; text: string; href: string; action: string }) {
+  return (
+    <article className="rounded-[26px] border border-emerald-900/10 bg-white p-5 shadow-lg shadow-emerald-900/5">
+      <div className="h-1.5 w-16 rounded-full bg-amber-400" />
+      <h2 className="mt-5 text-lg font-black">{title}</h2>
+      <p className="mt-3 text-sm leading-6 text-stone-600">{text}</p>
+      <Link href={href} className="mt-5 inline-flex rounded-full border border-emerald-200 px-4 py-2 text-xs font-black text-emerald-800 hover:bg-emerald-50">
+        {action}
+      </Link>
+    </article>
   );
 }
 

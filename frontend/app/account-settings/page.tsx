@@ -29,7 +29,7 @@ export default function AccountSettingsPage() {
           <div className="ml-auto flex items-center gap-2">
             <Link href="/profile" className="rounded-full px-4 py-2 text-xs font-black text-stone-600 hover:bg-stone-100">Profile</Link>
             <Link href="/dashboard" className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-black text-white hover:bg-emerald-800">Dashboard</Link>
-            <button onClick={logout} className="rounded-full border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50">Logout</button>
+            <button onClick={() => logout()} className="rounded-full border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50">Logout</button>
           </div>
         </div>
       </nav>
