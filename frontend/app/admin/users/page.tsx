@@ -67,13 +67,11 @@ export default function AdminUsersPage() {
   const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.role?.toLowerCase() === "admin";
   const adminNavItems = [
-    { label: "Dashboard", href: "/dashboard" },
+    { label: "Overview", href: "/admin" },
     { label: "Users", href: "/admin/users", active: true },
-    { label: "Profile", href: "/profile" },
-    { label: "Account Settings", href: "/account-settings" },
-    { label: "Explore Surkhet", href: "/explore" },
+    { label: "Public Site", href: "/" },
   ];
 
   const loadUsers = useCallback(async () => {
@@ -122,7 +120,7 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.replace("/login?redirect=/admin/users");
+      router.replace("/admin/login?redirect=/admin/users");
       return;
     }
 
@@ -260,11 +258,11 @@ export default function AdminUsersPage() {
       navItems={adminNavItems}
       action={
         <>
-          <Link href="/dashboard" className="rounded-2xl border border-emerald-200 bg-white px-4 py-2 text-xs font-black text-emerald-800 hover:bg-emerald-50">
-            Dashboard
+          <Link href="/admin" className="rounded-2xl border border-emerald-200 bg-white px-4 py-2 text-xs font-black text-emerald-800 hover:bg-emerald-50">
+            Overview
           </Link>
           <button
-            onClick={logout}
+            onClick={() => logout("/admin/login")}
             className="rounded-2xl border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50"
           >
             Logout
