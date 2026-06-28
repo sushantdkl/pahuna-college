@@ -143,7 +143,7 @@ export default function HotelsPage() {
                     ))}
                   </div>
                   <div className="mt-auto grid gap-2 pt-6 sm:grid-cols-2">
-                    <Link href="/hotels" className="rounded-xl border border-emerald-200 px-3 py-2 text-center text-xs font-bold text-emerald-800 hover:bg-emerald-50">View Details</Link>
+                    <Link href={`/hotels/${stay.slug}`} className="rounded-xl border border-emerald-200 px-3 py-2 text-center text-xs font-bold text-emerald-800 hover:bg-emerald-50">View Details</Link>
                     <a href={stay.googleMapLink || fallbackMap} target="_blank" rel="noreferrer" className="rounded-xl border border-stone-200 px-3 py-2 text-center text-xs font-bold text-stone-700 hover:bg-stone-50">Google Maps</a>
                     <Link href="/contact" className="rounded-xl bg-emerald-700 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-800 sm:col-span-2">Ask Availability / Send Inquiry</Link>
                   </div>

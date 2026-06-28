@@ -144,7 +144,7 @@ export default function Home() {
                 <p className="mt-2 text-xs text-stone-500">{stay.area}, {stay.district}</p>
                 <p className="mt-5 text-lg font-black text-stone-900">{stay.priceFrom}</p>
                 <div className="mt-5 flex gap-2">
-                  <Link href="/hotels" className="flex-1 rounded-xl border border-emerald-200 px-3 py-2 text-center text-xs font-bold text-emerald-800 hover:bg-emerald-50">View Details</Link>
+                  <Link href={`/hotels/${stay.slug}`} className="flex-1 rounded-xl border border-emerald-200 px-3 py-2 text-center text-xs font-bold text-emerald-800 hover:bg-emerald-50">View Details</Link>
                   <Link href="/contact" className="flex-1 rounded-xl bg-emerald-600 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-700">Ask</Link>
                 </div>
               </div>

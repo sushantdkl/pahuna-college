@@ -5,6 +5,7 @@ export type NavItem = {
 
 export type FeatureCard = {
   title: string;
+  slug?: string;
   eyebrow?: string;
   description: string;
   href: string;
@@ -13,6 +14,7 @@ export type FeatureCard = {
 };
 
 export type StayCard = {
+  slug: string;
   name: string;
   type: string;
   area: string;
@@ -37,7 +39,7 @@ export const navItems: NavItem[] = [
 ];
 
 export const images = {
-  hero: "/images/karnali/karnali-river-2.jpg",
+  hero: "/images/karnali/aakashe-tal-jumla.jpg",
   karnaliHero: "/images/hero/karnali-hero.jpg",
   bulbule: "/images/surkhet/bulbule-lake.jpg",
   kakrebihar: "/images/surkhet/kakrebihar.jpg",
@@ -165,6 +167,7 @@ export const surkhetPlaces: FeatureCard[] = [
 
 export const featuredStays: StayCard[] = [
   {
+    slug: "valley-view-resort",
     name: "Valley View Resort",
     type: "Resort",
     area: "Birendranagar",
@@ -177,6 +180,7 @@ export const featuredStays: StayCard[] = [
     googleMapLink: "https://maps.google.com/?q=Birendranagar+Surkhet",
   },
   {
+    slug: "bulbule-heritage-inn",
     name: "Bulbule Heritage Inn",
     type: "Hotel",
     area: "Bulbule",
@@ -189,6 +193,7 @@ export const featuredStays: StayCard[] = [
     googleMapLink: "https://maps.google.com/?q=Bulbule+Lake+Surkhet",
   },
   {
+    slug: "kakrebihar-guest-house",
     name: "Kakrebihar Guest House",
     type: "Guest House",
     area: "Latikoili",
@@ -201,6 +206,7 @@ export const featuredStays: StayCard[] = [
     googleMapLink: "https://maps.google.com/?q=Kakrebihar+Surkhet",
   },
   {
+    slug: "gurase-hill-stay",
     name: "Gurase Hill Stay",
     type: "Homestay",
     area: "Gurase",
@@ -217,23 +223,26 @@ export const featuredStays: StayCard[] = [
 export const foodHighlights: FeatureCard[] = [
   {
     title: "Local thakali & family restaurants",
+    slug: "local-thakali-family-restaurants",
     eyebrow: "Food",
     description: "Easy meal stops around Birendranagar for travelers before longer routes.",
-    href: "/food",
+    href: "/food/local-thakali-family-restaurants",
     image: images.food,
   },
   {
     title: "Cafes near the city core",
+    slug: "cafes-near-city-core",
     eyebrow: "Cafes",
     description: "Coffee, tea, light snacks, and planning breaks before moving onward.",
-    href: "/food",
+    href: "/food/cafes-near-city-core",
     image: images.cafe,
   },
   {
     title: "Route-side tea and snacks",
+    slug: "route-side-tea-and-snacks",
     eyebrow: "Local stops",
     description: "Small practical food stops for Gurase, Dailekh, and longer road journeys.",
-    href: "/food",
+    href: "/food/route-side-tea-and-snacks",
     image: images.tea,
   },
 ];
