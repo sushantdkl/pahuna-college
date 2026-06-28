@@ -1,0 +1,16 @@
+{
+  "name": "Pahuna — Your Gateway to Karnali",
+  "short_name": "Pahuna",
+  "description": "Discover Surkhet — premium stays, authentic experiences, and curated tourism in the heart of Karnali Province, Nepal.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#113f75",
+  "icons": [
+    {
+      "src": "/logo/pahuna-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

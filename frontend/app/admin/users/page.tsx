@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { DashboardFrame } from "@/app/_components/pahuna-layout";
 import { useAuth } from "@/context/AuthContext";
 import {
   createAdminUserAction,
@@ -68,6 +68,13 @@ export default function AdminUsersPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const isAdmin = user?.role === "admin";
+  const adminNavItems = [
+    { label: "Dashboard", href: "/dashboard" },
+    { label: "Users", href: "/admin/users", active: true },
+    { label: "Profile", href: "/profile" },
+    { label: "Account Settings", href: "/account-settings" },
+    { label: "Explore Surkhet", href: "/explore" },
+  ];
 
   const loadUsers = useCallback(async () => {
     if (!isAdmin) {
@@ -247,39 +254,25 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f8f3e8] text-stone-950">
-      <nav className="sticky top-0 z-40 border-b border-emerald-900/10 bg-[#fffdf7]/95 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <Image
-              src="/pahuna-icon.svg"
-              alt="Pahuna"
-              width={34}
-              height={34}
-              className="h-8 w-8"
-            />
-            <span className="text-lg font-black tracking-tight text-emerald-800">
-              PAHUNA
-            </span>
+    <DashboardFrame
+      title="Users"
+      eyebrow="Admin User Management"
+      navItems={adminNavItems}
+      action={
+        <>
+          <Link href="/dashboard" className="rounded-2xl border border-emerald-200 bg-white px-4 py-2 text-xs font-black text-emerald-800 hover:bg-emerald-50">
+            Dashboard
           </Link>
-          <div className="ml-auto flex items-center gap-2">
-            <Link
-              href="/dashboard"
-              className="rounded-full px-4 py-2 text-xs font-bold text-stone-600 hover:bg-stone-100"
-            >
-              Dashboard
-            </Link>
-            <button
-              onClick={logout}
-              className="rounded-full border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <button
+            onClick={logout}
+            className="rounded-2xl border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50"
+          >
+            Logout
+          </button>
+        </>
+      }
+    >
+      <section className="mx-auto w-full max-w-7xl">
         <div className="flex flex-col gap-5 rounded-[32px] border border-emerald-900/10 bg-white p-6 shadow-xl shadow-emerald-900/5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">
@@ -492,7 +485,7 @@ export default function AdminUsersPage() {
           onConfirm={handleDeleteUser}
         />
       ) : null}
-    </main>
+    </DashboardFrame>
   );
 }
 

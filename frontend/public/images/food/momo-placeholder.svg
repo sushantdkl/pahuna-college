@@ -1,0 +1,9 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#FFF7E8"/>
+  <ellipse cx="600" cy="485" rx="330" ry="90" fill="#D7A64A"/>
+  <path d="M395 405C395 310 485 260 555 330C585 250 700 250 730 330C805 265 895 315 885 405C875 515 410 515 395 405Z" fill="#FFFDF8" stroke="#2F6B4F" stroke-width="14"/>
+  <path d="M505 350C545 390 550 430 520 465" stroke="#D7A64A" stroke-width="14" stroke-linecap="round"/>
+  <path d="M620 330C655 385 660 430 625 470" stroke="#D7A64A" stroke-width="14" stroke-linecap="round"/>
+  <path d="M735 350C770 395 770 435 735 465" stroke="#D7A64A" stroke-width="14" stroke-linecap="round"/>
+  <text x="600" y="665" text-anchor="middle" font-family="Arial, sans-serif" font-size="44" font-weight="700" fill="#2F4F3D">Momo & Fast Food</text>
+</svg>

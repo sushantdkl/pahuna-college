@@ -2,135 +2,216 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { DashboardFrame } from "@/app/_components/pahuna-layout";
+import { resolveImageUrl } from "@/app/_components/profile-forms";
 import { useAuth } from "@/context/AuthContext";
+import { galleryItems, images, quickActions } from "@/lib/pahuna-content";
 
-function imageUrl(path?: string) {
-  if (!path) {
-    return null;
-  }
+const savedExperiences = [
+  {
+    title: "Bulbule Lake evening walk",
+    category: "Surkhet",
+    image: images.bulbule,
+    text: "Save this for an easy family-friendly city plan.",
+  },
+  {
+    title: "Kakrebihar heritage stop",
+    category: "Culture",
+    image: images.kakrebihar,
+    text: "A strong first-day cultural stop near Birendranagar.",
+  },
+];
 
-  if (path.startsWith("http")) {
-    return path;
-  }
-
-  return `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}${path}`;
-}
+const reviews = [
+  {
+    title: "Valley View Resort",
+    date: "2 weeks ago",
+    text: "Clean stay option for a Surkhet base before moving toward Karnali routes.",
+  },
+  {
+    title: "Bulbule food stop",
+    date: "1 month ago",
+    text: "Good simple food and a calm evening walk around the lake area.",
+  },
+];
 
 export default function DashboardPage() {
   const { user, loading, logout } = useAuth();
-  const avatar = imageUrl(user?.profileImage);
+  const avatarUrl = resolveImageUrl(user?.profileImage);
+  const displayName = user?.fullName || "Pahuna Traveler";
+  const location = user?.location || "Surkhet / Nepal";
   const memberSince = user?.createdAt
-    ? new Intl.DateTimeFormat("en", { month: "short", year: "numeric" }).format(
-        new Date(user.createdAt),
-      )
-    : "New member";
+    ? new Date(user.createdAt).toLocaleDateString()
+    : "Sprint 3";
+  const navItems = [
+    { label: "Dashboard", href: "/dashboard", active: true },
+    { label: "Profile", href: "/profile" },
+    { label: "Account Settings", href: "/account-settings" },
+    ...(user?.role === "admin" ? [{ label: "Admin Users", href: "/admin/users" }] : []),
+    { label: "Explore Surkhet", href: "/explore" },
+  ];
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-emerald-50 text-sm text-zinc-500">
-        Loading your Pahuna profile...
+      <main className="flex min-h-screen items-center justify-center bg-[#f6f0e5] text-stone-700">
+        <div className="rounded-[28px] border border-emerald-900/10 bg-white px-8 py-6 text-sm font-bold shadow-lg shadow-emerald-900/5">
+          Loading Pahuna dashboard...
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#f5fbf8] text-zinc-900">
-      <nav className="flex items-center justify-between border-b border-emerald-100 bg-white px-6 py-4 shadow-sm">
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <Image src="/pahuna-icon.svg" alt="Pahuna" width={34} height={34} />
-          <span className="text-lg font-semibold text-emerald-800">Pahuna</span>
-        </Link>
-        <div className="flex items-center gap-3 text-sm">
-          <Link className="font-medium text-zinc-600 hover:text-emerald-700" href="/profile">
+    <DashboardFrame
+      title={displayName}
+      eyebrow="Traveler Dashboard"
+      navItems={navItems}
+      action={
+        <>
+          <Link href="/profile" className="rounded-2xl bg-emerald-700 px-4 py-2 text-xs font-black text-white hover:bg-emerald-800">
             Profile
           </Link>
-          <Link className="rounded-full bg-emerald-600 px-4 py-2 font-semibold text-white" href="/account-settings">
-            Settings
-          </Link>
-        </div>
-      </nav>
-
-      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-xl shadow-emerald-100">
-          <div className="h-52 bg-[url('/auth-hero.svg')] bg-cover bg-center" />
-          <div className="px-6 pb-7">
-            <div className="-mt-14 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-              <div className="flex items-end gap-4">
-                <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-emerald-100 text-3xl font-semibold text-emerald-800 shadow-lg">
-                  {avatar ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={avatar} alt={user?.fullName || "Profile"} className="h-full w-full object-cover" />
-                  ) : (
-                    user?.fullName?.charAt(0).toUpperCase() || "P"
-                  )}
-                </div>
-                <div className="pb-2">
-                  <h1 className="text-3xl font-semibold">{user?.fullName || "Pahuna Traveler"}</h1>
-                  <p className="mt-1 text-sm text-zinc-500">{user?.location || "Exploring Mid-Western Nepal"}</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <Link href="/account-settings" className="rounded-full border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700">
-                  Edit Profile
-                </Link>
-                <Link href="/account-settings" className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white">
-                  Account
-                </Link>
-              </div>
+          <button onClick={logout} className="rounded-2xl border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50">
+            Logout
+          </button>
+        </>
+      }
+    >
+      <section className="grid gap-6 xl:grid-cols-[1fr_340px]">
+        <div className="space-y-6">
+          <article className="overflow-hidden rounded-[30px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
+            <div className="relative h-56">
+              <Image src={images.karnaliHero} alt="Karnali landscape dashboard banner" fill priority sizes="(max-width: 1280px) 100vw, 70vw" className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/80 via-stone-950/25 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-amber-400" />
             </div>
+            <div className="grid gap-5 p-5 sm:grid-cols-[auto_1fr_auto] sm:items-end">
+              <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl border-4 border-white bg-emerald-100 text-4xl font-black text-emerald-800 shadow-xl">
+                {avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
+                ) : (
+                  displayName.charAt(0).toUpperCase()
+                )}
+              </div>
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">{location}</p>
+                <h2 className="mt-2 text-3xl font-black text-stone-950">{displayName}</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">
+                  {user?.bio || "Keep your Pahuna profile ready for stays, local food stops, and Karnali travel inquiries."}
+                </p>
+              </div>
+              <Link href="/account-settings" className="rounded-2xl border border-emerald-200 bg-white px-5 py-3 text-center text-sm font-black text-emerald-800 hover:bg-emerald-50">
+                Edit Profile
+              </Link>
+            </div>
+          </article>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <StatCard value="12" label="Bookings" />
+            <StatCard value="04" label="Experiences" />
+            <StatCard value="08" label="Reviews Written" />
           </div>
-        </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[320px_1fr]">
-          <aside className="space-y-4 rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
-            <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Traveler Info</h2>
-            <div className="space-y-3 text-sm text-zinc-600">
-              <p><span className="font-semibold text-zinc-900">Email:</span> {user?.email || "Not available"}</p>
-              <p><span className="font-semibold text-zinc-900">Phone:</span> {user?.phoneNumber || "Not added"}</p>
-              <p><span className="font-semibold text-zinc-900">Member since:</span> {memberSince}</p>
+          <section className="rounded-[28px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Quick Actions</p>
+                <h2 className="mt-2 text-2xl font-black">Plan faster from your dashboard</h2>
+              </div>
+              <Link href="/trip-planner" className="rounded-2xl bg-emerald-700 px-4 py-2 text-sm font-black text-white hover:bg-emerald-800">
+                Plan a Trip
+              </Link>
             </div>
-            <Link className="block rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700" href="/account-settings">
-              Account Settings
-            </Link>
-            <button onClick={logout} className="w-full rounded-xl border border-red-100 px-4 py-3 text-sm font-semibold text-red-600">
-              Logout
-            </button>
-          </aside>
-
-          <section className="space-y-6">
-            <div className="grid gap-4 sm:grid-cols-3">
-              {[
-                ["Bookings", "0"],
-                ["Experiences", "0"],
-                ["Reviews Written", "0"],
-              ].map(([label, value]) => (
-                <div key={label} className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
-                  <p className="text-sm text-zinc-500">{label}</p>
-                  <p className="mt-2 text-3xl font-semibold text-emerald-700">{value}</p>
-                </div>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {quickActions.slice(0, 6).map((action) => (
+                <Link key={action.title} href={action.href} className="rounded-[22px] border border-emerald-900/10 bg-[#fffaf0] p-5 transition hover:border-emerald-300 hover:bg-emerald-50">
+                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">{action.meta}</p>
+                  <h3 className="mt-3 font-black">{action.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-stone-600">{action.description}</p>
+                </Link>
               ))}
             </div>
+          </section>
 
-            <div className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-semibold">About Me</h2>
-              <p className="mt-3 leading-7 text-zinc-600">
-                {user?.bio || "Add a short bio in account settings to introduce yourself to Pahuna hosts and local experience providers."}
-              </p>
+          <section>
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-2xl font-black">Saved Experiences</h2>
+              <Link href="/gallery" className="text-sm font-black text-emerald-700 hover:text-emerald-900">View All</Link>
             </div>
-
-            <div className="grid gap-6 xl:grid-cols-2">
-              <div className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
-                <h2 className="text-xl font-semibold">Saved Experiences</h2>
-                <p className="mt-3 text-sm text-zinc-500">Saved tours and stays will appear here after the booking module is connected.</p>
-              </div>
-              <div className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
-                <h2 className="text-xl font-semibold">Reviews Written</h2>
-                <p className="mt-3 text-sm text-zinc-500">Your destination and hotel reviews will be listed here.</p>
-              </div>
+            <div className="grid gap-5 md:grid-cols-2">
+              {savedExperiences.map((item) => (
+                <article key={item.title} className="overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
+                  <div className="relative h-52">
+                    <Image src={item.image} alt={item.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
+                    <span className="absolute right-4 top-4 rounded-full bg-white px-3 py-2 text-xs font-black text-red-500 shadow">Saved</span>
+                  </div>
+                  <div className="p-5">
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-emerald-700">{item.category}</p>
+                    <h3 className="mt-2 text-lg font-black">{item.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-stone-600">{item.text}</p>
+                  </div>
+                </article>
+              ))}
             </div>
           </section>
         </div>
+
+        <aside className="space-y-5">
+          <div className="rounded-[28px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
+            <h2 className="text-lg font-black">Account Information</h2>
+            <InfoRow label="Email" value={user?.email || "Not available"} />
+            <InfoRow label="Phone" value={user?.phoneNumber || "Add phone number"} />
+            <InfoRow label="Member Since" value={memberSince} />
+          </div>
+
+          <div className="rounded-[28px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
+            <h2 className="text-lg font-black">Reviews Written</h2>
+            <div className="mt-4 space-y-4">
+              {reviews.map((review) => (
+                <article key={review.title} className="rounded-[22px] border-l-4 border-emerald-600 bg-[#fffaf0] p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="font-black">{review.title}</h3>
+                      <p className="mt-1 text-sm font-black text-amber-500">5.0 / 5.0</p>
+                    </div>
+                    <p className="text-xs font-semibold text-stone-400">{review.date}</p>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-stone-600">{review.text}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-3">
+            {galleryItems.slice(0, 2).map((item) => (
+              <Link key={item.title} href="/gallery" className="relative h-44 overflow-hidden rounded-[24px] bg-stone-900">
+                <Image src={item.image} alt={item.alt} fill sizes="(max-width: 1280px) 100vw, 340px" className="object-cover opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                <p className="absolute bottom-5 left-5 right-5 font-black text-white">{item.title}</p>
+              </Link>
+            ))}
+          </div>
+        </aside>
       </section>
-    </main>
+    </DashboardFrame>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="mt-5 rounded-2xl bg-emerald-50/60 p-4">
+      <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">{label}</p>
+      <p className="mt-1 break-words text-sm font-semibold text-stone-700">{value}</p>
+    </div>
+  );
+}
+
+function StatCard({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="rounded-[24px] border border-emerald-900/10 bg-white p-5 text-center shadow-sm">
+      <p className="text-2xl font-black text-emerald-800">{value}</p>
+      <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-stone-500">{label}</p>
+    </div>
   );
 }

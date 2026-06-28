@@ -1,0 +1,9 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#F7EFE1"/>
+  <rect x="350" y="280" width="400" height="260" rx="44" fill="#FFFDF8" stroke="#2F6B4F" stroke-width="14"/>
+  <path d="M750 345H830C880 345 910 382 910 425C910 468 880 505 830 505H750" stroke="#2F6B4F" stroke-width="28" stroke-linecap="round"/>
+  <path d="M445 255C430 225 430 195 455 165" stroke="#D7A64A" stroke-width="18" stroke-linecap="round"/>
+  <path d="M555 255C540 225 540 195 565 165" stroke="#D7A64A" stroke-width="18" stroke-linecap="round"/>
+  <path d="M665 255C650 225 650 195 675 165" stroke="#D7A64A" stroke-width="18" stroke-linecap="round"/>
+  <text x="600" y="650" text-anchor="middle" font-family="Arial, sans-serif" font-size="44" font-weight="700" fill="#2F4F3D">Cafe</text>
+</svg>
