@@ -190,7 +190,7 @@ export default function HotelsPage() {
                   </div>
                   <p className="mt-4 text-sm leading-6 text-stone-600">{stay.shortDescription}</p>
                   <div className="mt-5 flex flex-wrap gap-2">
-                    {[...stay.amenities, ...(stay.services || [])].slice(0, 5).map((amenity) => (
+                    {Array.from(new Set([...stay.amenities, ...(stay.services || [])])).slice(0, 5).map((amenity) => (
                       <span key={amenity} className="rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold text-stone-600">{amenity}</span>
                     ))}
                   </div>

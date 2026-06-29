@@ -161,7 +161,7 @@ function FoodCard({ provider, compact = false }: { provider: (typeof foodProvide
         <h2 className="mt-2 text-xl font-black">{provider.name}</h2>
         <p className="mt-3 text-sm leading-6 text-stone-600">{provider.shortDescription}</p>
         <div className="mt-5 flex flex-wrap gap-2">
-          {[...provider.cuisines, ...provider.features].slice(0, 5).map((item) => (
+          {Array.from(new Set([...provider.cuisines, ...provider.features])).slice(0, 5).map((item) => (
             <span key={item} className="rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold text-stone-600">{item}</span>
           ))}
         </div>
