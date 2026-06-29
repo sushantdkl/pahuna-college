@@ -69,9 +69,11 @@ export default function AdminUsersPage() {
 
   const isAdmin = user?.role?.toLowerCase() === "admin";
   const adminNavItems = [
-    { label: "Overview", href: "/admin" },
-    { label: "Users", href: "/admin/users", active: true },
-    { label: "Public Site", href: "/" },
+    { label: "Overview", href: "/admin", section: "OV" },
+    { label: "Users", href: "/admin/users", active: true, section: "US" },
+    { label: "Stays", href: "/hotels", section: "ST" },
+    { label: "Food", href: "/food", section: "FD" },
+    { label: "Public Site", href: "/", section: "PB" },
   ];
 
   const loadUsers = useCallback(async () => {

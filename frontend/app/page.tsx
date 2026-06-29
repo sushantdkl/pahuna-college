@@ -131,7 +131,7 @@ export default function Home() {
           <ButtonLink href="/hotels" variant="secondary">View all stays</ButtonLink>
         </div>
         <div className="mt-9 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {featuredStays.map((stay) => (
+          {featuredStays.slice(0, 4).map((stay) => (
             <article key={stay.name} className="overflow-hidden rounded-[26px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
               <div className="relative h-44 bg-emerald-50">
                 <Image src={stay.image} alt={stay.name} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover" />
