@@ -74,20 +74,23 @@ export default function AdminOverviewPage() {
       }
     >
       <div className="space-y-6">
-        <div className="flex flex-col gap-3 rounded-[30px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h2 className="text-2xl font-black tracking-tight">Welcome back, {user.fullName || user.email}</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">A compact admin control room for Pahuna users, stay listings, food places, and public route safety.</p>
+        <div className="overflow-hidden rounded-[32px] border border-emerald-900/10 bg-white shadow-xl shadow-emerald-900/5">
+          <div className="grid gap-6 p-6 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-700">Control room</p>
+              <h2 className="mt-3 text-3xl font-black tracking-tight text-stone-950 sm:text-4xl">Welcome back, {user.fullName || user.email}</h2>
+              <p className="mt-3 max-w-3xl text-sm leading-7 text-stone-600">Manage Pahuna users, public stay/food listings, and route safety from one protected admin workspace.</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:w-80">
+              <AdminHealth label="Session" value="Protected" />
+              <AdminHealth label="Role" value="Admin" />
+            </div>
           </div>
-          {pendingListings > 0 ? (
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-black text-amber-900">
-              {pendingListings} listing{pendingListings > 1 ? "s" : ""} need verification
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-800">
-              All visible modules ready
-            </div>
-          )}
+          <div className="h-1.5 w-full bg-amber-400" />
+          <div className="flex flex-col gap-3 bg-[#fffaf0] px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-bold text-stone-600">Public navigation is safe. Logout only runs from the Logout button.</p>
+            <Link href="/admin/users" className="inline-flex justify-center rounded-2xl bg-emerald-700 px-5 py-3 text-sm font-black text-white hover:bg-emerald-800">Manage users</Link>
+          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -135,9 +138,9 @@ export default function AdminOverviewPage() {
 
           <aside className="space-y-5">
             <div className="rounded-[30px] border border-amber-200 bg-amber-50 p-6">
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-800">Admin note</p>
-              <h2 className="mt-3 text-2xl font-black text-amber-950">Home never logs out.</h2>
-              <p className="mt-3 text-sm leading-6 text-amber-900/80">Public links only navigate. Session clearing is wired only to the Logout button, matching the route-safety requirement.</p>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-800">Listing review</p>
+              <h2 className="mt-3 text-2xl font-black text-amber-950">{pendingListings} pending</h2>
+              <p className="mt-3 text-sm leading-6 text-amber-900/80">Listings marked pending stay inquiry-first until owner/contact details are verified.</p>
             </div>
             <div className="rounded-[30px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
               <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Quick links</p>
@@ -165,6 +168,15 @@ function MetricCard({ title, value, subtitle, icon }: { title: string; value: st
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-sm font-black text-emerald-800">{icon}</div>
       </div>
       <p className="mt-4 text-sm font-semibold text-stone-500">{subtitle}</p>
+    </div>
+  );
+}
+
+function AdminHealth({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-emerald-900/10 bg-emerald-50 p-4">
+      <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">{label}</p>
+      <p className="mt-2 text-lg font-black text-emerald-950">{value}</p>
     </div>
   );
 }

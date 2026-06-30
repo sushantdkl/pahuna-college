@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -229,61 +229,84 @@ export function DashboardFrame({
   action?: ReactNode;
 }>) {
   const { user, logout } = useAuth();
+  const pathname = usePathname();
   const isAdmin = user?.role?.toLowerCase() === "admin";
   const dashboardHomeHref = isAdmin ? "/admin" : "/dashboard";
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0 });
+  }, [pathname]);
+
   return (
-    <main className="min-h-screen bg-[#f4efe6] text-stone-950 lg:grid lg:grid-cols-[260px_1fr]">
-      <aside className="border-b border-emerald-900/10 bg-[#fffdf7] px-4 py-4 shadow-sm lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r lg:px-4">
-        <Link href={dashboardHomeHref} className="flex h-14 items-center gap-3 rounded-2xl border border-emerald-900/10 bg-white px-3 shadow-sm">
+    <main className="min-h-screen overflow-x-hidden bg-[#f4efe6] text-stone-950">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-emerald-900/10 bg-[#fffdf7] px-5 py-5 shadow-sm lg:flex">
+        <Link href={dashboardHomeHref} className="flex h-16 items-center gap-3 rounded-3xl border border-emerald-900/10 bg-white px-4 shadow-sm">
           <Image src="/pahuna-icon.svg" alt="Pahuna" width={34} height={34} className="h-8 w-8" />
           <div>
             <span className="block text-sm font-black tracking-tight text-emerald-800">PAHUNA</span>
-            <span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-stone-400">Dashboard</span>
+            <span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-stone-400">{isAdmin ? "Admin console" : "Traveler desk"}</span>
           </div>
         </Link>
-        <nav className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1 lg:grid lg:gap-1 lg:overflow-visible lg:pb-0">
+        <nav className="mt-5 grid gap-2">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition ${
+              className={`flex shrink-0 items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition ${
                 item.active
                   ? "bg-emerald-700 text-white shadow-lg shadow-emerald-900/10"
                   : "text-stone-600 hover:bg-emerald-50 hover:text-emerald-800"
               }`}
             >
-              <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-black ${item.active ? "bg-white/15 text-white" : "bg-stone-100 text-stone-500"}`}>
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl text-xs font-black ${item.active ? "bg-white/15 text-white" : "bg-stone-100 text-stone-500"}`}>
                 {(item.section || item.label).slice(0, 2).toUpperCase()}
               </span>
               {item.label}
             </Link>
           ))}
         </nav>
-        <div className="mt-6 hidden rounded-2xl border border-amber-200 bg-amber-50 p-4 lg:block">
-          <div className="h-1 w-20 rounded-full bg-amber-400" />
-          <p className="mt-4 text-xs font-black uppercase tracking-[0.18em] text-amber-800">{isAdmin ? "Pahuna admin" : "Pahuna traveler"}</p>
-          <p className="mt-2 text-sm leading-6 text-amber-900/80">
-            {isAdmin
-              ? "Manage public content and Sprint 4 users without leaving the current auth flow."
-              : "Keep trips, saved stays, and profile settings together without changing your session."}
-          </p>
-        </div>
-        <Link href="/" className="mt-4 hidden rounded-xl px-3 py-2 text-sm font-bold text-stone-500 hover:bg-stone-100 hover:text-emerald-800 lg:block">
+        <Link href="/" className="mt-6 rounded-2xl border border-emerald-900/10 bg-white px-4 py-3 text-sm font-bold text-stone-600 hover:bg-emerald-50 hover:text-emerald-800">
           Back to public site
         </Link>
       </aside>
-      <section className="flex min-h-screen min-w-0 flex-col">
-        <header className="sticky top-0 z-30 border-b border-emerald-900/10 bg-[#fffdf7]/95 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
+      <section className="flex min-h-screen min-w-0 flex-col lg:pl-72">
+        <header className="sticky top-0 z-30 border-b border-emerald-900/10 bg-[#fffdf7]/95 px-4 py-4 backdrop-blur-xl sm:px-6 lg:px-8">
+          <div className="mb-4 flex items-center justify-between gap-3 lg:hidden">
+            <Link href={dashboardHomeHref} className="flex items-center gap-2 rounded-2xl border border-emerald-900/10 bg-white px-3 py-2 shadow-sm">
+              <Image src="/pahuna-icon.svg" alt="Pahuna" width={30} height={30} className="h-7 w-7" />
+              <span className="text-sm font-black text-emerald-800">PAHUNA</span>
+            </Link>
+            <Link href="/" className="rounded-2xl border border-emerald-200 px-3 py-2 text-xs font-black text-emerald-800">
+              Home
+            </Link>
+          </div>
+          <nav className="no-scrollbar mb-4 flex gap-2 overflow-x-auto pb-1 lg:hidden">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`shrink-0 rounded-2xl px-3 py-2 text-xs font-black ${
+                  item.active ? "bg-emerald-700 text-white" : "bg-white text-stone-600"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-700">{eyebrow}</p>
               <h1 className="mt-1 text-2xl font-black text-stone-950 sm:text-3xl">{title}</h1>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="rounded-2xl border border-emerald-900/10 bg-white px-4 py-2 text-right shadow-sm">
+              <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/10 bg-white px-3 py-2 shadow-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-sm font-black text-emerald-800">
+                  {(user?.fullName || user?.email || "P").charAt(0).toUpperCase()}
+                </div>
+                <div className="text-left">
                 <p className="text-sm font-black text-stone-900">{user?.fullName || user?.email || "Pahuna Admin"}</p>
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-emerald-700">{user?.role || "ADMIN"}</p>
+                </div>
               </div>
               {action ? <div className="flex flex-wrap gap-2">{action}</div> : null}
               {!action ? (

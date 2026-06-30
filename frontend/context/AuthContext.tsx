@@ -12,7 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import { whoamiAction } from "@/lib/actions/auth-actions";
 import type { AuthUser } from "@/lib/api/auth";
-import { clearAuthCookies, storeUserCookie } from "@/lib/cookies";
+import { clearAuthCookies, getCookie, storeUserCookie } from "@/lib/cookies";
 
 type AuthContextValue = {
   user: AuthUser | null;
@@ -27,6 +27,10 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 const protectedRoutes = ["/dashboard", "/profile", "/account-settings", "/admin"];
 
 function isProtectedRoute(pathname: string) {
+  if (pathname === "/login" || pathname === "/admin/login") {
+    return false;
+  }
+
   return protectedRoutes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
@@ -46,6 +50,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAuth = useCallback(async () => {
     try {
       setLoading(true);
+
+      if (!getCookie("auth_token")) {
+        setUser(null);
+
+        if (isProtectedRoute(window.location.pathname)) {
+          const redirect = encodeURIComponent(window.location.pathname);
+          router.replace(`${loginRouteFor(window.location.pathname)}?redirect=${redirect}`);
+        }
+
+        return null;
+      }
+
       const response = await whoamiAction();
       const currentUser = response.data?.user || null;
 

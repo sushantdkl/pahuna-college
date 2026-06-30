@@ -37,13 +37,13 @@ export default function ProfilePage() {
       </nav>
 
       <section className="relative overflow-hidden">
-        <div className="relative h-72 bg-stone-950 sm:h-80">
+        <div className="relative h-64 bg-stone-950 sm:h-72">
           <Image src={images.hero} alt="Profile cover" fill priority sizes="100vw" className="object-cover opacity-80" />
           <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/80 via-stone-950/35 to-amber-900/10" />
         </div>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="relative -mt-20 rounded-[34px] border border-white/70 bg-white p-6 shadow-2xl shadow-emerald-900/10">
-            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="flex flex-col gap-5 sm:flex-row sm:items-end">
                 <div className="flex h-32 w-32 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-emerald-100 text-4xl font-black text-emerald-800 shadow-xl shadow-emerald-900/15">
                   {avatarUrl ? (
@@ -57,9 +57,13 @@ export default function ProfilePage() {
                   <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Public Profile</p>
                   <h1 className="mt-2 text-3xl font-black sm:text-4xl">{displayName}</h1>
                   <p className="mt-1 text-sm font-semibold text-stone-500">{user?.location || "Surkhet / Nepal"}</p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Link href="/account-settings" className="rounded-full bg-emerald-700 px-5 py-3 text-sm font-black text-white hover:bg-emerald-800">Edit profile</Link>
+                    <Link href="/trip-planner" className="rounded-full border border-emerald-200 px-5 py-3 text-sm font-black text-emerald-800 hover:bg-emerald-50">Plan trip</Link>
+                  </div>
                 </div>
               </div>
-              <div className="grid gap-3 sm:grid-cols-3 md:min-w-[360px]">
+              <div className="grid gap-3 sm:grid-cols-3 lg:min-w-[420px]">
                 <MiniStat value="0" label="Bookings" />
                 <MiniStat value="0" label="Wishlist" />
                 <MiniStat value="0" label="Interested" />
@@ -69,16 +73,16 @@ export default function ProfilePage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[0.78fr_1.22fr] lg:px-8">
+      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[360px_1fr] lg:px-8">
         <aside className="space-y-5">
           <div className="rounded-[28px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
             <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Information</p>
             <h2 className="mt-2 text-2xl font-black">Traveler details</h2>
-            <div className="mt-5 space-y-3 text-sm leading-6 text-stone-600">
-              <p><strong className="text-stone-900">Email:</strong> {user?.email || "Not available"}</p>
-              <p><strong className="text-stone-900">Phone:</strong> {user?.phoneNumber || "Add phone number"}</p>
-              <p><strong className="text-stone-900">Location:</strong> {user?.location || "Surkhet / Nepal"}</p>
-              <p><strong className="text-stone-900">Account type:</strong> {user?.role || "user"}</p>
+            <div className="mt-5 grid gap-3 text-sm leading-6">
+              <ProfileInfo label="Email" value={user?.email || "Not available"} />
+              <ProfileInfo label="Phone" value={user?.phoneNumber || "Add phone number"} />
+              <ProfileInfo label="Location" value={user?.location || "Surkhet / Nepal"} />
+              <ProfileInfo label="Account type" value={user?.role || "user"} />
             </div>
           </div>
           <div className="rounded-[28px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
@@ -118,6 +122,15 @@ function MiniStat({ value, label }: { value: string; label: string }) {
     <div className="rounded-[22px] bg-emerald-50 p-4 text-center">
       <p className="text-2xl font-black text-emerald-800">{value}</p>
       <p className="mt-1 text-xs font-black uppercase tracking-[0.14em] text-stone-500">{label}</p>
+    </div>
+  );
+}
+
+function ProfileInfo({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-[#fffaf0] p-4">
+      <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">{label}</p>
+      <p className="mt-1 break-words font-semibold text-stone-700">{value}</p>
     </div>
   );
 }

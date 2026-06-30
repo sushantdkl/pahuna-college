@@ -132,8 +132,8 @@ export function ProfileSettingsPanel({ compact = false }: { compact?: boolean })
           <div>
             <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Profile Settings</p>
             <h2 className="mt-2 text-2xl font-black text-stone-950">Update traveler profile</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-500">Keep your contact details ready for stay inquiries, route planning, and profile updates.</p>
           </div>
-          <p className="text-sm text-stone-500">Image key: profileImage</p>
         </div>
 
         <form key={profileKey} className="mt-6 grid gap-5" onSubmit={handleProfileSubmit}>

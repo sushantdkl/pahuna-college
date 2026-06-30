@@ -18,7 +18,7 @@ function adminRedirect() {
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const { setUser } = useAuth();
+  const { checkAuth, setUser } = useAuth();
   const [email, setEmail] = useState("admin@pahuna.com");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -58,9 +58,11 @@ export default function AdminLoginPage() {
 
       storeAuthCookies(token, user);
       flushSync(() => setUser(user));
+      await checkAuth();
       setStatus("success");
       setMessage(response.message || "Admin signed in successfully");
       router.replace(adminRedirect());
+      router.refresh();
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Admin login failed");
