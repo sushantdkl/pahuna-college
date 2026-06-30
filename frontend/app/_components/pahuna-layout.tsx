@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -229,95 +229,93 @@ export function DashboardFrame({
   action?: ReactNode;
 }>) {
   const { user, logout } = useAuth();
-  const pathname = usePathname();
   const isAdmin = user?.role?.toLowerCase() === "admin";
   const dashboardHomeHref = isAdmin ? "/admin" : "/dashboard";
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0 });
-  }, [pathname]);
-
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#f4efe6] text-stone-950">
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-emerald-900/10 bg-[#fffdf7] px-5 py-5 shadow-sm lg:flex">
-        <Link href={dashboardHomeHref} className="flex h-16 items-center gap-3 rounded-3xl border border-emerald-900/10 bg-white px-4 shadow-sm">
-          <Image src="/pahuna-icon.svg" alt="Pahuna" width={34} height={34} className="h-8 w-8" />
-          <div>
-            <span className="block text-sm font-black tracking-tight text-emerald-800">PAHUNA</span>
-            <span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-stone-400">{isAdmin ? "Admin console" : "Traveler desk"}</span>
+    <main className="flex h-screen overflow-hidden bg-[#f7f4ed] text-stone-950">
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-stone-200 bg-white md:flex">
+        <div className="flex h-14 items-center justify-between border-b border-stone-200 px-4">
+          <Link href={dashboardHomeHref} className="flex items-center gap-2 font-semibold">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg">
+              <Image src="/pahuna-icon.svg" alt="Pahuna" width={28} height={28} className="h-7 w-7" />
+            </span>
+            <span className="text-sm">Dashboard</span>
+          </Link>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto px-3 py-4">
+          <ul className="space-y-1">
+            {navItems.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    item.active
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "text-stone-500 hover:bg-stone-100 hover:text-stone-950"
+                  }`}
+                >
+                  <span className="flex h-4 w-4 shrink-0 items-center justify-center text-[10px] font-black">
+                    {(item.section || item.label).slice(0, 2).toUpperCase()}
+                  </span>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="border-t border-stone-200 px-3 py-3">
+          <Link href="/" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-950">
+            <span aria-hidden="true">←</span>
+            Back to site
+          </Link>
+        </div>
+      </aside>
+
+      <section className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-stone-200 bg-white px-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <Link href={dashboardHomeHref} className="flex items-center gap-2 font-semibold md:hidden">
+              <Image src="/pahuna-icon.svg" alt="Pahuna" width={28} height={28} className="h-7 w-7" />
+              <span className="text-sm">Dashboard</span>
+            </Link>
+            <div className="hidden md:block">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-stone-400">{eyebrow}</p>
+              <h1 className="text-sm font-semibold text-stone-900">{title}</h1>
+            </div>
           </div>
-        </Link>
-        <nav className="mt-5 grid gap-2">
+
+          <div className="flex items-center gap-4">
+            <div className="hidden text-right sm:block">
+              <p className="text-sm font-medium leading-none">{user?.fullName || user?.email || "Pahuna Admin"}</p>
+              <p className="mt-1 text-xs text-stone-500">{user?.role || "ADMIN"}</p>
+            </div>
+            {action ? <div className="flex items-center gap-2">{action}</div> : null}
+            {!action ? (
+              <button onClick={() => logout("/admin/login")} className="rounded-lg px-3 py-2 text-sm font-medium text-stone-500 hover:bg-stone-100 hover:text-red-600">
+                Logout
+              </button>
+            ) : null}
+          </div>
+        </header>
+
+        <nav className="no-scrollbar flex gap-2 overflow-x-auto border-b border-stone-200 bg-white px-4 py-2 md:hidden">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex shrink-0 items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition ${
-                item.active
-                  ? "bg-emerald-700 text-white shadow-lg shadow-emerald-900/10"
-                  : "text-stone-600 hover:bg-emerald-50 hover:text-emerald-800"
+              className={`shrink-0 rounded-lg px-3 py-2 text-xs font-medium ${
+                item.active ? "bg-emerald-50 text-emerald-700" : "text-stone-500"
               }`}
             >
-              <span className={`flex h-9 w-9 items-center justify-center rounded-xl text-xs font-black ${item.active ? "bg-white/15 text-white" : "bg-stone-100 text-stone-500"}`}>
-                {(item.section || item.label).slice(0, 2).toUpperCase()}
-              </span>
               {item.label}
             </Link>
           ))}
         </nav>
-        <Link href="/" className="mt-6 rounded-2xl border border-emerald-900/10 bg-white px-4 py-3 text-sm font-bold text-stone-600 hover:bg-emerald-50 hover:text-emerald-800">
-          Back to public site
-        </Link>
-      </aside>
-      <section className="flex min-h-screen min-w-0 flex-col lg:pl-72">
-        <header className="sticky top-0 z-30 border-b border-emerald-900/10 bg-[#fffdf7]/95 px-4 py-4 backdrop-blur-xl sm:px-6 lg:px-8">
-          <div className="mb-4 flex items-center justify-between gap-3 lg:hidden">
-            <Link href={dashboardHomeHref} className="flex items-center gap-2 rounded-2xl border border-emerald-900/10 bg-white px-3 py-2 shadow-sm">
-              <Image src="/pahuna-icon.svg" alt="Pahuna" width={30} height={30} className="h-7 w-7" />
-              <span className="text-sm font-black text-emerald-800">PAHUNA</span>
-            </Link>
-            <Link href="/" className="rounded-2xl border border-emerald-200 px-3 py-2 text-xs font-black text-emerald-800">
-              Home
-            </Link>
-          </div>
-          <nav className="no-scrollbar mb-4 flex gap-2 overflow-x-auto pb-1 lg:hidden">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`shrink-0 rounded-2xl px-3 py-2 text-xs font-black ${
-                  item.active ? "bg-emerald-700 text-white" : "bg-white text-stone-600"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-700">{eyebrow}</p>
-              <h1 className="mt-1 text-2xl font-black text-stone-950 sm:text-3xl">{title}</h1>
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/10 bg-white px-3 py-2 shadow-sm">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-sm font-black text-emerald-800">
-                  {(user?.fullName || user?.email || "P").charAt(0).toUpperCase()}
-                </div>
-                <div className="text-left">
-                <p className="text-sm font-black text-stone-900">{user?.fullName || user?.email || "Pahuna Admin"}</p>
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-emerald-700">{user?.role || "ADMIN"}</p>
-                </div>
-              </div>
-              {action ? <div className="flex flex-wrap gap-2">{action}</div> : null}
-              {!action ? (
-                <button onClick={() => logout("/admin/login")} className="rounded-2xl border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50">
-                  Logout
-                </button>
-              ) : null}
-            </div>
-          </div>
-        </header>
-        <div className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</div>
+
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">{children}</div>
       </section>
     </main>
   );

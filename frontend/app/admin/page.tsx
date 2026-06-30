@@ -22,6 +22,13 @@ const dashboardRows = [
   { area: "Route safety", status: "Active", detail: "Admin login, public navigation, and logout-only session clearing", href: "/" },
 ];
 
+const systemRows = [
+  ["Admin login", "Active", "Separate /admin/login route"],
+  ["User CRUD", "Protected", "Admin-only endpoint flow"],
+  ["Public navigation", "Safe", "Home does not logout"],
+  ["OpenStreetMap", "Enabled", "Stay previews use map component"],
+];
+
 export default function AdminOverviewPage() {
   const router = useRouter();
   const { user, loading, logout } = useAuth();
@@ -42,9 +49,9 @@ export default function AdminOverviewPage() {
 
   if (loading || !user || !isAdmin) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#f6f0e5] px-4">
-        <div className="rounded-[28px] border border-emerald-900/10 bg-white p-6 text-center shadow-lg">
-          <p className="text-sm font-black text-stone-700">Checking admin session...</p>
+      <main className="flex min-h-screen items-center justify-center bg-[#f7f4ed] px-4">
+        <div className="rounded-xl border border-stone-200 bg-white px-6 py-4 text-center shadow-sm">
+          <p className="text-sm font-medium text-stone-600">Checking admin session...</p>
         </div>
       </main>
     );
@@ -57,6 +64,11 @@ export default function AdminOverviewPage() {
     ...foodProviders.filter((provider) => provider.verificationStatus === "PENDING"),
   ].length;
 
+  const checks = [
+    ...systemRows,
+    ["Listing review", pendingListings ? "Pending" : "Clear", `${pendingListings} pending`],
+  ];
+
   return (
     <DashboardFrame
       title="Dashboard"
@@ -64,119 +76,131 @@ export default function AdminOverviewPage() {
       navItems={adminNavItems}
       action={
         <>
-          <Link href="/" className="rounded-2xl border border-emerald-200 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-emerald-800 hover:bg-emerald-50">
+          <Link href="/" className="rounded-lg px-3 py-2 text-sm font-medium text-stone-500 hover:bg-stone-100 hover:text-stone-950">
             Home
           </Link>
-          <button onClick={() => logout("/admin/login")} className="rounded-2xl border border-red-100 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-red-600 hover:bg-red-50">
+          <button onClick={() => logout("/admin/login")} className="rounded-lg px-3 py-2 text-sm font-medium text-stone-500 hover:bg-stone-100 hover:text-red-600">
             Logout
           </button>
         </>
       }
     >
       <div className="space-y-6">
-        <div className="overflow-hidden rounded-[32px] border border-emerald-900/10 bg-white shadow-xl shadow-emerald-900/5">
-          <div className="grid gap-6 p-6 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-700">Control room</p>
-              <h2 className="mt-3 text-3xl font-black tracking-tight text-stone-950 sm:text-4xl">Welcome back, {user.fullName || user.email}</h2>
-              <p className="mt-3 max-w-3xl text-sm leading-7 text-stone-600">Manage Pahuna users, public stay/food listings, and route safety from one protected admin workspace.</p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:w-80">
-              <AdminHealth label="Session" value="Protected" />
-              <AdminHealth label="Role" value="Admin" />
-            </div>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-sm text-stone-500">Welcome back, {user.fullName || user.email} - Admin</p>
           </div>
-          <div className="h-1.5 w-full bg-amber-400" />
-          <div className="flex flex-col gap-3 bg-[#fffaf0] px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm font-bold text-stone-600">Public navigation is safe. Logout only runs from the Logout button.</p>
-            <Link href="/admin/users" className="inline-flex justify-center rounded-2xl bg-emerald-700 px-5 py-3 text-sm font-black text-white hover:bg-emerald-800">Manage users</Link>
-          </div>
+          {pendingListings > 0 ? (
+            <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm">
+              <span className="text-amber-600">!</span>
+              <span className="font-medium text-amber-800">{pendingListings} items need attention</span>
+            </div>
+          ) : null}
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <MetricCard title="Stay Listings" value={featuredStays.length.toString()} subtitle={`${verifiedStays} verified`} icon="ST" />
-          <MetricCard title="Food Listings" value={foodProviders.length.toString()} subtitle={`${featuredFood} featured`} icon="FD" />
-          <MetricCard title="Admin Users" value="CRUD" subtitle="Search, paginate, edit" icon="US" />
-          <MetricCard title="Route Safety" value="Active" subtitle="Admin/public auth split" icon="RS" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard title="Stay Listings" value={featuredStays.length} subtitle={`${verifiedStays} verified`} icon="ST" />
+          <StatCard title="Food Listings" value={foodProviders.length} subtitle={`${featuredFood} featured`} icon="FD" />
+          <StatCard title="Admin Users" value="CRUD" subtitle="Search, paginate, edit" icon="US" />
+          <StatCard title="Route Safety" value="Active" subtitle="Admin/public auth split" icon="RS" />
+          <StatCard title="Pending Reviews" value={pendingListings} subtitle="Need attention" icon="PR" />
+          <StatCard title="Public Pages" value="Live" subtitle="Home, stays, food" icon="PB" />
+          <StatCard title="Maps" value="OSM" subtitle="Preview enabled" icon="MP" />
+          <StatCard title="Session" value="Safe" subtitle="Logout button only" icon="SE" />
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
-          <section className="overflow-hidden rounded-[30px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
-            <div className="border-b border-stone-100 px-6 py-5">
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Operations</p>
-              <h2 className="mt-2 text-2xl font-black">Admin modules</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[720px] text-left text-sm">
-                <thead className="bg-[#fffaf0] text-xs font-black uppercase tracking-[0.16em] text-stone-500">
-                  <tr>
-                    <th className="px-6 py-4">Area</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4">Details</th>
-                    <th className="px-6 py-4">Action</th>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <DataCard title="Admin Modules" description="Current Pahuna admin routes" count={dashboardRows.length}>
+            <table className="w-full text-sm" aria-label="Admin modules">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-2 pr-4 font-medium text-stone-500">Area</th>
+                  <th className="pb-2 pr-4 font-medium text-stone-500">Status</th>
+                  <th className="pb-2 pr-4 font-medium text-stone-500">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dashboardRows.map((row) => (
+                  <tr key={row.area} className="border-b last:border-0">
+                    <td className="py-2.5 pr-4">
+                      <p className="font-medium text-stone-900">{row.area}</p>
+                      <p className="mt-1 text-xs text-stone-500">{row.detail}</p>
+                    </td>
+                    <td className="py-2.5 pr-4">
+                      <StatusPill>{row.status}</StatusPill>
+                    </td>
+                    <td className="py-2.5 pr-4">
+                      <Link href={row.href} className="text-sm font-medium text-emerald-700 hover:text-emerald-900">
+                        Open
+                      </Link>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-100">
-                  {dashboardRows.map((row) => (
-                    <tr key={row.area}>
-                      <td className="px-6 py-4 font-black text-stone-900">{row.area}</td>
-                      <td className="px-6 py-4">
-                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-800">{row.status}</span>
-                      </td>
-                      <td className="px-6 py-4 text-stone-600">{row.detail}</td>
-                      <td className="px-6 py-4">
-                        <Link href={row.href} className="rounded-xl border border-emerald-200 px-3 py-2 text-xs font-black text-emerald-800 hover:bg-emerald-50">
-                          Open
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
+                ))}
+              </tbody>
+            </table>
+          </DataCard>
 
-          <aside className="space-y-5">
-            <div className="rounded-[30px] border border-amber-200 bg-amber-50 p-6">
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-800">Listing review</p>
-              <h2 className="mt-3 text-2xl font-black text-amber-950">{pendingListings} pending</h2>
-              <p className="mt-3 text-sm leading-6 text-amber-900/80">Listings marked pending stay inquiry-first until owner/contact details are verified.</p>
-            </div>
-            <div className="rounded-[30px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Quick links</p>
-              <div className="mt-5 grid gap-2">
-                <Link href="/admin/users" className="rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-black text-white hover:bg-emerald-800">Manage users</Link>
-                <Link href="/hotels" className="rounded-2xl border border-emerald-200 px-4 py-3 text-sm font-black text-emerald-800 hover:bg-emerald-50">Review stays</Link>
-                <Link href="/food" className="rounded-2xl border border-emerald-200 px-4 py-3 text-sm font-black text-emerald-800 hover:bg-emerald-50">Review food</Link>
-              </div>
-            </div>
-          </aside>
+          <DataCard title="Recent System Checks" description="Admin flow health" count={checks.length}>
+            <table className="w-full text-sm" aria-label="Recent system checks">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-2 pr-4 font-medium text-stone-500">Check</th>
+                  <th className="pb-2 pr-4 font-medium text-stone-500">Status</th>
+                  <th className="pb-2 pr-4 font-medium text-stone-500">Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {checks.map(([check, status, note]) => (
+                  <tr key={check} className="border-b last:border-0">
+                    <td className="py-2.5 pr-4 font-medium text-stone-900">{check}</td>
+                    <td className="py-2.5 pr-4">
+                      <StatusPill>{status}</StatusPill>
+                    </td>
+                    <td className="py-2.5 pr-4 text-stone-500">{note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </DataCard>
         </div>
       </div>
     </DashboardFrame>
   );
 }
 
-function MetricCard({ title, value, subtitle, icon }: { title: string; value: string; subtitle: string; icon: string }) {
+function StatCard({ title, value, subtitle, icon }: { title: string; value: string | number; subtitle: string; icon: string }) {
   return (
-    <div className="rounded-[28px] border border-emerald-900/10 bg-white p-5 shadow-lg shadow-emerald-900/5">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <p className="text-sm font-bold text-stone-500">{title}</p>
-          <p className="mt-3 text-3xl font-black text-stone-950">{value}</p>
+    <div className="rounded-xl border border-stone-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
+      <div className="flex items-start justify-between">
+        <div className="space-y-1">
+          <p className="text-sm text-stone-500">{title}</p>
+          <p className="text-2xl font-bold tracking-tight text-stone-950">{value}</p>
+          <p className="text-xs text-stone-500">{subtitle}</p>
         </div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-sm font-black text-emerald-800">{icon}</div>
+        <div className="rounded-xl bg-emerald-50 p-2.5 text-xs font-black text-emerald-700">{icon}</div>
       </div>
-      <p className="mt-4 text-sm font-semibold text-stone-500">{subtitle}</p>
     </div>
   );
 }
 
-function AdminHealth({ label, value }: { label: string; value: string }) {
+function DataCard({ title, description, count, children }: { title: string; description: string; count: number; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-emerald-900/10 bg-emerald-50 p-4">
-      <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">{label}</p>
-      <p className="mt-2 text-lg font-black text-emerald-950">{value}</p>
-    </div>
+    <section className="rounded-xl border border-stone-200 bg-white shadow-sm">
+      <div className="flex items-center justify-between border-b border-stone-200 px-6 py-4">
+        <div>
+          <h2 className="text-base font-semibold">{title}</h2>
+          <p className="text-sm text-stone-500">{description}</p>
+        </div>
+        <span className="rounded-full bg-stone-100 px-2.5 py-1 text-xs font-medium text-stone-600">{count}</span>
+      </div>
+      <div className="p-6">
+        <div className="overflow-x-auto">{children}</div>
+      </div>
+    </section>
   );
+}
+
+function StatusPill({ children }: { children: React.ReactNode }) {
+  return <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">{children}</span>;
 }
