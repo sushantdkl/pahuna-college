@@ -1,9 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { DashboardFrame } from "@/app/_components/pahuna-layout";
+import { AdminReplicaFrame } from "@/app/_components/admin-replica-dashboard";
 import { useAuth } from "@/context/AuthContext";
 import {
   createAdminUserAction,
@@ -45,7 +44,7 @@ const inputClassName =
 
 export default function AdminUsersPage() {
   const router = useRouter();
-  const { user, loading, logout } = useAuth();
+  const { user, loading } = useAuth();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -68,13 +67,6 @@ export default function AdminUsersPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const isAdmin = user?.role?.toLowerCase() === "admin";
-  const adminNavItems = [
-    { label: "Overview", href: "/admin", section: "OV" },
-    { label: "Users", href: "/admin/users", active: true, section: "US" },
-    { label: "Stays", href: "/hotels", section: "ST" },
-    { label: "Food", href: "/food", section: "FD" },
-    { label: "Public Site", href: "/", section: "PB" },
-  ];
 
   const loadUsers = useCallback(async () => {
     if (!isAdmin) {
@@ -254,24 +246,7 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <DashboardFrame
-      title="Users"
-      eyebrow="Admin User Management"
-      navItems={adminNavItems}
-      action={
-        <>
-          <Link href="/admin" className="rounded-2xl border border-emerald-200 bg-white px-4 py-2 text-xs font-black text-emerald-800 hover:bg-emerald-50">
-            Overview
-          </Link>
-          <button
-            onClick={() => logout("/admin/login")}
-            className="rounded-2xl border border-red-100 bg-white px-4 py-2 text-xs font-black text-red-600 hover:bg-red-50"
-          >
-            Logout
-          </button>
-        </>
-      }
-    >
+    <AdminReplicaFrame>
       <section className="mx-auto w-full max-w-7xl">
         <div className="flex flex-col gap-5 rounded-[32px] border border-emerald-900/10 bg-white p-6 shadow-xl shadow-emerald-900/5 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -485,7 +460,7 @@ export default function AdminUsersPage() {
           onConfirm={handleDeleteUser}
         />
       ) : null}
-    </DashboardFrame>
+    </AdminReplicaFrame>
   );
 }
 
