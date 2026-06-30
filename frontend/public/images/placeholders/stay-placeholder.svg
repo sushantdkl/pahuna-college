@@ -1,0 +1,7 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#F8F1E4"/>
+  <rect x="300" y="285" width="600" height="290" rx="28" fill="#FFFDF8" stroke="#2F6B4F" stroke-width="14"/>
+  <path d="M380 575V405L600 255L820 405V575" stroke="#2F6B4F" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="535" y="455" width="130" height="120" rx="12" fill="#D7A64A"/>
+  <text x="600" y="675" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#2F4F3D">Stay Placeholder</text>
+</svg>

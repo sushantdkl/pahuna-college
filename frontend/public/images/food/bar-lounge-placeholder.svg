@@ -1,0 +1,8 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#F8F1E4"/>
+  <path d="M410 235H790L720 430C700 485 655 520 600 520C545 520 500 485 480 430L410 235Z" fill="#FFFDF8" stroke="#2F6B4F" stroke-width="14"/>
+  <path d="M510 310H690" stroke="#D7A64A" stroke-width="18" stroke-linecap="round"/>
+  <path d="M600 520V610" stroke="#2F6B4F" stroke-width="18" stroke-linecap="round"/>
+  <path d="M505 610H695" stroke="#2F6B4F" stroke-width="18" stroke-linecap="round"/>
+  <text x="600" y="700" text-anchor="middle" font-family="Arial, sans-serif" font-size="44" font-weight="700" fill="#2F4F3D">Bar & Lounge</text>
+</svg>

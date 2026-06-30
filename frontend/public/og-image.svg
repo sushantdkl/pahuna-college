@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Pahuna">
+  <rect width="1200" height="630" fill="#f8f3e8" />
+  <g transform="translate(150 105)">
+    <path d="M350 128 L475 26 L555 98 L535 112 L480 64 L335 164 Z" fill="#113f75"/>
+    <path d="M516 132 L650 60 L812 176 L700 134 L628 88 L524 154 Z" fill="#113f75"/>
+    <text x="118" y="278" font-family="Brush Script MT, Segoe Script, cursive" font-size="150" font-weight="700" fill="#113f75" transform="skewX(-8)">Pahuna</text>
+    <path d="M118 334 C300 294, 512 268, 752 292 C790 296, 812 306, 802 318 C600 304, 388 328, 130 372 C104 374, 92 346, 118 334 Z" fill="#ff9f0a"/>
+  </g>
+</svg>

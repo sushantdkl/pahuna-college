@@ -1,0 +1,7 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#EFF6EC"/>
+  <circle cx="850" cy="220" r="80" fill="#D7A64A"/>
+  <path d="M170 560L410 315L610 525L760 370L1030 560V650H170V560Z" fill="#2F6B4F"/>
+  <path d="M410 315L480 390H340L410 315Z" fill="#FFFDF8"/>
+  <text x="600" y="720" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#2F4F3D">Destination Placeholder</text>
+</svg>

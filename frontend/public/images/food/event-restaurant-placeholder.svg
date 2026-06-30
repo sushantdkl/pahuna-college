@@ -1,0 +1,9 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#FFF7E8"/>
+  <rect x="310" y="270" width="580" height="300" rx="32" fill="#FFFDF8" stroke="#2F6B4F" stroke-width="14"/>
+  <path d="M405 370H795M405 465H795" stroke="#D7A64A" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="465" cy="370" r="28" fill="#2F6B4F"/>
+  <circle cx="600" cy="370" r="28" fill="#2F6B4F"/>
+  <circle cx="735" cy="370" r="28" fill="#2F6B4F"/>
+  <text x="600" y="665" text-anchor="middle" font-family="Arial, sans-serif" font-size="44" font-weight="700" fill="#2F4F3D">Events & Group Dining</text>
+</svg>

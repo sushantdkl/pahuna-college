@@ -12,7 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import { whoamiAction } from "@/lib/actions/auth-actions";
 import type { AuthUser } from "@/lib/api/auth";
-import { clearAuthCookies, storeUserCookie } from "@/lib/cookies";
+import { clearAuthCookies, getCookie, storeUserCookie } from "@/lib/cookies";
 
 type AuthContextValue = {
   user: AuthUser | null;
@@ -20,16 +20,26 @@ type AuthContextValue = {
   loading: boolean;
   isAuthenticated: boolean;
   checkAuth: () => Promise<AuthUser | null>;
-  logout: () => void;
+  logout: (redirectTo?: string) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-const protectedRoutes = ["/dashboard", "/profile", "/account-settings"];
+const protectedRoutes = ["/dashboard", "/profile", "/account-settings", "/admin"];
 
 function isProtectedRoute(pathname: string) {
+  if (pathname === "/login" || pathname === "/admin/login") {
+    return false;
+  }
+
   return protectedRoutes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
+}
+
+function loginRouteFor(pathname: string) {
+  return pathname === "/admin" || pathname.startsWith("/admin/")
+    ? "/admin/login"
+    : "/login";
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -40,6 +50,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAuth = useCallback(async () => {
     try {
       setLoading(true);
+
+      if (!getCookie("auth_token")) {
+        setUser(null);
+
+        if (isProtectedRoute(window.location.pathname)) {
+          const redirect = encodeURIComponent(window.location.pathname);
+          router.replace(`${loginRouteFor(window.location.pathname)}?redirect=${redirect}`);
+        }
+
+        return null;
+      }
+
       const response = await whoamiAction();
       const currentUser = response.data?.user || null;
 
@@ -56,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (isProtectedRoute(window.location.pathname)) {
         const redirect = encodeURIComponent(window.location.pathname);
-        router.replace(`/login?redirect=${redirect}`);
+        router.replace(`${loginRouteFor(window.location.pathname)}?redirect=${redirect}`);
       }
 
       return null;
@@ -65,10 +87,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [router]);
 
-  const logout = useCallback(() => {
+  const logout = useCallback((redirectTo = "/login") => {
     clearAuthCookies();
     setUser(null);
-    router.push("/login");
+    router.push(redirectTo);
   }, [router]);
 
   useEffect(() => {

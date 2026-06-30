@@ -2,6 +2,7 @@ import path from "path";
 import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import multer from "multer";
+import adminUserRoutes from "./routes/admin-user.route";
 import userRoutes from "./routes/user.route";
 
 const app: Application = express();
@@ -28,6 +29,7 @@ app.get("/", (req: Request, res: Response) => {
 
 // Sprint 2 auth endpoints are grouped under /api/v1/auth before being handled by the user route/controller layers.
 app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1/admin/users", adminUserRoutes);
 
 app.use((req: Request, res: Response) => {
   return res.status(404).json({

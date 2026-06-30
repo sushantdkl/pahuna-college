@@ -1,0 +1,9 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#F7EFE1"/>
+  <path d="M400 350H760V450C760 530 700 585 600 585C500 585 400 530 400 450V350Z" fill="#FFFDF8" stroke="#2F6B4F" stroke-width="14"/>
+  <path d="M760 380H830C875 380 905 410 905 450C905 490 875 520 830 520H760" stroke="#2F6B4F" stroke-width="22" stroke-linecap="round"/>
+  <path d="M460 285C445 255 445 225 470 195" stroke="#D7A64A" stroke-width="18" stroke-linecap="round"/>
+  <path d="M590 285C575 255 575 225 600 195" stroke="#D7A64A" stroke-width="18" stroke-linecap="round"/>
+  <path d="M720 285C705 255 705 225 730 195" stroke="#D7A64A" stroke-width="18" stroke-linecap="round"/>
+  <text x="600" y="665" text-anchor="middle" font-family="Arial, sans-serif" font-size="44" font-weight="700" fill="#2F4F3D">Tea Shop</text>
+</svg>
