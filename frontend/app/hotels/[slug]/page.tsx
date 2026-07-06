@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { HotelActionButtons } from "@/app/_components/hotel-action-buttons";
 import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
 import { StayMapCard } from "@/app/_components/stay-map-card";
 import { featuredStays, images, safeImage } from "@/lib/pahuna-content";
@@ -75,17 +76,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
               <InfoSection title="Amenities" values={stay.amenities} />
               <InfoSection title="Services" values={stay.services || []} />
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                <ButtonLink href="/contact">Ask Availability</ButtonLink>
-                <Link href={`/login?redirect=${encodeURIComponent(`/hotels/${stay.slug}`)}`} className="inline-flex items-center justify-center rounded-full border border-amber-200 bg-amber-50 px-5 py-3 text-sm font-bold text-amber-900 transition hover:bg-amber-100">
-                  Save stay
-                </Link>
-                {stay.googleMapLink ? (
-                  <a href={stay.googleMapLink} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center rounded-full border border-stone-200 bg-white px-5 py-3 text-sm font-bold text-stone-700 transition hover:bg-stone-50">
-                    Open Google Maps
-                  </a>
-                ) : null}
-              </div>
+              <HotelActionButtons slug={stay.slug} googleMapLink={stay.googleMapLink} />
             </div>
           </div>
 

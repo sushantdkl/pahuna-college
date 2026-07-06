@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { useAuth } from "@/context/AuthContext";
 import { featuredStays, images, safeImage } from "@/lib/pahuna-content";
 
 const fallbackMap = "https://maps.google.com/?q=Surkhet+Hotels";
@@ -22,6 +23,7 @@ const HotelMap = dynamic(
 );
 
 export default function HotelsPage() {
+  const { isAuthenticated } = useAuth();
   const [query, setQuery] = useState("");
   const [activeType, setActiveType] = useState(ALL);
   const [activeArea, setActiveArea] = useState(ALL);
@@ -165,6 +167,31 @@ export default function HotelsPage() {
         {visibleStays.length ? (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {visibleStays.map((stay) => (
+              <StayListingCard key={stay.slug} stay={stay} isAuthenticated={isAuthenticated} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-[28px] border border-emerald-900/10 bg-white p-8 text-center shadow-lg shadow-emerald-900/5">
+            <h2 className="text-2xl font-black">No stays match that search.</h2>
+            <p className="mt-3 text-sm text-stone-600">Try another area, feature, or stay type.</p>
+            <div className="mt-6">
+              <ButtonLink href="/contact" variant="secondary">Ask Pahuna for help</ButtonLink>
+            </div>
+          </div>
+        )}
+      </SectionShell>
+      <SiteFooter />
+    </PageShell>
+  );
+}
+
+function StayListingCard({ stay, isAuthenticated }: { stay: (typeof featuredStays)[number]; isAuthenticated: boolean }) {
+  const detailPath = `/hotels/${stay.slug}`;
+  const loginHref = `/login?redirect=${encodeURIComponent(detailPath)}`;
+  const actionHref = isAuthenticated ? `/contact?topic=${encodeURIComponent(`Availability for ${stay.name}`)}` : loginHref;
+  const saveHref = isAuthenticated ? "/profile" : loginHref;
+
+  return (
               <article key={stay.slug} className="flex h-full flex-col overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
                 <div className="relative h-56 bg-emerald-50">
                   <Image src={safeImage(stay.image, images.hotelFallback)} alt={`${stay.name} in ${stay.area}`} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
@@ -200,25 +227,11 @@ export default function HotelsPage() {
                   <div className="mt-auto grid gap-2 pt-6 sm:grid-cols-2">
                     <Link href={`/hotels/${stay.slug}`} className="rounded-xl border border-emerald-200 px-3 py-2 text-center text-xs font-bold text-emerald-800 hover:bg-emerald-50">View Details</Link>
                     <a href={stay.googleMapLink || fallbackMap} target="_blank" rel="noreferrer" className="rounded-xl border border-stone-200 px-3 py-2 text-center text-xs font-bold text-stone-700 hover:bg-stone-50">Google Maps</a>
-                    <Link href={`/login?redirect=${encodeURIComponent(`/hotels/${stay.slug}`)}`} className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-center text-xs font-bold text-amber-900 hover:bg-amber-100">Save</Link>
-                    <Link href="/contact" className="rounded-xl bg-emerald-700 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-800">Ask Availability</Link>
+                    <Link href={saveHref} className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-center text-xs font-bold text-amber-900 hover:bg-amber-100">Save</Link>
+                    <Link href={actionHref} className="rounded-xl bg-emerald-700 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-800">Ask Availability</Link>
                   </div>
                 </div>
               </article>
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-[28px] border border-emerald-900/10 bg-white p-8 text-center shadow-lg shadow-emerald-900/5">
-            <h2 className="text-2xl font-black">No stays match that search.</h2>
-            <p className="mt-3 text-sm text-stone-600">Try another area, feature, or stay type.</p>
-            <div className="mt-6">
-              <ButtonLink href="/contact" variant="secondary">Ask Pahuna for help</ButtonLink>
-            </div>
-          </div>
-        )}
-      </SectionShell>
-      <SiteFooter />
-    </PageShell>
   );
 }
 
