@@ -56,16 +56,6 @@ export function AdminReplicaFrame({ children }: { children: ReactNode }) {
 
   return (
     <main className="flex h-screen flex-col overflow-hidden bg-[#f7f4ed] text-stone-950">
-      <header className="flex h-14 shrink-0 items-center border-b border-stone-200 bg-white px-4">
-        <div className="flex w-full items-center gap-4">
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-stone-950">Admin Workspace</p>
-            <p className="hidden text-xs text-stone-500 sm:block">Manage stays, users, content, and safety checks</p>
-          </div>
-          <Link href="/" className="shrink-0 rounded-lg border border-stone-200 px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-emerald-700">Open site</Link>
-        </div>
-      </header>
-
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <aside className="hidden w-64 shrink-0 flex-col border-r border-stone-200 bg-white md:flex">
           <div className="flex h-14 items-center border-b border-stone-200 px-4">
@@ -108,8 +98,14 @@ export function AdminReplicaFrame({ children }: { children: ReactNode }) {
               <Image src="/pahuna-icon.svg" alt="Pahuna" width={28} height={28} className="h-7 w-7" />
               <span className="text-sm">Dashboard</span>
             </Link>
-            <div className="hidden md:block" />
+            <div className="hidden md:block">
+              <p className="text-sm font-semibold text-stone-950">Admin Workspace</p>
+              <p className="text-xs text-stone-500">Manage stays, users, content, and safety checks</p>
+            </div>
             <div className="flex items-center gap-4">
+              <Link href="/" className="hidden rounded-lg border border-stone-200 px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-emerald-700 sm:inline-flex">
+                Open site
+              </Link>
               <div className="text-right">
                 <p className="text-sm font-medium leading-none">{user.fullName || user.email}</p>
                 <p className="mt-1 text-xs text-stone-500">Administrator</p>
@@ -117,7 +113,7 @@ export function AdminReplicaFrame({ children }: { children: ReactNode }) {
               <button
                 onClick={() => logout("/admin/login")}
                 title="Sign out"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-stone-500 hover:bg-stone-100 hover:text-red-600"
+                className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 hover:text-red-800"
               >
                 Logout
               </button>
