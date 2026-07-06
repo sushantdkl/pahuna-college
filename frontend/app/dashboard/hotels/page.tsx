@@ -124,7 +124,11 @@ export default function DashboardHotelsPage() {
   }, [search]);
 
   useEffect(() => {
-    void loadHotels();
+    const timeout = window.setTimeout(() => {
+      void loadHotels();
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
   }, [loadHotels]);
 
   const stats = useMemo(() => {

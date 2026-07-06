@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HotelActionButtons } from "@/app/_components/hotel-action-buttons";
-import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
 import { StayMapCard } from "@/app/_components/stay-map-card";
 import { featuredStays, images, safeImage } from "@/lib/pahuna-content";
 
