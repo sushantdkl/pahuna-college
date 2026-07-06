@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { AdminCreateHotelDTO, AdminUpdateHotelDTO } from "../dtos/admin-hotel.dto";
 import { HttpException } from "../exceptions/http-exception";
+import { hotelSeedData } from "../data/hotel-seed.data";
 import { HotelModel, IHotel } from "../models/hotel.model";
 
 type ListHotelsParams = {
@@ -30,6 +31,16 @@ function cleanPayload<T extends Record<string, unknown>>(payload: T) {
 }
 
 export class AdminHotelService {
+  private async seedHotelsIfEmpty() {
+    const total = await HotelModel.estimatedDocumentCount();
+
+    if (total > 0) {
+      return;
+    }
+
+    await HotelModel.insertMany(hotelSeedData);
+  }
+
   private toAdminHotel(hotel: IHotel) {
     return {
       _id: hotel._id.toString(),
@@ -107,6 +118,8 @@ export class AdminHotelService {
   }
 
   async listHotels(params: ListHotelsParams) {
+    await this.seedHotelsIfEmpty();
+
     const page = Math.max(Number(params.page) || 1, 1);
     const limit = Math.min(Math.max(Number(params.limit) || 10, 1), 50);
     const skip = (page - 1) * limit;
