@@ -5,9 +5,13 @@ import { Request } from "express";
 
 const profileUploadDirectory = path.join(process.cwd(), "uploads", "profiles");
 const hotelUploadDirectory = path.join(process.cwd(), "uploads", "hotels");
+const destinationUploadDirectory = path.join(process.cwd(), "uploads", "destinations");
+const experienceUploadDirectory = path.join(process.cwd(), "uploads", "experiences");
 
 fs.mkdirSync(profileUploadDirectory, { recursive: true });
 fs.mkdirSync(hotelUploadDirectory, { recursive: true });
+fs.mkdirSync(destinationUploadDirectory, { recursive: true });
+fs.mkdirSync(experienceUploadDirectory, { recursive: true });
 
 function createImageStorage(uploadDirectory: string) {
   return multer.diskStorage({
@@ -23,6 +27,8 @@ function createImageStorage(uploadDirectory: string) {
 
 const profileStorage = createImageStorage(profileUploadDirectory);
 const hotelStorage = createImageStorage(hotelUploadDirectory);
+const destinationStorage = createImageStorage(destinationUploadDirectory);
+const experienceStorage = createImageStorage(experienceUploadDirectory);
 
 const fileFilter = (
   req: Request,
@@ -49,6 +55,24 @@ export const uploadProfileImage = multer({
 
 export const uploadHotelImages = multer({
   storage: hotelStorage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+    files: 6,
+  },
+});
+
+export const uploadDestinationImages = multer({
+  storage: destinationStorage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+    files: 6,
+  },
+});
+
+export const uploadExperienceImages = multer({
+  storage: experienceStorage,
   fileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024,
