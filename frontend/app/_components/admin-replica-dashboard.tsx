@@ -17,6 +17,7 @@ export const adminReplicaNavItems: AdminNavItem[] = [
   { label: "Overview", href: "/admin", section: "OV" },
   { label: "Hotels", href: "/dashboard/hotels", section: "HT" },
   { label: "Content", href: "/dashboard/content", section: "CT" },
+  { label: "Experiences", href: "/dashboard/experiences", section: "EX" },
   { label: "Training", href: "/dashboard/training", section: "TR" },
   { label: "Consulting", href: "/dashboard/consulting", section: "CO" },
   { label: "Leads", href: "/dashboard/leads", section: "LD" },
@@ -308,6 +309,13 @@ function SidebarIcon({ label }: { label: string }) {
         <svg {...iconProps}>
           <path d="M4 10l8-4 8 4-8 4z" />
           <path d="M6 12v4c2 2 10 2 12 0v-4" />
+        </svg>
+      );
+    case "Experiences":
+      return (
+        <svg {...iconProps}>
+          <path d="M5 17 11 5l3 7 5-3-6 10-3-6z" />
+          <path d="M4 20h16" />
         </svg>
       );
     case "Consulting":
