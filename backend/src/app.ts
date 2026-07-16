@@ -5,7 +5,9 @@ import multer from "multer";
 import adminDestinationRoutes from "./routes/admin-destination.route";
 import adminExperienceRoutes from "./routes/admin-experience.route";
 import adminHotelRoutes from "./routes/admin-hotel.route";
+import adminInquiryRoutes from "./routes/admin-inquiry.route";
 import adminUserRoutes from "./routes/admin-user.route";
+import inquiryRoutes from "./routes/inquiry.route";
 import userRoutes from "./routes/user.route";
 
 const app: Application = express();
@@ -36,6 +38,8 @@ app.use("/api/v1/admin/users", adminUserRoutes);
 app.use("/api/v1/admin/hotels", adminHotelRoutes);
 app.use("/api/v1/admin/destinations", adminDestinationRoutes);
 app.use("/api/v1/admin/experiences", adminExperienceRoutes);
+app.use("/api/v1/inquiries", inquiryRoutes);
+app.use("/api/v1/admin/inquiries", adminInquiryRoutes);
 
 app.use((req: Request, res: Response) => {
   return res.status(404).json({
