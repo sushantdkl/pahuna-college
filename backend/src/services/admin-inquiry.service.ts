@@ -64,7 +64,14 @@ export class AdminInquiryService {
     const skip = (params.page - 1) * params.limit;
     const filter = await this.buildFilter(params);
 
-    const [inquiries, total] = await Promise.all([
+    const [
+      inquiries,
+      total,
+      totalInquiries,
+      newInquiries,
+      respondedInquiries,
+      closedInquiries,
+    ] = await Promise.all([
       InquiryModel.find(filter)
         .populate("userId", "fullName email phoneNumber")
         .populate("hotelId", "name address propertyType")
@@ -73,6 +80,10 @@ export class AdminInquiryService {
         .skip(skip)
         .limit(params.limit),
       InquiryModel.countDocuments(filter),
+      InquiryModel.countDocuments(),
+      InquiryModel.countDocuments({ status: "NEW" }),
+      InquiryModel.countDocuments({ status: "RESPONDED" }),
+      InquiryModel.countDocuments({ status: "CLOSED" }),
     ]);
 
     return {
@@ -82,6 +93,12 @@ export class AdminInquiryService {
         limit: params.limit,
         total,
         totalPages: Math.max(Math.ceil(total / params.limit), 1),
+        summary: {
+          total: totalInquiries,
+          new: newInquiries,
+          responded: respondedInquiries,
+          closed: closedInquiries,
+        },
       },
     };
   }

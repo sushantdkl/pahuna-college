@@ -5,6 +5,7 @@ export interface PaginationMeta {
   limit: number;
   total: number;
   totalPages?: number;
+  summary?: Record<string, number>;
 }
 
 export interface ApiResponse<T> {
