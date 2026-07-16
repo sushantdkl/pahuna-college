@@ -2,6 +2,7 @@ import path from "path";
 import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import multer from "multer";
+import adminHotelRoutes from "./routes/admin-hotel.route";
 import adminUserRoutes from "./routes/admin-user.route";
 import userRoutes from "./routes/user.route";
 
@@ -30,6 +31,7 @@ app.get("/", (req: Request, res: Response) => {
 // Sprint 2 auth endpoints are grouped under /api/v1/auth before being handled by the user route/controller layers.
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/admin/users", adminUserRoutes);
+app.use("/api/v1/admin/hotels", adminHotelRoutes);
 
 app.use((req: Request, res: Response) => {
   return res.status(404).json({
@@ -46,7 +48,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
       success: false,
       message:
         err.code === "LIMIT_FILE_SIZE"
-          ? "Profile image must be smaller than 2MB"
+          ? "Uploaded image is too large"
           : err.message,
       data: null,
     });

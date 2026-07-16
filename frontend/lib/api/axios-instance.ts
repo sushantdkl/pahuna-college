@@ -82,7 +82,7 @@ export function apiGet<T>(path: string, auth = false) {
 
 export function apiPost<T>(
   path: string,
-  body: Record<string, unknown>,
+  body: Record<string, unknown> | FormData,
   auth = false,
 ) {
   return apiRequest<T>(path, { method: "POST", body, auth });

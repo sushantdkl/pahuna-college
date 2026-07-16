@@ -27,18 +27,6 @@ export const adminReplicaNavItems: AdminNavItem[] = [
   { label: "Settings", href: "/dashboard/settings", section: "SE" },
 ];
 
-const publicLinks = [
-  { label: "Home", href: "/" },
-  { label: "Explore Surkhet", href: "/explore" },
-  { label: "Stays", href: "/hotels" },
-  { label: "Food", href: "/food" },
-  { label: "Destinations", href: "/destinations" },
-  { label: "Trip Planner", href: "/trip-planner" },
-  { label: "Contact", href: "/contact" },
-  { label: "Services", href: "/services" },
-  { label: "Blog", href: "/blog" },
-];
-
 export function AdminReplicaFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -68,25 +56,6 @@ export function AdminReplicaFrame({ children }: { children: ReactNode }) {
 
   return (
     <main className="flex h-screen flex-col overflow-hidden bg-[#f7f4ed] text-stone-950">
-      <header className="flex h-16 shrink-0 items-center border-b border-stone-200 bg-white px-4">
-        <div className="mx-auto flex w-full max-w-7xl items-center gap-4">
-          <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-emerald-800">
-            <Image src="/pahuna-icon.svg" alt="Pahuna" width={32} height={32} className="h-8 w-8" />
-            <span>PAHUNA</span>
-          </Link>
-          <nav className="hidden min-w-0 flex-1 items-center justify-center gap-1 overflow-x-auto lg:flex">
-            {publicLinks.map((item) => (
-              <Link key={item.href} href={item.href} className="rounded-lg px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-100 hover:text-emerald-700">
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-          <Link href="/contact" className="ml-auto shrink-0 rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800">
-            Get in Touch
-          </Link>
-        </div>
-      </header>
-
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <aside className="hidden w-64 shrink-0 flex-col border-r border-stone-200 bg-white md:flex">
           <div className="flex h-14 items-center border-b border-stone-200 px-4">
@@ -129,8 +98,14 @@ export function AdminReplicaFrame({ children }: { children: ReactNode }) {
               <Image src="/pahuna-icon.svg" alt="Pahuna" width={28} height={28} className="h-7 w-7" />
               <span className="text-sm">Dashboard</span>
             </Link>
-            <div className="hidden md:block" />
+            <div className="hidden md:block">
+              <p className="text-sm font-semibold text-stone-950">Admin Workspace</p>
+              <p className="text-xs text-stone-500">Manage stays, users, content, and safety checks</p>
+            </div>
             <div className="flex items-center gap-4">
+              <Link href="/" className="hidden rounded-lg border border-stone-200 px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-emerald-700 sm:inline-flex">
+                Open site
+              </Link>
               <div className="text-right">
                 <p className="text-sm font-medium leading-none">{user.fullName || user.email}</p>
                 <p className="mt-1 text-xs text-stone-500">Administrator</p>
@@ -138,7 +113,7 @@ export function AdminReplicaFrame({ children }: { children: ReactNode }) {
               <button
                 onClick={() => logout("/admin/login")}
                 title="Sign out"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-stone-500 hover:bg-stone-100 hover:text-red-600"
+                className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 hover:text-red-800"
               >
                 Logout
               </button>
