@@ -51,7 +51,7 @@ export class InquiryService {
       }).select("_id");
 
       if (!hotel) {
-        throw new HttpException(404, "Hotel not found");
+        return undefined;
       }
 
       return hotel._id;
@@ -63,7 +63,11 @@ export class InquiryService {
   async createInquiry(userId: string, payload: CreateInquiryDTO) {
     const hotelId = await this.resolveHotelId(payload);
 
-    if (hotelInquiryTypes.has(payload.inquiryType) && !hotelId) {
+    if (
+      hotelInquiryTypes.has(payload.inquiryType) &&
+      !hotelId &&
+      !payload.hotelName
+    ) {
       throw new HttpException(
         400,
         "A hotel is required for this type of inquiry",
