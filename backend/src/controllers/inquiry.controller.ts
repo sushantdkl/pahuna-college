@@ -18,7 +18,13 @@ export class InquiryController {
         );
       }
 
-      const parsedData = CreateInquiryDTO.safeParse(req.body);
+      const parsedData = CreateInquiryDTO.safeParse({
+        hotelId: req.body.hotelId || req.body.hotel_id,
+        hotelName: req.body.hotelName || req.body.hotel_name,
+        title: req.body.title,
+        message: req.body.message,
+        inquiryType: req.body.inquiryType || req.body.inquiry_type,
+      });
 
       if (!parsedData.success) {
         return ApiResponseHelper.error(

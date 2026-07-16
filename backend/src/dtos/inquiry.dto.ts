@@ -22,6 +22,7 @@ export const AdminUpdateInquiryDTO = z
     response: z.string().trim().min(1).max(5000).optional(),
     assignedTo: mongoId.optional(),
   })
+  .strict()
   .refine(
     (payload) => Object.values(payload).some((value) => value !== undefined),
     "At least one inquiry field must be provided",
