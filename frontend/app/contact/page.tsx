@@ -1,8 +1,35 @@
 import Image from "next/image";
 import { SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { HotelInquiryForm } from "@/app/contact/hotel-inquiry-form";
 import { images } from "@/lib/pahuna-content";
+import type { InquiryKind } from "@/schemas/inquiry.schema";
 
-export default function ContactPage() {
+type ContactSearchParams = Promise<{
+  topic?: string | string[];
+  hotel?: string | string[];
+  type?: string | string[];
+}>;
+
+function firstValue(value?: string | string[]) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+const hotelInquiryTypes = new Set<InquiryKind>([
+  "HOTEL",
+  "AVAILABILITY",
+  "BOOKING",
+  "RESERVATION",
+]);
+
+export default async function ContactPage({ searchParams }: { searchParams: ContactSearchParams }) {
+  const params = await searchParams;
+  const hotelName = firstValue(params.hotel);
+  const topic = firstValue(params.topic) || (hotelName ? `Availability for ${hotelName}` : "");
+  const requestedType = firstValue(params.type) as InquiryKind | undefined;
+  const inquiryType = requestedType && hotelInquiryTypes.has(requestedType)
+    ? requestedType
+    : "AVAILABILITY";
+
   return (
     <main className="min-h-screen bg-[#fffaf0] text-stone-950">
       <SiteHeader />
@@ -25,7 +52,7 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
-          <form action="mailto:hello@pahuna.com" method="post" encType="text/plain" className="rounded-[32px] border border-emerald-900/10 bg-white p-6 shadow-xl shadow-emerald-900/5">
+          {hotelName ? <HotelInquiryForm hotelName={hotelName} initialTitle={topic} inquiryType={inquiryType} /> : <form action="mailto:hello@pahuna.com" method="post" encType="text/plain" className="rounded-[32px] border border-emerald-900/10 bg-white p-6 shadow-xl shadow-emerald-900/5">
             <div className="grid gap-4 sm:grid-cols-2">
               <input name="name" className="rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100" placeholder="Full name" />
               <input name="contact" className="rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100" placeholder="Phone or email" />
@@ -35,7 +62,7 @@ export default function ContactPage() {
             <button type="submit" className="mt-6 inline-flex rounded-full bg-emerald-700 px-6 py-3 text-sm font-black text-white shadow-lg shadow-emerald-800/15 transition hover:bg-emerald-800">
               Send Inquiry
             </button>
-          </form>
+          </form>}
         </div>
       </SectionShell>
       <SiteFooter />
