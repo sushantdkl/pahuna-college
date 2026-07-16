@@ -187,9 +187,13 @@ export default function HotelsPage() {
 
 function StayListingCard({ stay, isAuthenticated }: { stay: (typeof featuredStays)[number]; isAuthenticated: boolean }) {
   const detailPath = `/hotels/${stay.slug}`;
-  const loginHref = `/login?redirect=${encodeURIComponent(detailPath)}`;
-  const actionHref = isAuthenticated ? `/contact?topic=${encodeURIComponent(`Availability for ${stay.name}`)}` : loginHref;
-  const saveHref = isAuthenticated ? "/profile" : loginHref;
+  const inquiryPath = `/contact?topic=${encodeURIComponent(`Availability for ${stay.name}`)}&hotel=${encodeURIComponent(stay.name)}&type=AVAILABILITY`;
+  const actionHref = isAuthenticated
+    ? inquiryPath
+    : `/login?redirect=${encodeURIComponent(inquiryPath)}`;
+  const saveHref = isAuthenticated
+    ? "/profile"
+    : `/login?redirect=${encodeURIComponent(detailPath)}`;
 
   return (
               <article key={stay.slug} className="flex h-full flex-col overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">

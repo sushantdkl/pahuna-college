@@ -5,18 +5,20 @@ import { useAuth } from "@/context/AuthContext";
 
 export function HotelActionButtons({
   slug,
+  hotelName,
   googleMapLink,
 }: {
   slug: string;
+  hotelName: string;
   googleMapLink?: string;
 }) {
   const { isAuthenticated } = useAuth();
   const detailPath = `/hotels/${slug}`;
-  const loginHref = `/login?redirect=${encodeURIComponent(detailPath)}`;
-  const availabilityHref = isAuthenticated
-    ? `/contact?topic=${encodeURIComponent(`Availability for ${slug}`)}`
-    : loginHref;
-  const saveHref = isAuthenticated ? "/profile" : loginHref;
+  const inquiryPath = `/contact?topic=${encodeURIComponent(`Availability for ${hotelName}`)}&hotel=${encodeURIComponent(hotelName)}&type=AVAILABILITY`;
+  const loginHref = `/login?redirect=${encodeURIComponent(inquiryPath)}`;
+  const availabilityHref = isAuthenticated ? inquiryPath : loginHref;
+  const saveLoginHref = `/login?redirect=${encodeURIComponent(detailPath)}`;
+  const saveHref = isAuthenticated ? "/profile" : saveLoginHref;
 
   return (
     <div className="mt-8 flex flex-wrap gap-3">

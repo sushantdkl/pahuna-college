@@ -76,7 +76,11 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
               <InfoSection title="Amenities" values={stay.amenities} />
               <InfoSection title="Services" values={stay.services || []} />
 
-              <HotelActionButtons slug={stay.slug} googleMapLink={stay.googleMapLink} />
+              <HotelActionButtons
+                slug={stay.slug}
+                hotelName={stay.name}
+                googleMapLink={stay.googleMapLink}
+              />
             </div>
           </div>
 
