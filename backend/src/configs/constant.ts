@@ -11,3 +11,12 @@ export const MONGODB_URL: string =
 // SECRET_KEY signs login tokens; JWT_SECRET is supported for clearer auth-specific naming.
 export const SECRET_KEY: string =
   process.env.JWT_SECRET || process.env.SECRET_KEY || "4kgamingFF@#";
+
+export const SMTP_HOST = process.env.SMTP_HOST || "";
+export const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
+export const SMTP_SECURE = process.env.SMTP_SECURE === "true";
+export const SMTP_USER = process.env.SMTP_USER || "";
+export const SMTP_PASS = process.env.SMTP_PASS || "";
+export const SMTP_FROM = process.env.SMTP_FROM || SMTP_USER;
+export const PAHUNA_NOTIFICATION_EMAIL =
+  process.env.PAHUNA_NOTIFICATION_EMAIL || "";
