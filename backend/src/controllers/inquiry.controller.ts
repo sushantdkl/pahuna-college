@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { z } from "zod";
 import { CreateInquiryDTO } from "../dtos/inquiry.dto";
+import { emailNotificationService } from "../services/email-notification.service";
 import { InquiryService } from "../services/inquiry.service";
 import { AuthRequest } from "../types/auth-request.type";
 import { ApiResponseHelper } from "../uttils/apihelper.util";
@@ -38,6 +39,22 @@ export class InquiryController {
         req.user._id.toString(),
         parsedData.data,
       );
+
+      await emailNotificationService.sendNotification({
+        subject: `[Pahuna Inquiry] ${parsedData.data.title}`,
+        replyTo: req.user.email,
+        text: [
+          `Customer: ${req.user.fullName}`,
+          `Email: ${req.user.email}`,
+          `Hotel: ${parsedData.data.hotelName || parsedData.data.hotelId || "General"}`,
+          `Type: ${parsedData.data.inquiryType}`,
+          `Subject: ${parsedData.data.title}`,
+          "",
+          parsedData.data.message,
+          "",
+          `Inquiry ID: ${inquiry._id}`,
+        ].join("\n"),
+      });
 
       return ApiResponseHelper.success(
         res,
