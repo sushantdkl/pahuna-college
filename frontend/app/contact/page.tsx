@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { GeneralContactForm } from "@/app/contact/general-contact-form";
 import { HotelInquiryForm } from "@/app/contact/hotel-inquiry-form";
 import { images } from "@/lib/pahuna-content";
 import type { InquiryKind } from "@/schemas/inquiry.schema";
@@ -52,17 +53,11 @@ export default async function ContactPage({ searchParams }: { searchParams: Cont
               </div>
             </div>
           </div>
-          {hotelName ? <HotelInquiryForm hotelName={hotelName} initialTitle={topic} inquiryType={inquiryType} /> : <form action="mailto:hello@pahuna.com" method="post" encType="text/plain" className="rounded-[32px] border border-emerald-900/10 bg-white p-6 shadow-xl shadow-emerald-900/5">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <input name="name" className="rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100" placeholder="Full name" />
-              <input name="contact" className="rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100" placeholder="Phone or email" />
-              <input name="topic" className="rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 sm:col-span-2" placeholder="Trip / stay / route topic" />
-              <textarea name="message" className="min-h-36 rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 sm:col-span-2" placeholder="Tell us what you need help with" />
-            </div>
-            <button type="submit" className="mt-6 inline-flex rounded-full bg-emerald-700 px-6 py-3 text-sm font-black text-white shadow-lg shadow-emerald-800/15 transition hover:bg-emerald-800">
-              Send Inquiry
-            </button>
-          </form>}
+          {hotelName ? (
+            <HotelInquiryForm hotelName={hotelName} initialTitle={topic} inquiryType={inquiryType} />
+          ) : (
+            <GeneralContactForm initialSubject={topic} />
+          )}
         </div>
       </SectionShell>
       <SiteFooter />
