@@ -2,11 +2,13 @@ import path from "path";
 import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import multer from "multer";
+import adminContactMessageRoutes from "./routes/admin-contact-message.route";
 import adminDestinationRoutes from "./routes/admin-destination.route";
 import adminExperienceRoutes from "./routes/admin-experience.route";
 import adminHotelRoutes from "./routes/admin-hotel.route";
 import adminInquiryRoutes from "./routes/admin-inquiry.route";
 import adminUserRoutes from "./routes/admin-user.route";
+import contactMessageRoutes from "./routes/contact-message.route";
 import inquiryRoutes from "./routes/inquiry.route";
 import userRoutes from "./routes/user.route";
 
@@ -40,6 +42,8 @@ app.use("/api/v1/admin/destinations", adminDestinationRoutes);
 app.use("/api/v1/admin/experiences", adminExperienceRoutes);
 app.use("/api/v1/inquiries", inquiryRoutes);
 app.use("/api/v1/admin/inquiries", adminInquiryRoutes);
+app.use("/api/v1/contact-messages", contactMessageRoutes);
+app.use("/api/v1/admin/contact-messages", adminContactMessageRoutes);
 
 app.use((req: Request, res: Response) => {
   return res.status(404).json({
