@@ -7,9 +7,11 @@ import adminDestinationRoutes from "./routes/admin-destination.route";
 import adminExperienceRoutes from "./routes/admin-experience.route";
 import adminHotelRoutes from "./routes/admin-hotel.route";
 import adminInquiryRoutes from "./routes/admin-inquiry.route";
+import adminItineraryRoutes from "./routes/admin-itinerary.route";
 import adminUserRoutes from "./routes/admin-user.route";
 import contactMessageRoutes from "./routes/contact-message.route";
 import inquiryRoutes from "./routes/inquiry.route";
+import itineraryRoutes from "./routes/itinerary.route";
 import userRoutes from "./routes/user.route";
 
 const app: Application = express();
@@ -42,6 +44,8 @@ app.use("/api/v1/admin/destinations", adminDestinationRoutes);
 app.use("/api/v1/admin/experiences", adminExperienceRoutes);
 app.use("/api/v1/inquiries", inquiryRoutes);
 app.use("/api/v1/admin/inquiries", adminInquiryRoutes);
+app.use("/api/v1/itineraries", itineraryRoutes);
+app.use("/api/v1/admin/itineraries", adminItineraryRoutes);
 app.use("/api/v1/contact-messages", contactMessageRoutes);
 app.use("/api/v1/admin/contact-messages", adminContactMessageRoutes);
 
