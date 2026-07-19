@@ -17,7 +17,7 @@ function readIdParam(req: AuthRequest) {
 }
 
 function itineraryBody(body: Record<string, unknown>) {
-  return {
+  return Object.fromEntries(Object.entries({
     title: body.title,
     description: body.description,
     destinationId: body.destinationId || body.destination_id,
@@ -29,7 +29,7 @@ function itineraryBody(body: Record<string, unknown>) {
     experienceIds: body.experienceIds || body.experience_ids,
     status: body.status,
     isPublic: body.isPublic ?? body.is_public,
-  };
+  }).filter(([, value]) => value !== undefined));
 }
 
 export class ItineraryController {

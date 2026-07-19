@@ -44,7 +44,7 @@ const idArray = z.preprocess(
     }
     return value;
   },
-  z.array(mongoIdSchema).max(50).default([]),
+  z.array(mongoIdSchema).max(50),
 );
 
 const itineraryFields = z.object({
@@ -57,8 +57,8 @@ const itineraryFields = z.object({
   budget: optionalNumber,
   hotelIds: idArray,
   experienceIds: idArray,
-  status: ItineraryStatusSchema.default("DRAFT"),
-  isPublic: booleanValue.default(false),
+  status: ItineraryStatusSchema,
+  isPublic: booleanValue,
 });
 
 function datesAreValid(payload: { startDate?: Date; endDate?: Date }) {
@@ -68,6 +68,9 @@ function datesAreValid(payload: { startDate?: Date; endDate?: Date }) {
 export const CreateItineraryDTO = itineraryFields
   .extend({
     status: z.enum(["DRAFT", "PLANNED"]).default("DRAFT"),
+    isPublic: booleanValue.default(false),
+    hotelIds: idArray.default([]),
+    experienceIds: idArray.default([]),
   })
   .refine(datesAreValid, {
     message: "End date cannot be before start date",
@@ -93,7 +96,13 @@ export const UpdateItineraryDTO = itineraryFields
 export type UpdateItineraryDTO = z.infer<typeof UpdateItineraryDTO>;
 
 export const AdminCreateItineraryDTO = itineraryFields
-  .extend({ userId: mongoIdSchema })
+  .extend({
+    userId: mongoIdSchema,
+    status: ItineraryStatusSchema.default("DRAFT"),
+    isPublic: booleanValue.default(false),
+    hotelIds: idArray.default([]),
+    experienceIds: idArray.default([]),
+  })
   .refine(datesAreValid, {
     message: "End date cannot be before start date",
     path: ["endDate"],

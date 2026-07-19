@@ -191,6 +191,10 @@ export class ItineraryService {
     const { startDate, endDate } = this.datesForUpdate(existing, payload);
     const updatePayload = removeUndefined({
       ...payload,
+      status: payload.status ?? existing.status,
+      isPublic: payload.isPublic ?? existing.isPublic,
+      hotelIds: payload.hotelIds ?? existing.hotelIds,
+      experienceIds: payload.experienceIds ?? existing.experienceIds,
       totalDays:
         payload.totalDays || calculateTotalDays(startDate, endDate),
     });

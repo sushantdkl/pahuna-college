@@ -193,6 +193,10 @@ export class AdminItineraryService {
 
     const updatePayload = removeUndefined({
       ...payload,
+      status: payload.status ?? existing.status,
+      isPublic: payload.isPublic ?? existing.isPublic,
+      hotelIds: payload.hotelIds ?? existing.hotelIds,
+      experienceIds: payload.experienceIds ?? existing.experienceIds,
       totalDays:
         payload.totalDays || calculateTotalDays(startDate, endDate),
     });
