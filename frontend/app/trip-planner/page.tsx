@@ -1,9 +1,7 @@
-import Link from "next/link";
 import Image from "next/image";
 import { ButtonLink, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
 import { images, routeCards } from "@/lib/pahuna-content";
-
-const fields = ["Starting city", "Destination", "Travel days", "Budget range", "Travel vibe"];
+import { ItineraryPlannerForm } from "./itinerary-planner-form";
 
 export default function TripPlannerPage() {
   return (
@@ -22,18 +20,7 @@ export default function TripPlannerPage() {
             <div className="relative h-44">
               <Image src={images.routeFallback} alt="Karnali road route planning context" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
             </div>
-            <div className="p-6">
-            <h2 className="text-xl font-black">Quick trip request</h2>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              {fields.map((field) => (
-                <label key={field} className="space-y-2 text-xs font-black uppercase tracking-[0.14em] text-stone-500">
-                  {field}
-                  <input className="w-full rounded-2xl border border-stone-200 px-4 py-3 text-sm normal-case tracking-normal outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100" placeholder={field} />
-                </label>
-              ))}
-            </div>
-            <Link href="/contact" className="mt-6 inline-flex rounded-full bg-emerald-700 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-800">Continue to inquiry</Link>
-            </div>
+            <ItineraryPlannerForm />
           </div>
         </div>
       </SectionShell>
