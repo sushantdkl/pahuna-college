@@ -18,6 +18,8 @@ export const adminReplicaNavItems: AdminNavItem[] = [
   { label: "Hotels", href: "/dashboard/hotels", section: "HT" },
   { label: "Content", href: "/dashboard/content", section: "CT" },
   { label: "Experiences", href: "/dashboard/experiences", section: "EX" },
+  { label: "Trip Planner", href: "/dashboard/trip-planner", section: "TP" },
+  { label: "Blog Posts", href: "/dashboard/blog", section: "BP" },
   { label: "Training", href: "/dashboard/training", section: "TR" },
   { label: "Consulting", href: "/dashboard/consulting", section: "CO" },
   { label: "Leads", href: "/dashboard/leads", section: "LD" },
