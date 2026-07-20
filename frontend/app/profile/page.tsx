@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LiveLocationCard } from "@/app/_components/live-location-card";
+import { MyItineraries } from "@/app/profile/my-itineraries";
 import { SiteFooter } from "@/app/_components/pahuna-layout";
 import { resolveImageUrl } from "@/app/_components/profile-forms";
 import { useAuth } from "@/context/AuthContext";
@@ -106,6 +107,8 @@ export default function ProfilePage() {
           </section>
 
           <LiveLocationCard />
+
+          <MyItineraries />
 
           <section className="grid gap-5 xl:grid-cols-3">
             <EmptyProfilePanel title="No bookings yet" text="Your confirmed stays and trip bookings will appear here when the backend returns them." href="/stays" action="Explore Stays" />
