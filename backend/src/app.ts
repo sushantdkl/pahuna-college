@@ -10,12 +10,14 @@ import adminHotelRoutes from "./routes/admin-hotel.route";
 import adminInquiryRoutes from "./routes/admin-inquiry.route";
 import adminItineraryRoutes from "./routes/admin-itinerary.route";
 import adminNewsletterSubscriberRoutes from "./routes/admin-newsletter-subscriber.route";
+import adminPartnerApplicationRoutes from "./routes/admin-partner-application.route";
 import adminUserRoutes from "./routes/admin-user.route";
 import blogPostRoutes from "./routes/blog-post.route";
 import contactMessageRoutes from "./routes/contact-message.route";
 import inquiryRoutes from "./routes/inquiry.route";
 import itineraryRoutes from "./routes/itinerary.route";
 import newsletterSubscriberRoutes from "./routes/newsletter-subscriber.route";
+import partnerApplicationRoutes from "./routes/partner-application.route";
 import userRoutes from "./routes/user.route";
 
 const app: Application = express();
@@ -58,6 +60,11 @@ app.use("/api/v1/newsletter", newsletterSubscriberRoutes);
 app.use(
   "/api/v1/admin/newsletter-subscribers",
   adminNewsletterSubscriberRoutes,
+);
+app.use("/api/v1/partner-applications", partnerApplicationRoutes);
+app.use(
+  "/api/v1/admin/partner-applications",
+  adminPartnerApplicationRoutes,
 );
 
 app.use((req: Request, res: Response) => {
