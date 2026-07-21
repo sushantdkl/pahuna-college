@@ -26,8 +26,7 @@ const optionalDate = z.preprocess(
   z.coerce.date().optional(),
 );
 
-const courseFields = z
-  .object({
+const courseFields = z.object({
     title: z.string().trim().min(1, "Title is required").max(180),
     slug: z
       .string()
@@ -61,8 +60,10 @@ const courseFields = z
     ),
     image: localImagePath,
     status: TrainingCourseStatusSchema.default("DRAFT"),
-    isActive: z.boolean().default(true),
-  })
+  isActive: z.boolean().default(true),
+});
+
+export const CreateTrainingCourseDTO = courseFields
   .refine(
     (payload) =>
       !payload.startDate ||
@@ -71,13 +72,19 @@ const courseFields = z
     "End date cannot be before start date",
   );
 
-export const CreateTrainingCourseDTO = courseFields;
 export type CreateTrainingCourseDTO = z.infer<
   typeof CreateTrainingCourseDTO
 >;
 
 export const UpdateTrainingCourseDTO = courseFields
   .partial()
+  .refine(
+    (payload) =>
+      !payload.startDate ||
+      !payload.endDate ||
+      payload.endDate >= payload.startDate,
+    "End date cannot be before start date",
+  )
   .refine(
     (payload) => Object.values(payload).some((value) => value !== undefined),
     "At least one training course field must be provided",

@@ -38,8 +38,7 @@ const optionalNumber = z.preprocess(
   z.coerce.number().min(0).optional(),
 );
 
-const packageFields = z
-  .object({
+const packageFields = z.object({
     title: z.string().trim().min(1, "Title is required").max(180),
     slug: z
       .string()
@@ -64,9 +63,11 @@ const packageFields = z
     difficulty: optionalText(80),
     groupSize: optionalText(80),
     images: imageList.default([]),
-    isActive: z.boolean().default(true),
-    isFeatured: z.boolean().default(false),
-  })
+  isActive: z.boolean().default(true),
+  isFeatured: z.boolean().default(false),
+});
+
+export const CreateTripPackageDTO = packageFields
   .refine(
     (payload) =>
       payload.priceMin === undefined ||
@@ -75,11 +76,17 @@ const packageFields = z
     "Maximum price cannot be lower than minimum price",
   );
 
-export const CreateTripPackageDTO = packageFields;
 export type CreateTripPackageDTO = z.infer<typeof CreateTripPackageDTO>;
 
 export const UpdateTripPackageDTO = packageFields
   .partial()
+  .refine(
+    (payload) =>
+      payload.priceMin === undefined ||
+      payload.priceMax === undefined ||
+      payload.priceMax >= payload.priceMin,
+    "Maximum price cannot be lower than minimum price",
+  )
   .refine(
     (payload) => Object.values(payload).some((value) => value !== undefined),
     "At least one trip package field must be provided",
