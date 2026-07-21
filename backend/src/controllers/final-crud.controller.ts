@@ -1,34 +1,21 @@
 import { Request, Response } from "express";
 import { z } from "zod";
 import {
-  CreateFAQDTO,
   CreateFoodProviderDTO,
   CreateRouteSegmentDTO,
-  CreateTestimonialDTO,
   CreateTransportRouteDTO,
-  FAQListQueryDTO,
   FoodProviderListQueryDTO,
   RouteListQueryDTO,
-  TestimonialListQueryDTO,
-  UpdateFAQDTO,
   UpdateFoodProviderDTO,
   UpdateRouteSegmentDTO,
-  UpdateTestimonialDTO,
   UpdateTransportRouteDTO,
 } from "../dtos/final-crud.dto";
-import {
-  FAQService,
-  FoodProviderService,
-  RouteCrudService,
-  TestimonialService,
-} from "../services/final-crud.service";
+import { FoodProviderService, RouteCrudService } from "../services/final-crud.service";
 import { AuthRequest } from "../types/auth-request.type";
 import { ApiResponseHelper } from "../uttils/apihelper.util";
 
 const foodService = new FoodProviderService();
 const routeService = new RouteCrudService();
-const faqService = new FAQService();
-const testimonialService = new TestimonialService();
 
 function idParam(req: Request) {
   const id = req.params.id;
@@ -332,152 +319,6 @@ export class RouteCrudController {
     try {
       const result = await routeService.deleteRouteSegment(idParam(req));
       return ApiResponseHelper.success(res, result, "Route segment deleted successfully");
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-}
-
-export class FAQController {
-  async list(req: Request, res: Response) {
-    try {
-      const query = parseQuery(res, FAQListQueryDTO, req.query);
-      if (!query) return;
-      const { faqs, meta } = await faqService.list(query, true);
-      return ApiResponseHelper.success(res, faqs, "FAQs fetched successfully", 200, meta);
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async get(req: Request, res: Response) {
-    try {
-      const faq = await faqService.get(idParam(req), true);
-      return ApiResponseHelper.success(res, faq, "FAQ fetched successfully");
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async adminList(req: AuthRequest, res: Response) {
-    try {
-      const query = parseQuery(res, FAQListQueryDTO, req.query);
-      if (!query) return;
-      const { faqs, meta } = await faqService.list(query, false);
-      return ApiResponseHelper.success(res, faqs, "FAQs fetched successfully", 200, meta);
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async adminGet(req: AuthRequest, res: Response) {
-    try {
-      const faq = await faqService.get(idParam(req), false);
-      return ApiResponseHelper.success(res, faq, "FAQ fetched successfully");
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async adminCreate(req: AuthRequest, res: Response) {
-    try {
-      const parsed = CreateFAQDTO.safeParse(req.body);
-      if (!parsed.success) return handleParseError(res, parsed.error);
-      const faq = await faqService.create(parsed.data, req.user?._id);
-      return ApiResponseHelper.success(res, faq, "FAQ created successfully", 201);
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async adminUpdate(req: AuthRequest, res: Response) {
-    try {
-      const parsed = UpdateFAQDTO.safeParse(req.body);
-      if (!parsed.success) return handleParseError(res, parsed.error);
-      const faq = await faqService.update(idParam(req), parsed.data, req.user?._id);
-      return ApiResponseHelper.success(res, faq, "FAQ updated successfully");
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async adminDelete(req: AuthRequest, res: Response) {
-    try {
-      const result = await faqService.delete(idParam(req));
-      return ApiResponseHelper.success(res, result, "FAQ deleted successfully");
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-}
-
-export class TestimonialController {
-  async list(req: Request, res: Response) {
-    try {
-      const query = parseQuery(res, TestimonialListQueryDTO, req.query);
-      if (!query) return;
-      const { testimonials, meta } = await testimonialService.list(query, true);
-      return ApiResponseHelper.success(res, testimonials, "Testimonials fetched successfully", 200, meta);
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async get(req: Request, res: Response) {
-    try {
-      const testimonial = await testimonialService.get(idParam(req), true);
-      return ApiResponseHelper.success(res, testimonial, "Testimonial fetched successfully");
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async adminList(req: AuthRequest, res: Response) {
-    try {
-      const query = parseQuery(res, TestimonialListQueryDTO, req.query);
-      if (!query) return;
-      const { testimonials, meta } = await testimonialService.list(query, false);
-      return ApiResponseHelper.success(res, testimonials, "Testimonials fetched successfully", 200, meta);
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async adminGet(req: AuthRequest, res: Response) {
-    try {
-      const testimonial = await testimonialService.get(idParam(req), false);
-      return ApiResponseHelper.success(res, testimonial, "Testimonial fetched successfully");
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async adminCreate(req: AuthRequest, res: Response) {
-    try {
-      const parsed = CreateTestimonialDTO.safeParse(req.body);
-      if (!parsed.success) return handleParseError(res, parsed.error);
-      const testimonial = await testimonialService.create(parsed.data, req.user?._id);
-      return ApiResponseHelper.success(res, testimonial, "Testimonial created successfully", 201);
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async adminUpdate(req: AuthRequest, res: Response) {
-    try {
-      const parsed = UpdateTestimonialDTO.safeParse(req.body);
-      if (!parsed.success) return handleParseError(res, parsed.error);
-      const testimonial = await testimonialService.update(idParam(req), parsed.data, req.user?._id);
-      return ApiResponseHelper.success(res, testimonial, "Testimonial updated successfully");
-    } catch (error: Error | any | unknown) {
-      return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
-    }
-  }
-
-  async adminDelete(req: AuthRequest, res: Response) {
-    try {
-      const result = await testimonialService.delete(idParam(req));
-      return ApiResponseHelper.success(res, result, "Testimonial deleted successfully");
     } catch (error: Error | any | unknown) {
       return ApiResponseHelper.error(res, error.message || "Internal Server Error", error.status || 500);
     }

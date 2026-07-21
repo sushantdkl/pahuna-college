@@ -7,7 +7,7 @@ export default function ServicesPage() {
     <main className="min-h-screen bg-[#fffaf0] text-stone-950">
       <SiteHeader />
       <SectionShell className="pt-16">
-        <SectionHeader eyebrow="Services" title="Simple Pahuna services for travelers and local providers." description="A frontend-safe service overview page. No backend/admin flow changed." />
+        <SectionHeader eyebrow="Services" title="Simple Pahuna services for travelers and local providers." description="Discover practical support for stays, routes, local food, destinations, and provider visibility." />
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {services.map((service) => (
             <div key={service} className="rounded-[26px] border border-emerald-900/10 bg-white p-6 shadow-sm">

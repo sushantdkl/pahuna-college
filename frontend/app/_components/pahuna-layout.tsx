@@ -6,7 +6,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { navItems } from "@/lib/pahuna-content";
-import { NewsletterForm } from "@/app/_components/newsletter-form";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -115,11 +114,7 @@ export function SiteFooter() {
         </div>
         <FooterGroup title="Explore" links={["Explore Surkhet", "Stays", "Food", "Destinations"]} />
         <FooterGroup title="Plan" links={["Trip Planner", "Routes", "Gallery", "Contact", "Partner"]} />
-        <div>
-          <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-stone-200">Travel updates</h3>
-          <p className="mt-4 text-sm leading-6 text-stone-400">Get practical Surkhet and Karnali travel ideas from Pahuna.</p>
-          <NewsletterForm />
-        </div>
+        <FooterGroup title="Services" links={["Trip Packages", "Training", "Consulting", "Partner"]} />
       </div>
       <div className="border-t border-white/10 py-5 text-center text-xs text-stone-500">Copyright 2026 Pahuna. Crafted with hospitality in Nepal.</div>
     </footer>
@@ -132,6 +127,8 @@ function FooterGroup({ title, links }: { title: string; links: string[] }) {
       ? "/explore"
       : label === "Stays"
         ? "/hotels"
+        : label === "Trip Packages"
+          ? "/trip-packages"
         : `/${label.toLowerCase().replaceAll(" ", "-")}`;
 
   return (

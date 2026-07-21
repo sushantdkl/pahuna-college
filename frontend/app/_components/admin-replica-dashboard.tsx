@@ -22,18 +22,12 @@ export const adminReplicaNavItems: AdminNavItem[] = [
   { label: "Trip Packages", href: "/dashboard/trip-packages", section: "PK" },
   { label: "Routes", href: "/dashboard/routes", section: "RT" },
   { label: "Food", href: "/dashboard/food", section: "FD" },
-  { label: "Blog Posts", href: "/dashboard/blog", section: "BP" },
-  { label: "FAQs", href: "/dashboard/faqs", section: "FQ" },
-  { label: "Testimonials", href: "/dashboard/testimonials", section: "TS" },
   { label: "Training", href: "/dashboard/training", section: "TR" },
   { label: "Consulting", href: "/dashboard/consulting", section: "CO" },
   { label: "Leads", href: "/dashboard/leads", section: "LD" },
   { label: "Messages", href: "/dashboard/messages", section: "MS" },
-  { label: "Newsletter", href: "/dashboard/newsletter", section: "NL" },
   { label: "Partners", href: "/dashboard/partners", section: "PR" },
-  { label: "Locations", href: "/dashboard/locations", section: "LC" },
   { label: "Users", href: "/admin/users", section: "US" },
-  { label: "Settings", href: "/dashboard/settings", section: "SE" },
 ];
 
 export function AdminReplicaFrame({ children }: { children: ReactNode }) {
@@ -495,116 +489,5 @@ export function AdminReplicaOverviewContent({ title = "Dashboard" }: { title?: s
         </ReplicaDataCard>
       </div>
     </div>
-  );
-}
-
-const moduleContent: Record<string, { title: string; description: string; stats: Array<[string, string | number, string, string]>; rows: string[][] }> = {
-  hotels: {
-    title: "Stays & Services",
-    description: "Provider records for hotels, resorts, lodges, and homestays.",
-    stats: [["Total Providers", featuredStays.length, "Stay records", "HT"], ["Verified", featuredStays.filter((stay) => stay.verified).length, "Confirmed listings", "VR"], ["Pending", featuredStays.filter((stay) => stay.consentStatus === "PENDING").length, "Need review", "PN"], ["Map Ready", featuredStays.filter((stay) => stay.latitude && stay.longitude).length, "With coordinates", "MP"]],
-    rows: featuredStays.slice(0, 8).map((stay) => [stay.name, stay.type, stay.area, stay.verificationStatus || "PUBLIC_LISTING"]),
-  },
-  food: {
-    title: "Food Providers",
-    description: "Cafe, restaurant, momo, tea, and route food records.",
-    stats: [["Food Places", foodProviders.length, "Provider records", "FD"], ["Featured", foodProviders.filter((item) => item.featured).length, "Highlighted", "FT"], ["Types", new Set(foodProviders.map((item) => item.typeLabel)).size, "Categories", "TY"], ["Pending", foodProviders.filter((item) => item.verificationStatus === "PENDING").length, "Need review", "PN"]],
-    rows: foodProviders.slice(0, 8).map((item) => [item.name, item.typeLabel, item.area, item.verificationStatus || "PUBLIC_LISTING"]),
-  },
-  content: {
-    title: "Content Management",
-    description: "Public content sections prepared for moderation.",
-    stats: [["Destinations", 6, "Public pages", "DS"], ["Guides", 4, "Route content", "GD"], ["Gallery", 12, "Local assets", "GL"], ["Status", "Live", "Published", "LV"]],
-    rows: [["Explore Surkhet", "Published", "Hero and places", "Live"], ["Destinations", "Published", "Karnali region", "Live"], ["Gallery", "Published", "Local images", "Live"], ["Trip Planner", "Published", "Planning CTA", "Live"]],
-  },
-  training: {
-    title: "Training",
-    description: "Training enrollment UI copied as a safe admin placeholder.",
-    stats: [["Enrollments", 0, "No API connected", "EN"], ["Pending", 0, "All clear", "PN"], ["Courses", 0, "Placeholder", "CR"], ["Status", "Ready", "UI shell", "RD"]],
-    rows: [["Hospitality basics", "Draft", "No backend module", "Safe placeholder"], ["Local guide training", "Draft", "No backend module", "Safe placeholder"]],
-  },
-  consulting: {
-    title: "Consulting",
-    description: "Consulting lead board style from the reference dashboard.",
-    stats: [["Leads", 0, "No API connected", "LD"], ["New", 0, "All handled", "NW"], ["Qualified", 0, "No records", "QL"], ["Status", "Ready", "UI shell", "RD"]],
-    rows: [["Tourism partner", "No records", "Awaiting endpoint", "Placeholder"], ["Hotel onboarding", "No records", "Awaiting endpoint", "Placeholder"]],
-  },
-  leads: {
-    title: "Leads",
-    description: "Lead cards and sections adapted without adding backend calls.",
-    stats: [["Hotel Leads", 0, "No endpoint", "HL"], ["Food Leads", 0, "No endpoint", "FL"], ["Unread", 0, "All clear", "UR"], ["Status", "Ready", "UI shell", "RD"]],
-    rows: [["Availability inquiry", "Empty", "Connect API later", "Placeholder"], ["Partner inquiry", "Empty", "Connect API later", "Placeholder"]],
-  },
-  messages: {
-    title: "Messages",
-    description: "Contact message dashboard layout with safe empty records.",
-    stats: [["Messages", 0, "No API connected", "MS"], ["Unread", 0, "All read", "UR"], ["Archived", 0, "No records", "AR"], ["Status", "Ready", "UI shell", "RD"]],
-    rows: [["Contact inbox", "Empty", "No message endpoint", "Placeholder"], ["Inquiry replies", "Empty", "No message endpoint", "Placeholder"]],
-  },
-  partners: {
-    title: "Partners",
-    description: "Partner application dashboard view.",
-    stats: [["Applications", 0, "No API connected", "AP"], ["Pending", 0, "All clear", "PN"], ["Approved", 0, "No records", "OK"], ["Status", "Ready", "UI shell", "RD"]],
-    rows: [["Hotel partner", "Empty", "No partner endpoint", "Placeholder"], ["Food partner", "Empty", "No partner endpoint", "Placeholder"]],
-  },
-  locations: {
-    title: "Locations",
-    description: "Coordinate coverage and location management shell.",
-    stats: [["Stay Coordinates", featuredStays.filter((stay) => stay.latitude && stay.longitude).length, "Map-ready stays", "ST"], ["Food Coordinates", 0, "Fallback preview", "FD"], ["Fallback", "Surkhet", "Safe center", "SK"], ["Status", "OSM", "Map enabled", "MP"]],
-    rows: [["Surkhet fallback", "Active", "28.6019, 81.6339", "Map safe"], ["Stay detail maps", "Active", "Uses coordinates when available", "Live"]],
-  },
-  users: {
-    title: "Users",
-    description: "User management summary with link to the working CRUD page.",
-    stats: [["CRUD", "Active", "Admin users", "US"], ["Search", "Active", "Backend query", "SR"], ["Pagination", "Active", "Meta shape", "PG"], ["Route", "Protected", "/admin/users", "RT"]],
-    rows: [["User management", "Active", "Use /admin/users", "Protected"], ["Create/Edit/Delete", "Active", "Existing Sprint 4 logic", "Protected"]],
-  },
-  settings: {
-    title: "Settings",
-    description: "Launch checklist and admin safety notes.",
-    stats: [["Admin Login", "Active", "Separate route", "AL"], ["Home Link", "Safe", "No logout", "HM"], ["Logout", "Button", "Explicit only", "LO"], ["Build", "Checked", "QA required", "QA"]],
-    rows: [["Change default password", "Manual", "Before production", "Important"], ["Verify public listings", "Manual", "Before commercial use", "Important"], ["Keep env safe", "Manual", "Never expose secrets", "Important"]],
-  },
-};
-
-export function AdminReplicaModulePage({ moduleKey }: { moduleKey: keyof typeof moduleContent }) {
-  const content = moduleContent[moduleKey];
-
-  return (
-    <AdminReplicaFrame>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{content.title}</h1>
-          <p className="text-sm text-stone-500">{content.description}</p>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {content.stats.map(([title, value, subtitle, icon]) => (
-            <ReplicaStatCard key={title} title={title} value={value} subtitle={subtitle} icon={icon} />
-          ))}
-        </div>
-        <ReplicaDataCard title={`${content.title} Records`} description="Reference-style dashboard table" count={content.rows.length}>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b text-left">
-                <th className="pb-2 pr-4 font-medium text-stone-500">Name</th>
-                <th className="pb-2 pr-4 font-medium text-stone-500">Type</th>
-                <th className="pb-2 pr-4 font-medium text-stone-500">Detail</th>
-                <th className="pb-2 pr-4 font-medium text-stone-500">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {content.rows.map(([name, type, detail, status]) => (
-                <tr key={`${name}-${type}`} className="border-b last:border-0">
-                  <td className="py-2.5 pr-4 font-medium text-stone-900">{name}</td>
-                  <td className="py-2.5 pr-4 text-stone-500">{type}</td>
-                  <td className="py-2.5 pr-4 text-stone-500">{detail}</td>
-                  <td className="py-2.5 pr-4"><ReplicaStatusBadge>{status}</ReplicaStatusBadge></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </ReplicaDataCard>
-      </div>
-    </AdminReplicaFrame>
   );
 }

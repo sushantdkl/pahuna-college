@@ -76,8 +76,6 @@ export const navItems: NavItem[] = [
   { label: "Packages", href: "/trip-packages" },
   { label: "Training", href: "/training" },
   { label: "Consulting", href: "/consulting" },
-  { label: "Blog", href: "/blog" },
-  { label: "FAQ", href: "/faq" },
   { label: "Partner", href: "/partner" },
   { label: "Contact", href: "/contact" },
 ];

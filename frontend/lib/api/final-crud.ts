@@ -71,47 +71,17 @@ export type RouteSegment = {
   updatedAt: string;
 };
 
-export type FAQ = {
-  _id: string;
-  question: string;
-  answer: string;
-  category: string;
-  isPublished: boolean;
-  sortOrder: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type Testimonial = {
-  _id: string;
-  name: string;
-  role?: string;
-  company?: string;
-  quote: string;
-  rating: number;
-  avatar?: string;
-  category?: string;
-  serviceSlug?: string;
-  isPublished: boolean;
-  sortOrder: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
 export type ListParams = {
   page?: number;
   limit?: number;
   search?: string;
   active?: boolean | "";
   featured?: boolean | "";
-  published?: boolean | "";
-  category?: string;
   type?: string;
   area?: string;
   district?: string;
   mode?: string;
   verificationStatus?: string;
-  serviceSlug?: string;
 };
 
 export type FoodProviderPayload = Omit<Partial<FoodProvider>, "_id" | "createdAt" | "updatedAt"> & {
@@ -124,8 +94,6 @@ export type FoodProviderPayload = Omit<Partial<FoodProvider>, "_id" | "createdAt
 
 export type TransportRoutePayload = Omit<Partial<TransportRoute>, "_id" | "createdAt" | "updatedAt">;
 export type RouteSegmentPayload = Omit<Partial<RouteSegment>, "_id" | "createdAt" | "updatedAt">;
-export type FAQPayload = Omit<Partial<FAQ>, "_id" | "createdAt" | "updatedAt">;
-export type TestimonialPayload = Omit<Partial<Testimonial>, "_id" | "createdAt" | "updatedAt">;
 
 function queryString(params: Record<string, unknown>) {
   const query = new URLSearchParams();
@@ -198,44 +166,4 @@ export function updateAdminRouteSegment(id: string, payload: RouteSegmentPayload
 
 export function deleteAdminRouteSegment(id: string) {
   return apiDelete<{ deleted: true }>(`/admin/route-segments/${id}`, true);
-}
-
-export function getFAQs(params: ListParams = {}) {
-  return apiGet<FAQ[]>(`/faqs${queryString(params)}`);
-}
-
-export function getAdminFAQs(params: ListParams = {}) {
-  return apiGet<FAQ[]>(`/admin/faqs${queryString(params)}`, true);
-}
-
-export function createAdminFAQ(payload: FAQPayload) {
-  return apiPost<FAQ>("/admin/faqs", payload, true);
-}
-
-export function updateAdminFAQ(id: string, payload: FAQPayload) {
-  return apiPatch<FAQ>(`/admin/faqs/${id}`, payload, true);
-}
-
-export function deleteAdminFAQ(id: string) {
-  return apiDelete<{ deleted: true }>(`/admin/faqs/${id}`, true);
-}
-
-export function getTestimonials(params: ListParams = {}) {
-  return apiGet<Testimonial[]>(`/testimonials${queryString(params)}`);
-}
-
-export function getAdminTestimonials(params: ListParams = {}) {
-  return apiGet<Testimonial[]>(`/admin/testimonials${queryString(params)}`, true);
-}
-
-export function createAdminTestimonial(payload: TestimonialPayload) {
-  return apiPost<Testimonial>("/admin/testimonials", payload, true);
-}
-
-export function updateAdminTestimonial(id: string, payload: TestimonialPayload) {
-  return apiPatch<Testimonial>(`/admin/testimonials/${id}`, payload, true);
-}
-
-export function deleteAdminTestimonial(id: string) {
-  return apiDelete<{ deleted: true }>(`/admin/testimonials/${id}`, true);
 }

@@ -2,9 +2,7 @@ import path from "path";
 import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import multer from "multer";
-import adminFaqRoutes from "./routes/admin-faq.route";
 import adminFoodProviderRoutes from "./routes/admin-food-provider.route";
-import adminBlogPostRoutes from "./routes/admin-blog-post.route";
 import adminConsultingLeadRoutes from "./routes/admin-consulting-lead.route";
 import adminConsultingServiceRoutes from "./routes/admin-consulting-service.route";
 import adminContactMessageRoutes from "./routes/admin-contact-message.route";
@@ -13,26 +11,20 @@ import adminExperienceRoutes from "./routes/admin-experience.route";
 import adminHotelRoutes from "./routes/admin-hotel.route";
 import adminInquiryRoutes from "./routes/admin-inquiry.route";
 import adminItineraryRoutes from "./routes/admin-itinerary.route";
-import adminNewsletterSubscriberRoutes from "./routes/admin-newsletter-subscriber.route";
 import adminPartnerApplicationRoutes from "./routes/admin-partner-application.route";
 import adminRouteSegmentRoutes from "./routes/admin-route-segment.route";
-import adminTestimonialRoutes from "./routes/admin-testimonial.route";
 import adminTrainingCourseRoutes from "./routes/admin-training-course.route";
 import adminTrainingEnrollmentRoutes from "./routes/admin-training-enrollment.route";
 import adminTransportRouteRoutes from "./routes/admin-transport-route.route";
 import adminTripPackageRoutes from "./routes/admin-trip-package.route";
 import adminUserRoutes from "./routes/admin-user.route";
-import blogPostRoutes from "./routes/blog-post.route";
 import consultingRoutes from "./routes/consulting.route";
 import contactMessageRoutes from "./routes/contact-message.route";
-import faqRoutes from "./routes/faq.route";
 import foodProviderRoutes from "./routes/food-provider.route";
 import inquiryRoutes from "./routes/inquiry.route";
 import itineraryRoutes from "./routes/itinerary.route";
-import newsletterSubscriberRoutes from "./routes/newsletter-subscriber.route";
 import partnerApplicationRoutes from "./routes/partner-application.route";
 import routeSegmentRoutes from "./routes/route-segment.route";
-import testimonialRoutes from "./routes/testimonial.route";
 import trainingRoutes from "./routes/training.route";
 import transportRouteRoutes from "./routes/transport-route.route";
 import tripPackageRoutes from "./routes/trip-package.route";
@@ -70,15 +62,8 @@ app.use("/api/v1/inquiries", inquiryRoutes);
 app.use("/api/v1/admin/inquiries", adminInquiryRoutes);
 app.use("/api/v1/itineraries", itineraryRoutes);
 app.use("/api/v1/admin/itineraries", adminItineraryRoutes);
-app.use("/api/v1/blog-posts", blogPostRoutes);
-app.use("/api/v1/admin/blog-posts", adminBlogPostRoutes);
 app.use("/api/v1/contact-messages", contactMessageRoutes);
 app.use("/api/v1/admin/contact-messages", adminContactMessageRoutes);
-app.use("/api/v1/newsletter", newsletterSubscriberRoutes);
-app.use(
-  "/api/v1/admin/newsletter-subscribers",
-  adminNewsletterSubscriberRoutes,
-);
 app.use("/api/v1/partner-applications", partnerApplicationRoutes);
 app.use(
   "/api/v1/admin/partner-applications",
@@ -101,10 +86,6 @@ app.use("/api/v1/transport-routes", transportRouteRoutes);
 app.use("/api/v1/admin/transport-routes", adminTransportRouteRoutes);
 app.use("/api/v1/route-segments", routeSegmentRoutes);
 app.use("/api/v1/admin/route-segments", adminRouteSegmentRoutes);
-app.use("/api/v1/faqs", faqRoutes);
-app.use("/api/v1/admin/faqs", adminFaqRoutes);
-app.use("/api/v1/testimonials", testimonialRoutes);
-app.use("/api/v1/admin/testimonials", adminTestimonialRoutes);
 
 app.use((req: Request, res: Response) => {
   return res.status(404).json({

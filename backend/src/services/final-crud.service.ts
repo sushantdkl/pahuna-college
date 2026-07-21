@@ -1,25 +1,17 @@
 import mongoose, { Model } from "mongoose";
 import {
-  CreateFAQDTO,
   CreateFoodProviderDTO,
   CreateRouteSegmentDTO,
-  CreateTestimonialDTO,
   CreateTransportRouteDTO,
-  FAQListQueryDTO,
   FoodProviderListQueryDTO,
   RouteListQueryDTO,
-  TestimonialListQueryDTO,
-  UpdateFAQDTO,
   UpdateFoodProviderDTO,
   UpdateRouteSegmentDTO,
-  UpdateTestimonialDTO,
   UpdateTransportRouteDTO,
 } from "../dtos/final-crud.dto";
 import { HttpException } from "../exceptions/http-exception";
-import { FAQModel } from "../models/faq.model";
 import { FoodProviderModel } from "../models/food-provider.model";
 import { RouteSegmentModel } from "../models/route-segment.model";
-import { TestimonialModel } from "../models/testimonial.model";
 import { TransportRouteModel } from "../models/transport-route.model";
 
 function escapeRegex(value: string) {
@@ -289,126 +281,6 @@ export class RouteCrudService {
     assertValidId(id, "route segment");
     const segment = await RouteSegmentModel.findByIdAndDelete(id);
     if (!segment) throw new HttpException(404, "Route segment not found");
-    return { deleted: true };
-  }
-}
-
-export class FAQService {
-  private buildFilter(params: FAQListQueryDTO, publicOnly = false) {
-    const filter: Record<string, unknown> = publicOnly ? { isPublished: true } : {};
-    if (!publicOnly && params.published !== undefined) filter.isPublished = params.published;
-    if (params.category) filter.category = { $regex: `^${escapeRegex(params.category)}$`, $options: "i" };
-    if (params.search) {
-      const regex = { $regex: escapeRegex(params.search), $options: "i" };
-      filter.$or = [{ question: regex }, { answer: regex }, { category: regex }];
-    }
-    return filter;
-  }
-
-  async list(params: FAQListQueryDTO, publicOnly = false) {
-    const filter = this.buildFilter(params, publicOnly);
-    const skip = (params.page - 1) * params.limit;
-    const [faqs, total, all, published] = await Promise.all([
-      FAQModel.find(filter).sort({ sortOrder: 1, createdAt: -1 }).skip(skip).limit(params.limit),
-      FAQModel.countDocuments(filter),
-      FAQModel.countDocuments(),
-      FAQModel.countDocuments({ isPublished: true }),
-    ]);
-    return { faqs, meta: { ...pagination(params.page, params.limit, total), summary: { total: all, published, draft: Math.max(all - published, 0) } } };
-  }
-
-  async get(id: string, publicOnly = false) {
-    assertValidId(id, "FAQ");
-    const faq = await FAQModel.findOne({ _id: id, ...(publicOnly ? { isPublished: true } : {}) });
-    if (!faq) throw new HttpException(404, "FAQ not found");
-    return faq;
-  }
-
-  async create(payload: CreateFAQDTO, userId?: mongoose.Types.ObjectId) {
-    return FAQModel.create({ ...payload, createdBy: userId, updatedBy: userId });
-  }
-
-  async update(id: string, payload: UpdateFAQDTO, userId?: mongoose.Types.ObjectId) {
-    assertValidId(id, "FAQ");
-    const existing = await FAQModel.findById(id);
-    if (!existing) throw new HttpException(404, "FAQ not found");
-    return FAQModel.findByIdAndUpdate(id, { ...payload, updatedBy: userId }, {
-      returnDocument: "after",
-      runValidators: true,
-    });
-  }
-
-  async delete(id: string) {
-    assertValidId(id, "FAQ");
-    const faq = await FAQModel.findByIdAndDelete(id);
-    if (!faq) throw new HttpException(404, "FAQ not found");
-    return { deleted: true };
-  }
-}
-
-export class TestimonialService {
-  private buildFilter(params: TestimonialListQueryDTO, publicOnly = false) {
-    const filter: Record<string, unknown> = publicOnly ? { isPublished: true } : {};
-    if (!publicOnly && params.published !== undefined) filter.isPublished = params.published;
-    if (params.category) filter.category = { $regex: `^${escapeRegex(params.category)}$`, $options: "i" };
-    if (params.serviceSlug) filter.serviceSlug = { $regex: `^${escapeRegex(params.serviceSlug)}$`, $options: "i" };
-    if (params.search) {
-      const regex = { $regex: escapeRegex(params.search), $options: "i" };
-      filter.$or = [
-        { name: regex },
-        { role: regex },
-        { company: regex },
-        { quote: regex },
-        { category: regex },
-        { serviceSlug: regex },
-      ];
-    }
-    return filter;
-  }
-
-  async list(params: TestimonialListQueryDTO, publicOnly = false) {
-    const filter = this.buildFilter(params, publicOnly);
-    const skip = (params.page - 1) * params.limit;
-    const [testimonials, total, all, published] = await Promise.all([
-      TestimonialModel.find(filter).sort({ sortOrder: 1, createdAt: -1 }).skip(skip).limit(params.limit),
-      TestimonialModel.countDocuments(filter),
-      TestimonialModel.countDocuments(),
-      TestimonialModel.countDocuments({ isPublished: true }),
-    ]);
-    return {
-      testimonials,
-      meta: { ...pagination(params.page, params.limit, total), summary: { total: all, published, draft: Math.max(all - published, 0) } },
-    };
-  }
-
-  async get(id: string, publicOnly = false) {
-    assertValidId(id, "testimonial");
-    const testimonial = await TestimonialModel.findOne({
-      _id: id,
-      ...(publicOnly ? { isPublished: true } : {}),
-    });
-    if (!testimonial) throw new HttpException(404, "Testimonial not found");
-    return testimonial;
-  }
-
-  async create(payload: CreateTestimonialDTO, userId?: mongoose.Types.ObjectId) {
-    return TestimonialModel.create({ ...payload, createdBy: userId, updatedBy: userId });
-  }
-
-  async update(id: string, payload: UpdateTestimonialDTO, userId?: mongoose.Types.ObjectId) {
-    assertValidId(id, "testimonial");
-    const existing = await TestimonialModel.findById(id);
-    if (!existing) throw new HttpException(404, "Testimonial not found");
-    return TestimonialModel.findByIdAndUpdate(id, { ...payload, updatedBy: userId }, {
-      returnDocument: "after",
-      runValidators: true,
-    });
-  }
-
-  async delete(id: string) {
-    assertValidId(id, "testimonial");
-    const testimonial = await TestimonialModel.findByIdAndDelete(id);
-    if (!testimonial) throw new HttpException(404, "Testimonial not found");
     return { deleted: true };
   }
 }
