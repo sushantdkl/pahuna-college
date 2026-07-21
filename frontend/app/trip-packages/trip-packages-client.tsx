@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import {
   createTripPackageInquiryAction,
@@ -81,7 +82,7 @@ export function TripPackagesClient() {
                 <Fact label="Group" value={tripPackage.groupSize || "Flexible"} />
               </div>
               {tripPackage.highlights.length ? <p className="mt-4 text-sm text-stone-500">{tripPackage.highlights.slice(0, 4).join(" • ")}</p> : null}
-              <button type="button" disabled={savingId === tripPackage._id} onClick={() => void reservePackage(tripPackage)} className="mt-6 w-full rounded-full bg-emerald-700 px-5 py-3 text-sm font-black text-white shadow-lg shadow-emerald-800/15 transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">{savingId === tripPackage._id ? "Sending inquiry..." : "Reserve package"}</button>
+              <div className="mt-6 grid gap-2 sm:grid-cols-2"><Link href={`/trip-packages/${tripPackage.slug}`} className="rounded-full border border-emerald-200 px-5 py-3 text-center text-sm font-black text-emerald-800 hover:bg-emerald-50">View details</Link><button type="button" disabled={savingId === tripPackage._id} onClick={() => void reservePackage(tripPackage)} className="rounded-full bg-emerald-700 px-5 py-3 text-sm font-black text-white shadow-lg shadow-emerald-800/15 transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">{savingId === tripPackage._id ? "Sending..." : "Reserve"}</button></div>
             </article>
           ))}
         </div>

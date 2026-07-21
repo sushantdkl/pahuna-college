@@ -72,6 +72,24 @@ export class AdminDestinationService {
     };
   }
 
+  private toPublicDestination(destination: IDestination) {
+    return {
+      _id: destination._id.toString(),
+      name: destination.name,
+      slug: destination.slug,
+      description: destination.description,
+      attractions: destination.attractions || [],
+      bestTimeToVisit: destination.bestTimeToVisit,
+      distanceFromSurkhetKm: destination.distanceFromSurkhetKm,
+      latitude: destination.latitude,
+      longitude: destination.longitude,
+      images: destination.images || [],
+      category: destination.category,
+      district: destination.district,
+      isFeatured: destination.isFeatured,
+    };
+  }
+
   private assertValidId(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException(400, "Invalid destination id");
@@ -151,6 +169,38 @@ export class AdminDestinationService {
         totalPages: Math.max(Math.ceil(total / limit), 1),
       },
     };
+  }
+
+  async listPublicDestinations(params: ListDestinationsParams) {
+    await this.seedDestinationsIfEmpty();
+
+    const page = Math.max(Number(params.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(params.limit) || 12, 1), 50);
+    const skip = (page - 1) * limit;
+    const filter = { ...this.buildFilter(params), isActive: true };
+
+    const [destinations, total] = await Promise.all([
+      DestinationModel.find(filter).sort({ isFeatured: -1, createdAt: -1 }).skip(skip).limit(limit),
+      DestinationModel.countDocuments(filter),
+    ]);
+
+    return {
+      destinations: destinations.map((destination) => this.toPublicDestination(destination)),
+      meta: { page, limit, total, totalPages: Math.max(Math.ceil(total / limit), 1) },
+    };
+  }
+
+  async getPublicDestination(identifier: string) {
+    await this.seedDestinationsIfEmpty();
+    const destination = mongoose.Types.ObjectId.isValid(identifier)
+      ? await DestinationModel.findOne({ _id: identifier, isActive: true })
+      : await DestinationModel.findOne({ slug: identifier.toLowerCase(), isActive: true });
+
+    if (!destination) {
+      throw new HttpException(404, "Destination not found");
+    }
+
+    return this.toPublicDestination(destination);
   }
 
   async getDestination(id: string) {

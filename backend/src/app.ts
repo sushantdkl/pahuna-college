@@ -24,6 +24,7 @@ import foodProviderRoutes from "./routes/food-provider.route";
 import inquiryRoutes from "./routes/inquiry.route";
 import itineraryRoutes from "./routes/itinerary.route";
 import partnerApplicationRoutes from "./routes/partner-application.route";
+import publicCatalogRoutes from "./routes/public-catalog.route";
 import routeSegmentRoutes from "./routes/route-segment.route";
 import trainingRoutes from "./routes/training.route";
 import transportRouteRoutes from "./routes/transport-route.route";
@@ -54,6 +55,7 @@ app.get("/", (req: Request, res: Response) => {
 
 // Sprint 2 auth endpoints are grouped under /api/v1/auth before being handled by the user route/controller layers.
 app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1", publicCatalogRoutes);
 app.use("/api/v1/admin/users", adminUserRoutes);
 app.use("/api/v1/admin/hotels", adminHotelRoutes);
 app.use("/api/v1/admin/destinations", adminDestinationRoutes);

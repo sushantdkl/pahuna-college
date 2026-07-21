@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   createTrainingEnrollmentAction,
   getTrainingCoursesAction,
@@ -109,6 +110,7 @@ export function TrainingClient() {
                 <Fact label="Mode" value={course.mode || "In person"} />
                 <Fact label="Starts" value={course.startDate ? formatDate(course.startDate) : "To be announced"} />
               </div>
+              <Link href={`/training/${course.slug}`} className="mt-5 inline-flex text-sm font-black text-emerald-800">View course details →</Link>
             </article>
           ))
         ) : (
@@ -119,7 +121,7 @@ export function TrainingClient() {
         )}
       </section>
 
-      <form onSubmit={submitEnrollment} className="h-fit rounded-[32px] border border-emerald-900/10 bg-white p-6 shadow-xl shadow-emerald-900/5 sm:p-8">
+      <form id="enrollment" onSubmit={submitEnrollment} className="h-fit scroll-mt-24 rounded-[32px] border border-emerald-900/10 bg-white p-6 shadow-xl shadow-emerald-900/5 sm:p-8">
         <h3 className="text-2xl font-black text-stone-950">Enroll in a course</h3>
         <p className="mt-2 text-sm leading-6 text-stone-600">Send your details and the Pahuna team will confirm the next batch.</p>
         <div className="mt-6 grid gap-4">

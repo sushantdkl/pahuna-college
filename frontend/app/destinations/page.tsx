@@ -1,50 +1,73 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ButtonLink, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
-import { destinations, images } from "@/lib/pahuna-content";
+import { ButtonLink, PageHero, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { getDestinations, type PublicDestination } from "@/lib/api/public-catalog";
+import { resolveApiAssetUrl } from "@/lib/api/axios-instance";
+import { images, safeImage } from "@/lib/pahuna-content";
 
 export default function DestinationsPage() {
-  return (
-    <main className="min-h-screen bg-[#fffaf0] text-stone-950">
-      <SiteHeader />
-      <section className="relative overflow-hidden bg-stone-950 text-white">
-        <Image src={images.karnaliHero} alt="Karnali destinations" fill priority sizes="100vw" className="object-cover opacity-60" />
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-emerald-950/70 to-transparent" />
-        <SectionShell className="relative z-10 py-24">
-          <div className="max-w-3xl">
-            <p className="text-xs font-black uppercase tracking-[0.34em] text-emerald-200">Destinations</p>
-            <h1 className="mt-4 text-5xl font-black tracking-tight sm:text-6xl">Surkhet first, Karnali next.</h1>
-            <p className="mt-6 text-lg leading-8 text-white/80">A practical visual entry for Rara, Phoksundo, Kupinde Daha, river routes, and cultural extensions.</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/explore">Explore Surkhet</ButtonLink>
-              <ButtonLink href="/trip-planner" variant="secondary">Plan route</ButtonLink>
-            </div>
-          </div>
-        </SectionShell>
-      </section>
+  const [destinations, setDestinations] = useState<PublicDestination[]>([]);
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
+  useEffect(() => {
+    getDestinations({ limit: 50 })
+      .then((response) => setDestinations(response.data || []))
+      .catch((failure: Error) => setError(failure.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    if (!needle) return destinations;
+    return destinations.filter((destination) => [destination.name, destination.description, destination.category, destination.district, ...destination.attractions].filter(Boolean).join(" ").toLowerCase().includes(needle));
+  }, [destinations, query]);
+
+  return (
+    <PageShell>
+      <SiteHeader />
+      <PageHero eyebrow="Destinations" title="Surkhet first, Karnali next." description="Browse active destinations maintained by the Pahuna team, then move directly into route planning and local support." image={images.karnaliHero}>
+        <ButtonLink href="/trip-planner">Plan your route</ButtonLink>
+        <ButtonLink href="/contact" variant="secondary">Ask a local</ButtonLink>
+      </PageHero>
       <SectionShell>
-        <SectionHeader title="Popular Karnali destinations" description="Each card keeps the action visible and routes back to inquiry or planning instead of dead buttons." />
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {destinations.map((destination) => (
-            <article id={destination.title.toLowerCase().split(" ")[0]} key={destination.title} className="overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
-              <div className="relative h-64">
-                <Image src={destination.image || images.destinationFallback} alt={destination.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
-              </div>
-              <div className="p-6">
-                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">{destination.eyebrow}</p>
-                <h2 className="mt-2 text-2xl font-black">{destination.title}</h2>
-                <p className="mt-3 text-sm leading-6 text-stone-600">{destination.description}</p>
-                <div className="mt-6 grid gap-2 sm:grid-cols-2">
-                  <Link href="/trip-planner" className="rounded-xl border border-emerald-200 px-3 py-2 text-center text-xs font-bold text-emerald-800 hover:bg-emerald-50">Plan Trip</Link>
-                  <Link href="/contact" className="rounded-xl bg-emerald-700 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-800">Ask Route</Link>
-                </div>
-              </div>
-            </article>
-          ))}
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <SectionHeader eyebrow="Explore Karnali" title="Places worth building a journey around." description="Every published destination comes from the same catalog managed in the dashboard." />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search place, district, or attraction" className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 md:max-w-sm" />
         </div>
+        {loading || error || !filtered.length ? (
+          <CatalogState title={loading ? "Loading destinations" : error ? "Destinations are temporarily unavailable" : "No destinations found"} description={error || (loading ? "Fetching the latest published places." : "Try a broader search term.")} />
+        ) : (
+          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((destination) => (
+              <article key={destination._id} className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5 transition hover:-translate-y-1 hover:shadow-xl">
+                <Link href={`/destinations/${destination.slug}`} className="relative block h-64 overflow-hidden bg-emerald-50">
+                  <Image unoptimized src={safeImage(resolveApiAssetUrl(destination.images[0]), images.destinationFallback)} alt={destination.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition duration-700 group-hover:scale-105" />
+                  {destination.isFeatured ? <span className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-950">Featured</span> : null}
+                </Link>
+                <div className="flex flex-1 flex-col p-6">
+                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">{destination.category || "Destination"}{destination.district ? ` · ${destination.district}` : ""}</p>
+                  <h2 className="mt-2 text-2xl font-black">{destination.name}</h2>
+                  <p className="mt-3 line-clamp-3 text-sm leading-6 text-stone-600">{destination.description}</p>
+                  <div className="mt-auto grid gap-2 pt-6 sm:grid-cols-2">
+                    <Link href={`/destinations/${destination.slug}`} className="rounded-xl border border-emerald-200 px-3 py-2 text-center text-xs font-bold text-emerald-800 hover:bg-emerald-50">View details</Link>
+                    <Link href="/trip-planner" className="rounded-xl bg-emerald-700 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-800">Plan trip</Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </SectionShell>
       <SiteFooter />
-    </main>
+    </PageShell>
   );
+}
+
+function CatalogState({ title, description }: { title: string; description: string }) {
+  return <div className="mt-10 rounded-[28px] border border-dashed border-emerald-900/20 bg-white/70 p-12 text-center"><h2 className="text-2xl font-black">{title}</h2><p className="mt-3 text-sm text-stone-600">{description}</p></div>;
 }

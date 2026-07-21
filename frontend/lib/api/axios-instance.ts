@@ -12,6 +12,12 @@ function getApiBaseUrl() {
     : `${apiOrigin.replace(/\/$/, "")}/api/v1`;
 }
 
+export function resolveApiAssetUrl(value?: string) {
+  const path = value?.trim();
+  if (!path || !path.startsWith("/uploads/")) return path;
+  return `${getApiBaseUrl().replace(/\/api\/v1$/, "")}${path}`;
+}
+
 // Shared response shape mirrors the Express ApiResponseHelper used by the backend.
 export type ApiResponse<T> = {
   success: boolean;

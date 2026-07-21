@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
 import { useAuth } from "@/context/AuthContext";
-import { featuredStays, images, safeImage } from "@/lib/pahuna-content";
+import { getHotels, publicHotelToStay } from "@/lib/api/public-catalog";
+import { images, safeImage, type StayCard } from "@/lib/pahuna-content";
 
 const fallbackMap = "https://maps.google.com/?q=Surkhet+Hotels";
 const ALL = "All";
@@ -24,25 +25,35 @@ const HotelMap = dynamic(
 
 export default function HotelsPage() {
   const { isAuthenticated } = useAuth();
+  const [stays, setStays] = useState<StayCard[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [activeType, setActiveType] = useState(ALL);
   const [activeArea, setActiveArea] = useState(ALL);
   const [activeFeature, setActiveFeature] = useState(ALL);
   const [sort, setSort] = useState("recommended");
 
+  useEffect(() => {
+    getHotels({ limit: 50 })
+      .then((response) => setStays((response.data || []).map(publicHotelToStay)))
+      .catch((failure: Error) => setError(failure.message))
+      .finally(() => setLoading(false));
+  }, []);
+
   const options = useMemo(() => {
     const unique = (values: string[]) => [ALL, ...Array.from(new Set(values.filter(Boolean))).sort()];
 
     return {
-      types: unique(featuredStays.map((stay) => stay.type)),
-      areas: unique(featuredStays.map((stay) => stay.area)),
-      features: unique(featuredStays.flatMap((stay) => [...stay.amenities, ...(stay.services || [])])),
+      types: unique(stays.map((stay) => stay.type)),
+      areas: unique(stays.map((stay) => stay.area)),
+      features: unique(stays.flatMap((stay) => [...stay.amenities, ...(stay.services || [])])),
     };
-  }, []);
+  }, [stays]);
 
   const visibleStays = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    const filtered = featuredStays.filter((stay) => {
+    const filtered = stays.filter((stay) => {
       const matchesType = activeType === ALL || stay.type === activeType;
       const matchesArea = activeArea === ALL || stay.area === activeArea;
       const features = [...stay.amenities, ...(stay.services || [])];
@@ -80,10 +91,10 @@ export default function HotelsPage() {
 
       return Number(Boolean(b.featured)) - Number(Boolean(a.featured));
     });
-  }, [activeArea, activeFeature, activeType, query, sort]);
+  }, [activeArea, activeFeature, activeType, query, sort, stays]);
 
-  const featured = featuredStays.filter((stay) => stay.featured).slice(0, 3);
-  const mappedCount = featuredStays.filter((stay) => typeof stay.latitude === "number" && typeof stay.longitude === "number").length;
+  const featured = stays.filter((stay) => stay.featured).slice(0, 3);
+  const mappedCount = stays.filter((stay) => typeof stay.latitude === "number" && typeof stay.longitude === "number").length;
 
   return (
     <PageShell>
@@ -92,12 +103,13 @@ export default function HotelsPage() {
         <div className="grid gap-8 lg:grid-cols-[1fr_390px] lg:items-end">
           <div>
             <SectionHeader
+              as="h1"
               eyebrow="Stays & services"
               title="Search Surkhet stays with provider-style details."
               description="A richer Pahuna stay explorer inspired by the reference: filters, verified/public listing badges, details pages, Google Maps, and inquiry-first booking safety."
             />
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              <StatTile value={`${featuredStays.length}`} label="stays & services" />
+              <StatTile value={`${stays.length}`} label="stays & services" />
               <StatTile value={`${mappedCount}`} label="map-ready listings" />
               <StatTile value={`${featured.length}`} label="featured stays" />
             </div>
@@ -119,7 +131,7 @@ export default function HotelsPage() {
             {featured.map((stay) => (
               <Link key={stay.slug} href={`/hotels/${stay.slug}`} className="group overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
                 <div className="relative h-56 bg-emerald-50">
-                  <Image src={safeImage(stay.image, images.hotelFallback)} alt={`${stay.name} featured stay`} fill sizes="(max-width: 1024px) 100vw, 33vw" className="object-cover transition duration-700 group-hover:scale-105" />
+                  <Image unoptimized src={safeImage(stay.image, images.hotelFallback)} alt={`${stay.name} featured stay`} fill sizes="(max-width: 1024px) 100vw, 33vw" className="object-cover transition duration-700 group-hover:scale-105" />
                   <div className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-950">Featured</div>
                 </div>
                 <div className="p-5">
@@ -146,7 +158,7 @@ export default function HotelsPage() {
           </div>
           <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm font-semibold text-stone-600">
-              Showing {visibleStays.length} of {featuredStays.length} stay listings.
+              Showing {visibleStays.length} of {stays.length} stay listings.
             </p>
             <select
               value={sort}
@@ -164,7 +176,11 @@ export default function HotelsPage() {
       </SectionShell>
 
       <SectionShell className="pt-4">
-        {visibleStays.length ? (
+        {loading ? (
+          <CatalogState title="Loading stays" description="Fetching the latest active hotel listings." />
+        ) : error ? (
+          <CatalogState title="Stays are temporarily unavailable" description={error} />
+        ) : visibleStays.length ? (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {visibleStays.map((stay) => (
               <StayListingCard key={stay.slug} stay={stay} isAuthenticated={isAuthenticated} />
@@ -185,7 +201,7 @@ export default function HotelsPage() {
   );
 }
 
-function StayListingCard({ stay, isAuthenticated }: { stay: (typeof featuredStays)[number]; isAuthenticated: boolean }) {
+function StayListingCard({ stay, isAuthenticated }: { stay: StayCard; isAuthenticated: boolean }) {
   const detailPath = `/hotels/${stay.slug}`;
   const inquiryPath = `/contact?topic=${encodeURIComponent(`Availability for ${stay.name}`)}&hotel=${encodeURIComponent(stay.name)}&type=AVAILABILITY`;
   const actionHref = isAuthenticated
@@ -198,7 +214,7 @@ function StayListingCard({ stay, isAuthenticated }: { stay: (typeof featuredStay
   return (
               <article key={stay.slug} className="flex h-full flex-col overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
                 <div className="relative h-56 bg-emerald-50">
-                  <Image src={safeImage(stay.image, images.hotelFallback)} alt={`${stay.name} in ${stay.area}`} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
+                  <Image unoptimized src={safeImage(stay.image, images.hotelFallback)} alt={`${stay.name} in ${stay.area}`} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
                   <div className="absolute left-4 top-4 flex flex-wrap gap-2">
                     {stay.verificationStatus === "VERIFIED" || stay.verificationStatus === "PARTNER" ? <Badge tone="verified" label="Verified" /> : null}
                     {stay.publicListing ? <Badge tone="public" label="Public listing" /> : null}
@@ -236,6 +252,15 @@ function StayListingCard({ stay, isAuthenticated }: { stay: (typeof featuredStay
                   </div>
                 </div>
               </article>
+  );
+}
+
+function CatalogState({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="rounded-[28px] border border-dashed border-emerald-900/20 bg-white/70 p-12 text-center">
+      <h2 className="text-2xl font-black">{title}</h2>
+      <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600">{description}</p>
+    </div>
   );
 }
 

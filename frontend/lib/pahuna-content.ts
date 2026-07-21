@@ -71,6 +71,7 @@ export const navItems: NavItem[] = [
   { label: "Stays", href: "/hotels" },
   { label: "Food", href: "/food" },
   { label: "Destinations", href: "/destinations" },
+  { label: "Experiences", href: "/experiences" },
   { label: "Trip Planner", href: "/trip-planner" },
   { label: "Routes", href: "/routes" },
   { label: "Packages", href: "/trip-packages" },

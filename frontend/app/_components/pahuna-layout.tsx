@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,6 +13,7 @@ export function SiteHeader() {
   const isAdmin = user?.role?.toLowerCase() === "admin";
   const accountHref = isAdmin ? "/admin" : "/profile";
   const accountLabel = isAdmin ? "Admin" : "Profile";
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-emerald-900/10 bg-[#fffdf7]/95 backdrop-blur-xl">
@@ -23,19 +24,11 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden min-w-0 flex-1 items-center justify-center gap-1 xl:flex">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 ${
-                pathname === item.href || pathname.startsWith(`${item.href}/`)
-                  ? "bg-emerald-50 text-emerald-800"
-                  : "text-stone-600 hover:bg-emerald-50 hover:text-emerald-800"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          <DesktopMenu label="Discover" pathname={pathname} items={navItems.filter((item) => ["/explore", "/destinations", "/experiences", "/food", "/routes"].includes(item.href))} />
+          <DesktopLink label="Stays" href="/hotels" pathname={pathname} />
+          <DesktopMenu label="Plan" pathname={pathname} items={navItems.filter((item) => ["/trip-planner", "/trip-packages"].includes(item.href))} />
+          <DesktopMenu label="Services" pathname={pathname} items={navItems.filter((item) => ["/training", "/consulting", "/partner"].includes(item.href))} />
+          <DesktopLink label="Contact" href="/contact" pathname={pathname} />
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
@@ -65,36 +58,28 @@ export function SiteHeader() {
           )}
           <Link
             href="/contact"
-            className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-white shadow-lg shadow-emerald-800/15 transition hover:bg-emerald-800"
+            className="hidden rounded-full bg-emerald-700 px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-white shadow-lg shadow-emerald-800/15 transition hover:bg-emerald-800 sm:inline-flex"
           >
             Send inquiry
           </Link>
+          <button type="button" onClick={() => setMobileOpen((open) => !open)} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-emerald-900/10 bg-white text-xl text-emerald-900 xl:hidden" aria-expanded={mobileOpen} aria-label="Toggle navigation">
+            {mobileOpen ? "×" : "☰"}
+          </button>
         </div>
       </div>
-      <div className="no-scrollbar flex gap-2 overflow-x-auto border-t border-emerald-900/5 px-4 py-2 xl:hidden">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`shrink-0 rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition ${
-              pathname === item.href || pathname.startsWith(`${item.href}/`)
-                ? "bg-emerald-700 text-white"
-                : "bg-white text-stone-600 hover:bg-emerald-50 hover:text-emerald-800"
-            }`}
-          >
-            {item.label}
-          </Link>
-        ))}
-        {!loading && user ? (
-          <Link href={accountHref} className="shrink-0 rounded-full bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 shadow-sm">
-            {accountLabel}
-          </Link>
-        ) : (
-          <Link href="/login" className="shrink-0 rounded-full bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 shadow-sm">
-            Sign in
-          </Link>
-        )}
-      </div>
+      {mobileOpen ? (
+        <div className="border-t border-emerald-900/10 bg-[#fffdf7] px-4 py-5 shadow-xl xl:hidden">
+          <nav className="mx-auto grid max-w-7xl gap-1 sm:grid-cols-2">
+            {navItems.map((item) => (
+              <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} className={`rounded-xl px-4 py-3 text-sm font-bold transition ${pathname === item.href || pathname.startsWith(`${item.href}/`) ? "bg-emerald-700 text-white" : "text-stone-700 hover:bg-emerald-50 hover:text-emerald-800"}`}>{item.label}</Link>
+            ))}
+          </nav>
+          <div className="mx-auto mt-4 flex max-w-7xl flex-wrap gap-2 border-t border-emerald-900/10 pt-4">
+            <Link href="/contact" onClick={() => setMobileOpen(false)} className="rounded-full bg-emerald-700 px-5 py-3 text-sm font-bold text-white">Send inquiry</Link>
+            {!loading && user ? <><Link href={accountHref} onClick={() => setMobileOpen(false)} className="rounded-full bg-amber-100 px-5 py-3 text-sm font-bold text-amber-900">{accountLabel}</Link><button type="button" onClick={() => logout(isAdmin ? "/admin/login" : "/login")} className="rounded-full border border-red-100 px-5 py-3 text-sm font-bold text-red-600">Logout</button></> : <Link href="/login" onClick={() => setMobileOpen(false)} className="rounded-full bg-amber-100 px-5 py-3 text-sm font-bold text-amber-900">Sign in</Link>}
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 }
@@ -111,6 +96,10 @@ export function SiteFooter() {
           <p className="mt-4 max-w-sm text-sm leading-6 text-stone-400">
             Surkhet-first Karnali tourism platform for stays, routes, food, destinations, and local travel support.
           </p>
+          <div className="mt-5 grid gap-2 text-sm text-stone-400">
+            <a href="mailto:hello@pahuna.com" className="hover:text-emerald-300">hello@pahuna.com</a>
+            <span>Surkhet · Karnali gateway</span>
+          </div>
         </div>
         <FooterGroup title="Explore" links={["Explore Surkhet", "Stays", "Food", "Destinations"]} />
         <FooterGroup title="Plan" links={["Trip Planner", "Routes", "Gallery", "Contact", "Partner"]} />
@@ -157,21 +146,69 @@ export function SectionShell({
   );
 }
 
+function DesktopLink({ label, href, pathname }: { label: string; href: string; pathname: string }) {
+  const active = pathname === href || pathname.startsWith(`${href}/`);
+  return <Link href={href} className={`rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition ${active ? "bg-emerald-50 text-emerald-800" : "text-stone-600 hover:bg-emerald-50 hover:text-emerald-800"}`}>{label}</Link>;
+}
+
+function DesktopMenu({ label, pathname, items }: { label: string; pathname: string; items: { label: string; href: string }[] }) {
+  const active = items.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
+  return (
+    <details className="group relative">
+      <summary className={`cursor-pointer list-none rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition [&::-webkit-details-marker]:hidden ${active ? "bg-emerald-50 text-emerald-800" : "text-stone-600 hover:bg-emerald-50 hover:text-emerald-800"}`}>{label} <span aria-hidden="true" className="ml-1">▾</span></summary>
+      <div className="absolute left-1/2 top-full z-50 mt-2 min-w-52 -translate-x-1/2 rounded-2xl border border-emerald-900/10 bg-white p-2 shadow-2xl">
+        {items.map((item) => <Link key={item.href} href={item.href} className="block rounded-xl px-4 py-3 text-sm font-bold text-stone-700 hover:bg-emerald-50 hover:text-emerald-800">{item.label}</Link>)}
+      </div>
+    </details>
+  );
+}
+
+export function PageHero({
+  eyebrow,
+  title,
+  description,
+  image,
+  children,
+}: Readonly<{
+  eyebrow: string;
+  title: string;
+  description: string;
+  image?: string;
+  children?: ReactNode;
+}>) {
+  return (
+    <section className="relative overflow-hidden bg-gradient-to-br from-stone-950 via-emerald-950 to-stone-900 text-white">
+      {image ? <Image src={image} alt="" fill priority sizes="100vw" className="object-cover opacity-25" /> : null}
+      <div className="absolute -left-20 top-0 h-64 w-64 rounded-full bg-emerald-400/10 blur-3xl" />
+      <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" />
+      <SectionShell className="relative z-10 py-24 text-center sm:py-28">
+        <p className="text-xs font-black uppercase tracking-[0.32em] text-emerald-200">{eyebrow}</p>
+        <h1 className="mx-auto mt-5 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">{title}</h1>
+        <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-white/75 sm:text-lg">{description}</p>
+        {children ? <div className="mt-8 flex flex-wrap justify-center gap-3">{children}</div> : null}
+      </SectionShell>
+    </section>
+  );
+}
+
 export function SectionHeader({
   eyebrow,
   title,
   description,
   align = "left",
+  as = "h2",
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   align?: "left" | "center";
+  as?: "h1" | "h2";
 }) {
+  const Heading = as;
   return (
     <div className={align === "center" ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
       {eyebrow ? <p className="text-xs font-black uppercase tracking-[0.28em] text-emerald-700">{eyebrow}</p> : null}
-      <h2 className="mt-3 text-3xl font-black tracking-tight text-stone-950 sm:text-4xl">{title}</h2>
+      <Heading className="mt-3 text-3xl font-black tracking-tight text-stone-950 sm:text-4xl">{title}</Heading>
       {description ? <p className="mt-4 text-base leading-7 text-stone-600">{description}</p> : null}
     </div>
   );
