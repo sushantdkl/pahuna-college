@@ -11,6 +11,8 @@ import adminInquiryRoutes from "./routes/admin-inquiry.route";
 import adminItineraryRoutes from "./routes/admin-itinerary.route";
 import adminNewsletterSubscriberRoutes from "./routes/admin-newsletter-subscriber.route";
 import adminPartnerApplicationRoutes from "./routes/admin-partner-application.route";
+import adminTrainingCourseRoutes from "./routes/admin-training-course.route";
+import adminTrainingEnrollmentRoutes from "./routes/admin-training-enrollment.route";
 import adminUserRoutes from "./routes/admin-user.route";
 import blogPostRoutes from "./routes/blog-post.route";
 import contactMessageRoutes from "./routes/contact-message.route";
@@ -18,6 +20,7 @@ import inquiryRoutes from "./routes/inquiry.route";
 import itineraryRoutes from "./routes/itinerary.route";
 import newsletterSubscriberRoutes from "./routes/newsletter-subscriber.route";
 import partnerApplicationRoutes from "./routes/partner-application.route";
+import trainingRoutes from "./routes/training.route";
 import userRoutes from "./routes/user.route";
 
 const app: Application = express();
@@ -65,6 +68,12 @@ app.use("/api/v1/partner-applications", partnerApplicationRoutes);
 app.use(
   "/api/v1/admin/partner-applications",
   adminPartnerApplicationRoutes,
+);
+app.use("/api/v1", trainingRoutes);
+app.use("/api/v1/admin/training-courses", adminTrainingCourseRoutes);
+app.use(
+  "/api/v1/admin/training-enrollments",
+  adminTrainingEnrollmentRoutes,
 );
 
 app.use((req: Request, res: Response) => {
