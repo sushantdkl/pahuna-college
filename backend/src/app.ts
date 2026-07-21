@@ -3,6 +3,8 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import multer from "multer";
 import adminBlogPostRoutes from "./routes/admin-blog-post.route";
+import adminConsultingLeadRoutes from "./routes/admin-consulting-lead.route";
+import adminConsultingServiceRoutes from "./routes/admin-consulting-service.route";
 import adminContactMessageRoutes from "./routes/admin-contact-message.route";
 import adminDestinationRoutes from "./routes/admin-destination.route";
 import adminExperienceRoutes from "./routes/admin-experience.route";
@@ -15,6 +17,7 @@ import adminTrainingCourseRoutes from "./routes/admin-training-course.route";
 import adminTrainingEnrollmentRoutes from "./routes/admin-training-enrollment.route";
 import adminUserRoutes from "./routes/admin-user.route";
 import blogPostRoutes from "./routes/blog-post.route";
+import consultingRoutes from "./routes/consulting.route";
 import contactMessageRoutes from "./routes/contact-message.route";
 import inquiryRoutes from "./routes/inquiry.route";
 import itineraryRoutes from "./routes/itinerary.route";
@@ -75,6 +78,9 @@ app.use(
   "/api/v1/admin/training-enrollments",
   adminTrainingEnrollmentRoutes,
 );
+app.use("/api/v1", consultingRoutes);
+app.use("/api/v1/admin/consulting-services", adminConsultingServiceRoutes);
+app.use("/api/v1/admin/consulting-leads", adminConsultingLeadRoutes);
 
 app.use((req: Request, res: Response) => {
   return res.status(404).json({
