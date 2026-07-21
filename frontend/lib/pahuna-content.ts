@@ -72,6 +72,7 @@ export const navItems: NavItem[] = [
   { label: "Food", href: "/food" },
   { label: "Destinations", href: "/destinations" },
   { label: "Trip Planner", href: "/trip-planner" },
+  { label: "Training", href: "/training" },
   { label: "Blog", href: "/blog" },
   { label: "Partner", href: "/partner" },
   { label: "Contact", href: "/contact" },
