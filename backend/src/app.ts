@@ -15,6 +15,7 @@ import adminNewsletterSubscriberRoutes from "./routes/admin-newsletter-subscribe
 import adminPartnerApplicationRoutes from "./routes/admin-partner-application.route";
 import adminTrainingCourseRoutes from "./routes/admin-training-course.route";
 import adminTrainingEnrollmentRoutes from "./routes/admin-training-enrollment.route";
+import adminTripPackageRoutes from "./routes/admin-trip-package.route";
 import adminUserRoutes from "./routes/admin-user.route";
 import blogPostRoutes from "./routes/blog-post.route";
 import consultingRoutes from "./routes/consulting.route";
@@ -24,6 +25,7 @@ import itineraryRoutes from "./routes/itinerary.route";
 import newsletterSubscriberRoutes from "./routes/newsletter-subscriber.route";
 import partnerApplicationRoutes from "./routes/partner-application.route";
 import trainingRoutes from "./routes/training.route";
+import tripPackageRoutes from "./routes/trip-package.route";
 import userRoutes from "./routes/user.route";
 
 const app: Application = express();
@@ -81,6 +83,8 @@ app.use(
 app.use("/api/v1", consultingRoutes);
 app.use("/api/v1/admin/consulting-services", adminConsultingServiceRoutes);
 app.use("/api/v1/admin/consulting-leads", adminConsultingLeadRoutes);
+app.use("/api/v1/trip-packages", tripPackageRoutes);
+app.use("/api/v1/admin/trip-packages", adminTripPackageRoutes);
 
 app.use((req: Request, res: Response) => {
   return res.status(404).json({
