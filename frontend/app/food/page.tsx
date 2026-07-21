@@ -1,37 +1,56 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
-import { foodProviders, images, safeImage } from "@/lib/pahuna-content";
+import { foodProviders as fallbackFoodProviders, images, safeImage } from "@/lib/pahuna-content";
+import { getFoodProviders, type FoodProvider as ApiFoodProvider } from "@/lib/actions/final-crud-actions";
 
 const ALL = "All";
 const foodCategories = ["Cafes", "Momo & Fast Food", "Family Restaurants", "Viewpoint Cafes", "Local Food", "Events & Party Venues"];
+type FoodProviderCard = (typeof fallbackFoodProviders)[number] | ApiFoodProvider;
 
 export default function FoodPage() {
+  const [foodProviders, setFoodProviders] = useState<FoodProviderCard[]>(fallbackFoodProviders);
+  const [apiNotice, setApiNotice] = useState("");
   const [query, setQuery] = useState("");
   const [activeType, setActiveType] = useState(ALL);
   const [activeArea, setActiveArea] = useState(ALL);
   const [activeCuisine, setActiveCuisine] = useState(ALL);
   const [activeFeature, setActiveFeature] = useState(ALL);
 
+  useEffect(() => {
+    async function loadFoodProviders() {
+      try {
+        const response = await getFoodProviders({ limit: 50 });
+        if (response.data?.length) {
+          setFoodProviders(response.data);
+          setApiNotice("");
+        }
+      } catch {
+        setApiNotice("Showing curated public listings while live food provider data is unavailable.");
+      }
+    }
+    void loadFoodProviders();
+  }, []);
+
   const options = useMemo(() => {
     const unique = (values: string[]) => [ALL, ...Array.from(new Set(values.filter(Boolean))).sort()];
 
     return {
-      types: unique(foodProviders.map((provider) => provider.typeLabel)),
+      types: unique(foodProviders.map((provider) => typeLabel(provider))),
       areas: unique(foodProviders.map((provider) => provider.area)),
       cuisines: unique(foodProviders.flatMap((provider) => provider.cuisines)),
       features: unique(foodProviders.flatMap((provider) => provider.features)),
     };
-  }, []);
+  }, [foodProviders]);
 
   const visibleProviders = useMemo(() => {
     const needle = query.trim().toLowerCase();
 
     return foodProviders.filter((provider) => {
-      if (activeType !== ALL && provider.typeLabel !== activeType) return false;
+      if (activeType !== ALL && typeLabel(provider) !== activeType) return false;
       if (activeArea !== ALL && provider.area !== activeArea) return false;
       if (activeCuisine !== ALL && !provider.cuisines.includes(activeCuisine)) return false;
       if (activeFeature !== ALL && !provider.features.includes(activeFeature)) return false;
@@ -40,7 +59,7 @@ export default function FoodPage() {
       return [
         provider.name,
         provider.type,
-        provider.typeLabel,
+        typeLabel(provider),
         provider.area,
         provider.district,
         provider.shortDescription,
@@ -49,7 +68,7 @@ export default function FoodPage() {
         ...provider.features,
       ].join(" ").toLowerCase().includes(needle);
     });
-  }, [activeArea, activeCuisine, activeFeature, activeType, query]);
+  }, [activeArea, activeCuisine, activeFeature, activeType, foodProviders, query]);
 
   const featured = foodProviders.filter((provider) => provider.featured).slice(0, 4);
 
@@ -118,6 +137,7 @@ export default function FoodPage() {
             <FilterSelect label="Feature" value={activeFeature} onChange={setActiveFeature} options={options.features} />
           </div>
           <p className="mt-4 text-sm font-semibold text-stone-600">Showing {visibleProviders.length} of {foodProviders.length} food listings.</p>
+          {apiNotice ? <p className="mt-2 text-sm font-semibold text-amber-700">{apiNotice}</p> : null}
         </div>
 
         {visibleProviders.length ? (
@@ -141,15 +161,15 @@ export default function FoodPage() {
   );
 }
 
-function FoodCard({ provider, compact = false }: { provider: (typeof foodProviders)[number]; compact?: boolean }) {
+function FoodCard({ provider, compact = false }: { provider: FoodProviderCard; compact?: boolean }) {
   const trustBadge = provider.verificationStatus === "VERIFIED" || provider.verificationStatus === "PARTNER" ? "Verified" : "Public Listing";
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
       <div className={`relative bg-emerald-50 ${compact ? "h-48" : "h-56"}`}>
-        <Image src={safeImage(provider.image, images.foodFallback)} alt={provider.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
+        <Image src={safeImage(imageFor(provider), images.foodFallback)} alt={provider.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
         <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-          <span className="rounded-full bg-white/95 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-800">{provider.typeLabel}</span>
+          <span className="rounded-full bg-white/95 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-800">{typeLabel(provider)}</span>
           <span className="rounded-full bg-emerald-600 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white">{trustBadge}</span>
         </div>
         {provider.rating ? (
@@ -172,6 +192,15 @@ function FoodCard({ provider, compact = false }: { provider: (typeof foodProvide
       </div>
     </article>
   );
+}
+
+function typeLabel(provider: FoodProviderCard) {
+  return "typeLabel" in provider ? provider.typeLabel : provider.type;
+}
+
+function imageFor(provider: FoodProviderCard) {
+  if ("image" in provider) return provider.image;
+  return provider.images?.[0] || images.foodFallback;
 }
 
 function FilterSelect({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: string[] }) {
