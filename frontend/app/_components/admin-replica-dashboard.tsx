@@ -15,18 +15,18 @@ type AdminNavItem = {
 
 export const adminReplicaNavItems: AdminNavItem[] = [
   { label: "Overview", href: "/admin", section: "OV" },
-  { label: "Hotels", href: "/dashboard/hotels", section: "HT" },
-  { label: "Content", href: "/dashboard/content", section: "CT" },
+  { label: "Hotels / Stays", href: "/dashboard/hotels", section: "HT" },
+  { label: "Destinations", href: "/dashboard/content", section: "DS" },
   { label: "Experiences", href: "/dashboard/experiences", section: "EX" },
-  { label: "Trip Planner", href: "/dashboard/trip-planner", section: "TP" },
+  { label: "Itineraries", href: "/dashboard/trip-planner", section: "IT" },
   { label: "Trip Packages", href: "/dashboard/trip-packages", section: "PK" },
-  { label: "Routes", href: "/dashboard/routes", section: "RT" },
-  { label: "Food", href: "/dashboard/food", section: "FD" },
+  { label: "Routes & Segments", href: "/dashboard/routes", section: "RT" },
+  { label: "Food Providers", href: "/dashboard/food", section: "FD" },
   { label: "Training", href: "/dashboard/training", section: "TR" },
   { label: "Consulting", href: "/dashboard/consulting", section: "CO" },
-  { label: "Leads", href: "/dashboard/leads", section: "LD" },
-  { label: "Messages", href: "/dashboard/messages", section: "MS" },
-  { label: "Partners", href: "/dashboard/partners", section: "PR" },
+  { label: "Leads & Inquiries", href: "/dashboard/leads", section: "LD" },
+  { label: "Contact Messages", href: "/dashboard/messages", section: "MS" },
+  { label: "Partner Applications", href: "/dashboard/partners", section: "PR" },
   { label: "Users", href: "/admin/users", section: "US" },
 ];
 
@@ -50,7 +50,7 @@ export function AdminReplicaFrame({ children }: { children: ReactNode }) {
   if (loading || !user || !isAdmin) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#f7f4ed] px-4">
-        <div className="rounded-xl border border-stone-200 bg-white px-6 py-4 text-sm font-medium text-stone-600 shadow-sm">
+        <div className="rounded-[8px] border border-stone-200 bg-white px-6 py-4 text-sm font-medium text-stone-600 shadow-sm">
           Checking admin session...
         </div>
       </main>
@@ -107,7 +107,7 @@ export function AdminReplicaFrame({ children }: { children: ReactNode }) {
             </div>
             <div className="flex items-center gap-4">
               <Link href="/" className="hidden rounded-lg border border-stone-200 px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-emerald-700 sm:inline-flex">
-                Open site
+                Open public site
               </Link>
               <div className="text-right">
                 <p className="text-sm font-medium leading-none">{user.fullName || user.email}</p>
@@ -143,14 +143,14 @@ export function AdminReplicaFrame({ children }: { children: ReactNode }) {
 
 export function ReplicaStatCard({ title, value, subtitle, icon }: { title: string; value: string | number; subtitle?: string; icon: string }) {
   return (
-    <div className="rounded-xl border border-stone-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
+    <div className="rounded-[8px] border border-stone-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-sm text-stone-500">{title}</p>
           <p className="text-2xl font-bold tracking-tight text-stone-950">{value}</p>
           {subtitle ? <p className="text-xs text-stone-500">{subtitle}</p> : null}
         </div>
-        <div className="rounded-xl bg-emerald-50 p-2.5 text-emerald-700">
+        <div className="rounded-[8px] bg-emerald-50 p-2.5 text-emerald-700">
           <MetricIcon name={title || icon} />
         </div>
       </div>
@@ -391,7 +391,7 @@ function SidebarIcon({ label }: { label: string }) {
 
 export function ReplicaDataCard({ title, description, count, children }: { title: string; description?: string; count?: number; children: ReactNode }) {
   return (
-    <section className="rounded-xl border border-stone-200 bg-white shadow-sm">
+    <section className="rounded-[8px] border border-stone-200 bg-white shadow-sm">
       <div className="flex items-center justify-between border-b border-stone-200 px-6 py-4">
         <div>
           <h2 className="text-base font-semibold">{title}</h2>

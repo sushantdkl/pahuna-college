@@ -4,6 +4,19 @@
 :root {
   --background: #fffaf0;
   --foreground: #1c1917;
+  --pahuna-cream: #fffaf0;
+  --pahuna-cream-strong: #f7f1e4;
+  --pahuna-navy: #071121;
+  --pahuna-navy-soft: #111827;
+  --pahuna-green: #006b46;
+  --pahuna-green-action: #047857;
+  --pahuna-green-soft: #e8f4ee;
+  --pahuna-sage: #dfece4;
+  --pahuna-yellow: #f6c443;
+  --pahuna-border: #d8e7dd;
+  --pahuna-muted: #647067;
+  --pahuna-radius: 8px;
+  --pahuna-shadow: 0 18px 55px rgb(7 17 33 / 0.08);
 }
 
 @theme inline {
@@ -29,13 +42,14 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   overflow-x: hidden;
+  text-rendering: optimizeLegibility;
 }
 
 .leaflet-container {
   z-index: 0;
   min-height: 280px;
   width: 100%;
-  border-radius: 1.5rem;
+  border-radius: var(--pahuna-radius);
 }
 
 body > main,
@@ -60,10 +74,20 @@ select {
   -webkit-tap-highlight-color: transparent;
 }
 
+:where(a, button, input, textarea, select, summary):focus-visible {
+  outline: 3px solid rgb(246 196 67 / 0.7);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--pahuna-yellow);
+  color: var(--pahuna-navy);
+}
+
 .auth-input {
   width: 100%;
-  border-radius: 1rem;
-  border: 1px solid rgb(231 229 228);
+  border-radius: var(--pahuna-radius);
+  border: 1px solid var(--pahuna-border);
   background: #fff;
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
@@ -75,6 +99,29 @@ select {
 .auth-input:focus {
   border-color: rgb(16 185 129);
   box-shadow: 0 0 0 4px rgb(209 250 229);
+}
+
+.pahuna-card {
+  border: 1px solid var(--pahuna-border);
+  border-radius: var(--pahuna-radius);
+  background: #fff;
+  box-shadow: var(--pahuna-shadow);
+}
+
+.pahuna-control {
+  width: 100%;
+  border-radius: var(--pahuna-radius);
+  border: 1px solid var(--pahuna-border);
+  background: #fff;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.pahuna-control:focus {
+  border-color: var(--pahuna-green-action);
+  box-shadow: 0 0 0 4px rgb(4 120 87 / 0.12);
 }
 
 .no-scrollbar {

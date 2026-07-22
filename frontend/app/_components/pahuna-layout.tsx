@@ -101,7 +101,7 @@ function RefDesktopMenu({ label, pathname, active, items }: { label: string; pat
   const menuActive = active ?? items.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
   return (
     <details className="group relative">
-      <summary className={`cursor-pointer list-none rounded-lg px-3 py-2 text-sm font-medium transition [&::-webkit-details-marker]:hidden ${menuActive ? "bg-white text-emerald-800 shadow-sm" : "text-stone-600 hover:bg-white/70 hover:text-stone-950"}`}>{label} <span aria-hidden="true" className="ml-1">v</span></summary>
+      <summary className={`cursor-pointer list-none rounded-lg px-3 py-2 text-sm font-medium transition [&::-webkit-details-marker]:hidden ${menuActive ? "bg-white text-emerald-800 shadow-sm" : "text-stone-600 hover:bg-white/70 hover:text-stone-950"}`}>{label} <span aria-hidden="true" className="ml-1">⌄</span></summary>
       <div className="absolute left-1/2 top-full z-50 mt-2 w-72 -translate-x-1/2 rounded-xl border border-stone-200 bg-white p-2 shadow-xl">
         {items.map((item) => <Link key={item.href} href={item.href} className="block rounded-lg px-4 py-3 text-sm font-semibold text-stone-800 hover:bg-emerald-50 hover:text-emerald-800"><span>{item.label}</span>{item.description ? <span className="mt-1 block text-xs font-normal leading-5 text-stone-500">{item.description}</span> : null}</Link>)}
       </div>
@@ -212,6 +212,87 @@ export function PageHero({
         {children ? <div className="mt-8 flex flex-wrap justify-center gap-3">{children}</div> : null}
       </SectionShell>
     </section>
+  );
+}
+
+export function StatusBadge({
+  children,
+  tone = "green",
+}: Readonly<{ children: ReactNode; tone?: "green" | "yellow" | "slate" | "red" }>) {
+  const toneClass =
+    tone === "yellow"
+      ? "border-amber-200 bg-amber-50 text-amber-900"
+      : tone === "red"
+        ? "border-red-200 bg-red-50 text-red-700"
+        : tone === "slate"
+          ? "border-stone-200 bg-stone-50 text-stone-700"
+          : "border-emerald-200 bg-emerald-50 text-emerald-800";
+
+  return <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black ${toneClass}`}>{children}</span>;
+}
+
+export function EmptyState({
+  title,
+  description,
+  action,
+}: Readonly<{ title: string; description: string; action?: ReactNode }>) {
+  return (
+    <div className="rounded-[8px] border border-dashed border-emerald-200 bg-white/80 p-10 text-center shadow-sm">
+      <div className="mx-auto h-1.5 w-16 rounded-full bg-amber-400" />
+      <h2 className="mt-5 text-2xl font-black text-stone-950">{title}</h2>
+      <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600">{description}</p>
+      {action ? <div className="mt-6">{action}</div> : null}
+    </div>
+  );
+}
+
+export function ErrorState({
+  title = "Something went wrong",
+  description,
+  action,
+}: Readonly<{ title?: string; description: string; action?: ReactNode }>) {
+  return (
+    <div className="rounded-[8px] border border-red-200 bg-red-50 p-5 text-red-800">
+      <h2 className="text-sm font-black">{title}</h2>
+      <p className="mt-2 text-sm leading-6">{description}</p>
+      {action ? <div className="mt-4">{action}</div> : null}
+    </div>
+  );
+}
+
+export function LoadingSkeleton({ rows = 3 }: Readonly<{ rows?: number }>) {
+  return (
+    <div className="grid gap-4">
+      {Array.from({ length: rows }).map((_, index) => (
+        <div key={index} className="rounded-[8px] border border-stone-200 bg-white p-5 shadow-sm">
+          <div className="h-4 w-1/3 animate-pulse rounded bg-stone-200" />
+          <div className="mt-4 h-3 w-full animate-pulse rounded bg-stone-100" />
+          <div className="mt-2 h-3 w-2/3 animate-pulse rounded bg-stone-100" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function MapPanel({
+  title,
+  description,
+  children,
+}: Readonly<{ title: string; description?: string; children?: ReactNode }>) {
+  return (
+    <div className="overflow-hidden rounded-[8px] border border-emerald-100 bg-white shadow-sm">
+      <div className="relative min-h-64 bg-[linear-gradient(135deg,#eaf4ee,#f8fbf7)]">
+        <div className="absolute inset-0 opacity-70" style={{ backgroundImage: "radial-gradient(circle at 20% 30%, #cfe7d6 0 8%, transparent 9%), radial-gradient(circle at 72% 45%, #dbe7dd 0 12%, transparent 13%), linear-gradient(120deg, transparent 45%, #c9ddd2 46%, transparent 48%)" }} />
+        <span className="absolute left-[48%] top-[45%] h-5 w-5 rounded-full bg-emerald-700 shadow-lg ring-4 ring-white" />
+        <span className="absolute left-[56%] top-[35%] h-4 w-4 rounded-full bg-violet-600 shadow-lg ring-4 ring-white" />
+        <span className="absolute left-[42%] top-[56%] h-4 w-4 rounded-full bg-amber-500 shadow-lg ring-4 ring-white" />
+      </div>
+      <div className="border-t border-emerald-100 p-5">
+        <h3 className="font-black text-stone-950">{title}</h3>
+        {description ? <p className="mt-2 text-sm leading-6 text-stone-600">{description}</p> : null}
+        {children ? <div className="mt-4">{children}</div> : null}
+      </div>
+    </div>
   );
 }
 

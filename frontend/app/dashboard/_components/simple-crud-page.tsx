@@ -6,6 +6,7 @@ import {
   ReplicaDataCard,
   ReplicaStatCard,
 } from "@/app/_components/admin-replica-dashboard";
+import { EmptyState, ErrorState, LoadingSkeleton } from "@/app/_components/pahuna-layout";
 import type { ApiResponse } from "@/lib/api/axios-instance";
 
 type CrudRecord = Record<string, unknown> & {
@@ -236,8 +237,8 @@ export function SimpleCrudPage<T extends CrudRecord>({
           ))}
         </div>
 
-        {notice ? <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">{notice}</p> : null}
-        {error ? <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><span>{error}</span><button onClick={() => void loadRecords()} className="font-bold underline">Retry</button></div> : null}
+        {notice ? <p className="rounded-[8px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">{notice}</p> : null}
+        {error ? <ErrorState description={error} action={<button type="button" onClick={() => void loadRecords()} className="rounded-[8px] border border-red-200 bg-white px-3 py-2 text-xs font-black text-red-700">Retry</button>} /> : null}
 
         <ReplicaDataCard title={`${title} records`} description="Search, filter, view, update, or delete" count={meta.total}>
           <form onSubmit={(event) => { event.preventDefault(); setPage(1); setSearch(query.trim()); }} className="mb-5 grid gap-3 xl:grid-cols-[1fr_repeat(3,180px)_auto]">
@@ -252,7 +253,7 @@ export function SimpleCrudPage<T extends CrudRecord>({
           </form>
 
           {loading ? (
-            <div className="py-14 text-center text-sm font-medium text-stone-500">Loading {title.toLowerCase()}...</div>
+            <LoadingSkeleton rows={4} />
           ) : records.length ? (
             <table className="w-full min-w-[1050px] text-sm">
               <thead>
@@ -284,11 +285,7 @@ export function SimpleCrudPage<T extends CrudRecord>({
               </tbody>
             </table>
           ) : (
-            <div className="py-14 text-center">
-              <p className="font-semibold text-stone-800">No records found.</p>
-              <p className="mt-2 text-sm text-stone-500">Create a record or adjust your filters.</p>
-              <button onClick={openCreate} className="mt-4 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white">{createLabel}</button>
-            </div>
+            <EmptyState title="No records found" description="Create a record or adjust your filters to continue managing this module." action={<button type="button" onClick={openCreate} className="rounded-[8px] bg-emerald-700 px-4 py-2 text-sm font-semibold text-white">{createLabel}</button>} />
           )}
 
           <div className="mt-5 flex items-center justify-between border-t border-stone-200 pt-4 text-sm text-stone-500">
@@ -302,8 +299,8 @@ export function SimpleCrudPage<T extends CrudRecord>({
       </div>
 
       {editing ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/40 p-4">
-          <form onSubmit={saveRecord} className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/40 p-4" role="dialog" aria-modal="true" aria-label={editing === "create" ? createLabel : `Edit ${title}`}>
+          <form onSubmit={saveRecord} className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-[8px] bg-white p-6 shadow-2xl">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-xl font-bold">{editing === "create" ? createLabel : `Edit ${title}`}</h2>
@@ -311,7 +308,7 @@ export function SimpleCrudPage<T extends CrudRecord>({
               </div>
               <button type="button" onClick={() => setEditing(null)} className="rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold">Cancel</button>
             </div>
-            {formError ? <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{formError}</p> : null}
+            {formError ? <p className="mb-4 rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{formError}</p> : null}
             <div className="grid gap-4 md:grid-cols-2">
               {fields.map((field) => (
                 <label key={field.key} className={field.type === "textarea" || field.type === "list" ? "md:col-span-2" : ""}>
@@ -343,15 +340,15 @@ export function SimpleCrudPage<T extends CrudRecord>({
       ) : null}
 
       {viewing ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/40 p-4">
-          <div className="max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/40 p-4" role="dialog" aria-modal="true" aria-label={`${title} details`}>
+          <div className="max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-[8px] bg-white p-6 shadow-2xl">
             <div className="mb-4 flex items-start justify-between">
               <h2 className="text-xl font-bold">{title} details</h2>
               <button onClick={() => setViewing(null)} className="rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold">Close</button>
             </div>
             <dl className="grid gap-3 text-sm">
               {Object.entries(viewing).filter(([key]) => !key.startsWith("__")).map(([key, value]) => (
-                <div key={key} className="rounded-xl border border-stone-100 bg-stone-50 p-3">
+                <div key={key} className="rounded-[8px] border border-stone-100 bg-stone-50 p-3">
                   <dt className="font-semibold text-stone-500">{key}</dt>
                   <dd className="mt-1 whitespace-pre-wrap text-stone-800">{valueLabel(value)}</dd>
                 </div>
@@ -362,8 +359,8 @@ export function SimpleCrudPage<T extends CrudRecord>({
       ) : null}
 
       {deleting ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/40 p-4" role="dialog" aria-modal="true" aria-label="Delete record confirmation">
+          <div className="w-full max-w-md rounded-[8px] bg-white p-6 shadow-2xl">
             <h2 className="text-xl font-bold">Delete record?</h2>
             <p className="mt-2 text-sm text-stone-600">This action removes the selected record from the database.</p>
             <div className="mt-6 flex justify-end gap-3">
