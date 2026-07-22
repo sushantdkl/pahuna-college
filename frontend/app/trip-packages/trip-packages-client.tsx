@@ -60,13 +60,13 @@ export function TripPackagesClient() {
 
   return (
     <div className="mt-10 space-y-6">
-      {feedback ? <p aria-live="polite" className={`rounded-2xl px-4 py-3 text-sm font-semibold ${feedback.tone === "success" ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-700"}`}>{feedback.message}</p> : null}
+      {feedback ? <p aria-live="polite" className={`rounded-[8px] px-4 py-3 text-sm font-semibold ${feedback.tone === "success" ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-700"}`}>{feedback.message}</p> : null}
       {loading ? (
-        <div className="rounded-[28px] border border-stone-200 bg-white p-8 text-sm font-semibold text-stone-500 shadow-sm">Loading active trip packages...</div>
+        <div className="rounded-[8px] border border-stone-200 bg-white p-8 text-sm font-semibold text-stone-500 shadow-sm">Loading active trip packages...</div>
       ) : packages.length ? (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {packages.map((tripPackage) => (
-            <article key={tripPackage._id} className="rounded-[28px] border border-emerald-900/10 bg-white p-6 shadow-sm">
+            <article key={tripPackage._id} className="rounded-[8px] border border-emerald-200 bg-white p-6 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">{destinationName(tripPackage)}</p>
@@ -81,18 +81,34 @@ export function TripPackagesClient() {
                 <Fact label="Difficulty" value={tripPackage.difficulty || "Easy"} />
                 <Fact label="Group" value={tripPackage.groupSize || "Flexible"} />
               </div>
-              {tripPackage.highlights.length ? <p className="mt-4 text-sm text-stone-500">{tripPackage.highlights.slice(0, 4).join(" • ")}</p> : null}
-              <div className="mt-6 grid gap-2 sm:grid-cols-2"><Link href={`/trip-packages/${tripPackage.slug}`} className="rounded-full border border-emerald-200 px-5 py-3 text-center text-sm font-black text-emerald-800 hover:bg-emerald-50">View details</Link><button type="button" disabled={savingId === tripPackage._id} onClick={() => void reservePackage(tripPackage)} className="rounded-full bg-emerald-700 px-5 py-3 text-sm font-black text-white shadow-lg shadow-emerald-800/15 transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">{savingId === tripPackage._id ? "Sending..." : "Reserve"}</button></div>
+              {tripPackage.highlights.length ? <p className="mt-4 text-sm text-stone-500">{tripPackage.highlights.slice(0, 4).join(" / ")}</p> : null}
+              <div className="mt-6 grid gap-2 sm:grid-cols-2">
+                <Link href={`/trip-packages/${tripPackage.slug}`} className="rounded-[8px] border border-emerald-200 px-5 py-3 text-center text-sm font-black text-emerald-800 hover:bg-emerald-50">View details</Link>
+                <button type="button" disabled={savingId === tripPackage._id} onClick={() => void reservePackage(tripPackage)} className="rounded-[8px] bg-emerald-700 px-5 py-3 text-sm font-black text-white shadow-lg shadow-emerald-800/15 transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">{savingId === tripPackage._id ? "Sending..." : "Reserve"}</button>
+              </div>
             </article>
           ))}
         </div>
       ) : (
-        <div className="rounded-[28px] border border-stone-200 bg-white p-8 text-center shadow-sm"><p className="font-bold text-stone-800">No active trip packages yet.</p><p className="mt-2 text-sm text-stone-500">Published packages will appear here when the admin team adds them.</p></div>
+        <div className="rounded-[8px] border border-stone-200 bg-white p-8 text-center shadow-sm">
+          <p className="font-bold text-stone-800">No active trip packages yet.</p>
+          <p className="mt-2 text-sm text-stone-500">Published packages will appear here when the admin team adds them.</p>
+        </div>
       )}
     </div>
   );
 }
 
-function Fact({ label, value }: { label: string; value: string }) { return <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3"><p className="text-xs font-black uppercase tracking-[0.14em] text-stone-400">{label}</p><p className="mt-1 font-semibold text-stone-800">{value}</p></div>; }
-function destinationName(tripPackage: TripPackage) { return !tripPackage.destinationId || typeof tripPackage.destinationId === "string" ? "Karnali" : tripPackage.destinationId.name; }
-function priceLabel(tripPackage: TripPackage) { if (tripPackage.price !== undefined) return `NPR ${tripPackage.price.toLocaleString()}`; if (tripPackage.priceMin !== undefined && tripPackage.priceMax !== undefined) return `NPR ${tripPackage.priceMin.toLocaleString()} - ${tripPackage.priceMax.toLocaleString()}`; return "Contact for price"; }
+function Fact({ label, value }: { label: string; value: string }) {
+  return <div className="rounded-[8px] border border-stone-200 bg-stone-50 px-4 py-3"><p className="text-xs font-black uppercase tracking-[0.14em] text-stone-400">{label}</p><p className="mt-1 font-semibold text-stone-800">{value}</p></div>;
+}
+
+function destinationName(tripPackage: TripPackage) {
+  return !tripPackage.destinationId || typeof tripPackage.destinationId === "string" ? "Karnali" : tripPackage.destinationId.name;
+}
+
+function priceLabel(tripPackage: TripPackage) {
+  if (tripPackage.price !== undefined) return `NPR ${tripPackage.price.toLocaleString()}`;
+  if (tripPackage.priceMin !== undefined && tripPackage.priceMax !== undefined) return `NPR ${tripPackage.priceMin.toLocaleString()} - NPR ${tripPackage.priceMax.toLocaleString()}`;
+  return "Contact for price";
+}

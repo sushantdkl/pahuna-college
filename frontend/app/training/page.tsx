@@ -1,6 +1,7 @@
 import {
   ButtonLink,
   PageShell,
+  SectionHeader,
   SectionShell,
   SiteFooter,
   SiteHeader,
@@ -37,6 +38,42 @@ export default function TrainingPage() {
         </div>
         <TrainingClient />
       </SectionShell>
+      <section className="bg-white">
+        <SectionShell>
+          <SectionHeader align="center" eyebrow="Student outcomes" title="Student Success Stories" description="Static presentation stories from the reference layout." />
+          <div className="mt-8 grid gap-5 md:grid-cols-4">
+            {["Anu Gurung", "Bikash Thapa", "Sita Bista", "Rajan Malla"].map((name) => (
+              <article key={name} className="rounded-[8px] border border-stone-200 bg-white p-5 shadow-sm">
+                <p className="text-amber-500">*****</p>
+                <p className="mt-3 text-sm leading-6 text-stone-600">The training was practical and helped me understand real hospitality work.</p>
+                <h3 className="mt-4 text-sm font-black">{name}</h3>
+                <p className="text-xs text-stone-500">Hospitality graduate</p>
+              </article>
+            ))}
+          </div>
+        </SectionShell>
+      </section>
+      <SectionShell className="pt-8">
+        <SectionHeader align="center" eyebrow="Common questions" title="Frequently Asked Questions" />
+        <div className="mx-auto mt-8 max-w-3xl divide-y divide-stone-200 rounded-[8px] border border-stone-200 bg-white">
+          {["Where is the training center located?", "Are there age restrictions for enrollment?", "Do you offer accommodation for students from outside Surkhet?", "Is the certificate internationally recognized?", "Can fees be paid in installment?", "Will I get job support after course?"].map((question) => (
+            <details key={question} className="group p-4">
+              <summary className="cursor-pointer text-sm font-black text-stone-900">{question}</summary>
+              <p className="mt-3 text-sm leading-6 text-stone-600">Our team will confirm the latest details after you submit the enrollment form or contact Pahuna.</p>
+            </details>
+          ))}
+        </div>
+      </SectionShell>
+      <section className="mx-auto mb-14 max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-[8px] bg-[#071121] p-10 text-center text-white">
+          <h2 className="text-2xl font-black">Ready to Start Your Hospitality Career?</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-white/70">Pick a course, submit the enrollment form, or call the academy team.</p>
+          <div className="mt-6 flex justify-center gap-3">
+            <ButtonLink href="#enrollment">Enroll Now</ButtonLink>
+            <ButtonLink href="tel:+977083520000" variant="ghost">Call Us</ButtonLink>
+          </div>
+        </div>
+      </section>
       <SiteFooter />
     </PageShell>
   );

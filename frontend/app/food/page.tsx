@@ -80,8 +80,8 @@ export default function FoodPage() {
           <div>
             <SectionHeader
               eyebrow="Food & cafes"
-              title="Cafes, restaurants, momo spots, tea shops, and route food."
-              description="A fuller Surkhet food explorer inspired by the reference: categories, featured listings, search, filters, food detail pages, and inquiry-first planning."
+              title="Cafes & Restaurants in Surkhet"
+              description="Find food cafes, restaurants, momo spots, tea shops, bakeries, lounges, party venues, and traveler-friendly food stops around Birendranagar and Surkhet."
             />
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="#food-listings">Browse food places</ButtonLink>

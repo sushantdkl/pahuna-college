@@ -7,28 +7,28 @@ import {
   SectionShell,
   SiteFooter,
   SiteHeader,
-  StatPill,
 } from "@/app/_components/pahuna-layout";
-import { featuredStays, foodHighlights, images, routeCards, surkhetPlaces } from "@/lib/pahuna-content";
+import { foodHighlights, images, routeCards } from "@/lib/pahuna-content";
 
 const quickFacts = [
-  ["Best base", "Birendranagar"],
-  ["Good for", "Families, short trips, Karnali routes"],
-  ["Plan style", "1-2 days in Surkhet + onward route"],
-  ["Need to confirm", "Roads, flights, rooms, and local timings"],
+  ["Birendranagar", "Main urban base for Surkhet and Karnali travel"],
+  ["Family, transit, culture", "Useful for families, short trips, and onward routes"],
+  ["Flight + long-distance bus", "Flights and roads connect Surkhet with western Nepal"],
+  ["Kakrebihar, Bulbule, Deuti", "Easy local anchors for a first-day plan"],
 ];
 
-const tripIdeas = [
-  "Morning: Deuti Bajai, Ghantaghar, local breakfast, and city walk.",
-  "Afternoon: Kakrebihar heritage stop, tea break, then Bulbule Lake.",
-  "Easy extension: Gurase viewpoint or Bheri River Bridge depending on time.",
+const passportCards = [
+  ["Surkhet Starter", "Walkable city context, hotels, cafes, and local temples."],
+  ["Route Dreamer", "Compare onward routes to Rara, Dolpa, Jumla, and Humla."],
+  ["Food & Culture", "Cafes, Thakali meals, local snacks, and evening walks."],
+  ["Karnali Ground Check", "Ask about roads, weather, availability, and pickup timing."],
 ];
 
 const localTips = [
-  "Keep Surkhet as the practical base before deeper Karnali routes.",
-  "Ask stay providers about parking, early breakfast, and route pickup timing.",
-  "For Rara, Dolpa, Humla, and Jumla, keep buffer days for weather and roads.",
-  "Use Google Maps links as a guide, but confirm local road status before leaving.",
+  "Visit Bulbule in the morning.",
+  "Put Kakrebihar with Deuti Bajai for an easy culture day.",
+  "Start long trips with Surkhet hotel backup before remote routes.",
+  "Try local stops in Birendranagar before onward travel.",
 ];
 
 export default function ExploreSurkhetPage() {
@@ -36,117 +36,136 @@ export default function ExploreSurkhetPage() {
     <main className="min-h-screen bg-[#fffaf0] text-stone-950">
       <SiteHeader />
 
-      <section className="relative isolate overflow-hidden bg-stone-950 text-white">
-        <Image src={images.hero} alt="Surkhet valley gateway" fill priority sizes="100vw" className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/85 via-stone-950/55 to-amber-900/20" />
-        <SectionShell className="relative z-10 py-24 sm:py-32">
-          <div className="max-w-3xl">
-            <p className="text-xs font-black uppercase tracking-[0.34em] text-emerald-200">Explore Surkhet</p>
-            <h1 className="mt-4 text-5xl font-black leading-[0.98] tracking-tight sm:text-6xl">Your Surkhet gateway guide.</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/85">
-              Places, stays, food, local tips, and onward Karnali routes in one easy-to-scan destination page.
+      <SectionShell className="pt-16">
+        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+          <div>
+            <p className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">
+              Explore Surkhet
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="#top-places">Top Places</ButtonLink>
+            <h1 className="mt-4 max-w-2xl text-4xl font-black leading-tight tracking-tight sm:text-6xl">
+              Explore Surkhet - Gateway to Karnali
+            </h1>
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-stone-600">
+              Start your Karnali journey from Birendranagar with stays, culture, lakes, temples, viewpoints, and routes to Rara, Jumla, Dailekh, Dolpa, and Humla.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <ButtonLink href="/trip-planner">Plan My Trip</ButtonLink>
               <ButtonLink href="/hotels" variant="secondary">Find Stays</ButtonLink>
-              <ButtonLink href="/contact" variant="ghost">Send Inquiry</ButtonLink>
             </div>
           </div>
-        </SectionShell>
-      </section>
+          <div className="relative min-h-[320px] overflow-hidden rounded-[8px] border border-emerald-100 bg-white p-3 shadow-xl">
+            <Image src={images.hero} alt="Surkhet gateway card" fill priority sizes="(max-width: 768px) 100vw, 50vw" className="object-cover p-3" />
+            <div className="absolute inset-x-6 bottom-6 rounded-[8px] bg-white/92 p-4 shadow-lg">
+              <p className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-700">Surkhet city base</p>
+              <p className="mt-1 text-sm font-black">Easy stays, cafes, temples, lakes, and onward routes.</p>
+            </div>
+          </div>
+        </div>
+      </SectionShell>
 
-      <SectionShell className="-mt-10 relative z-20 py-0">
-        <div className="grid gap-4 rounded-[32px] border border-emerald-900/10 bg-white p-5 shadow-2xl shadow-emerald-900/10 md:grid-cols-4">
-          {quickFacts.map(([label, value]) => (
-            <div key={label} className="rounded-2xl bg-emerald-50/70 p-4">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">{label}</p>
-              <p className="mt-2 text-sm font-bold leading-6 text-stone-800">{value}</p>
+      <SectionShell className="py-8">
+        <div className="grid gap-4 md:grid-cols-4">
+          {quickFacts.map(([title, text]) => (
+            <div key={title} className="rounded-[8px] border border-emerald-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-black">{title}</p>
+              <p className="mt-2 text-xs leading-5 text-stone-600">{text}</p>
             </div>
           ))}
         </div>
       </SectionShell>
 
-      <SectionShell id="top-places" className="pt-16">
-        <SectionHeader eyebrow="Top places" title="Start with the places travelers ask about most." description="The page is image-rich, practical, and focused on what a visitor needs before moving around Surkhet." />
-        <div className="mt-9 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {surkhetPlaces.map((place) => (
-            <article id={place.title.toLowerCase().replaceAll(" ", "-")} key={place.title} className="overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
-              <div className="relative h-56">
-                <Image src={place.image || images.destinationFallback} alt={place.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
-              </div>
-              <div className="p-6">
-                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-emerald-700">{place.eyebrow}</p>
-                <h2 className="mt-2 text-2xl font-black">{place.title}</h2>
-                <p className="mt-3 text-sm leading-6 text-stone-600">{place.description}</p>
-                <div className="mt-5 flex gap-2">
-                  <Link href="/experiences" className="rounded-full border border-emerald-200 px-4 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-50">View experiences</Link>
-                  <Link href="/contact" className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-800">Ask local tip</Link>
+      <SectionShell>
+        <div className="grid gap-5 lg:grid-cols-2">
+          <div className="rounded-[8px] border border-emerald-200 bg-emerald-50/60 p-6">
+            <div className="flex items-center justify-between gap-4">
+              <SectionHeader eyebrow="Karnali Passport" title="Unlock your Karnali Passport" />
+              <span className="text-xs font-black text-emerald-700">1 of 7 badges unlocked</span>
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {passportCards.map(([title, text]) => (
+                <div key={title} className="rounded-[8px] border border-emerald-100 bg-white p-4">
+                  <h3 className="text-sm font-black">{title}</h3>
+                  <p className="mt-2 text-xs leading-5 text-stone-600">{text}</p>
                 </div>
-              </div>
-            </article>
+              ))}
+            </div>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <ButtonLink href="/trip-planner">Build personal route</ButtonLink>
+              <ButtonLink href="/contact" variant="secondary">Try advisor</ButtonLink>
+            </div>
+          </div>
+
+          <div className="rounded-[8px] border border-emerald-200 bg-white p-6">
+            <SectionHeader eyebrow="Pick a vibe" title="Pick a Surkhet-to-Karnali vibe" description="Choose what your trip should feel like, then build a plan around it." />
+            <div className="mt-5 flex flex-wrap gap-2">
+              {["Peaceful", "Adventure", "Culture", "Family", "Budget", "Spiritual", "Nature"].map((tag) => (
+                <span key={tag} className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800">{tag}</span>
+              ))}
+            </div>
+            <div className="mt-6 rounded-[8px] bg-amber-50 p-4">
+              <p className="text-sm font-black">Family route idea</p>
+              <p className="mt-2 text-xs leading-5 text-stone-600">Surkhet city stay, Bulbule Lake, Kakrebihar, food stop, and a soft onward route when ready.</p>
+            </div>
+          </div>
+        </div>
+      </SectionShell>
+
+      <SectionShell className="py-8">
+        <SectionHeader eyebrow="Surkhet trip confidence" title="Local confidence before you move deeper." />
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
+          {["Tested local sights", "Dailekh and Jumla routes", "Dolpa, Humla, Rara flights"].map((title) => (
+            <div key={title} className="rounded-[8px] border border-emerald-100 bg-white p-5">
+              <h3 className="text-sm font-black">{title}</h3>
+              <p className="mt-2 text-xs leading-5 text-stone-600">Confirm rooms, weather, and availability before final movement.</p>
+            </div>
           ))}
         </div>
       </SectionShell>
 
-      <section className="bg-[#f3f0e7]">
+      <SectionShell>
+        <SectionHeader eyebrow="Surkhet local tips" title="Small things that make the trip smoother." />
+        <div className="mt-5 grid gap-3 md:grid-cols-4">
+          {localTips.map((tip) => (
+            <div key={tip} className="rounded-[8px] border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-950">{tip}</div>
+          ))}
+        </div>
+      </SectionShell>
+
+      <section className="bg-white">
         <SectionShell>
-          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr]">
-            <div>
-              <SectionHeader eyebrow="Stay, eat, move" title="Surkhet is not only a place to see. It is your base." />
-              <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                <StatPill value="Stays" label="Hotels & lodges" />
-                <StatPill value="Food" label="Cafes & meals" />
-                <StatPill value="Routes" label="Karnali access" />
-              </div>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              <InfoCard title="Where to stay" href="/hotels" items={featuredStays.slice(0, 3).map((stay) => `${stay.name} · ${stay.area}`)} />
-              <InfoCard title="Where to eat" href="/food" items={foodHighlights.map((food) => food.title)} />
-              <InfoCard title="Short Surkhet trip ideas" href="/trip-planner" items={tripIdeas} />
-              <InfoCard title="Routes from Surkhet" href="/routes" items={routeCards.map((route) => `${route.route} - ${route.status}`)} />
-            </div>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <SectionHeader eyebrow="Food near Birendranagar" title="Where to eat around Birendranagar" description="Public food cards link into the backend-connected food provider catalog." />
+            <ButtonLink href="/food" variant="secondary">View food guide</ButtonLink>
+          </div>
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {foodHighlights.slice(0, 4).map((food) => (
+              <Link key={food.title} href={food.href} className="rounded-[8px] border border-emerald-200 bg-white p-4 shadow-sm">
+                <div className="relative h-36 overflow-hidden rounded-[8px] bg-emerald-50">
+                  <Image src={food.image || images.foodFallback} alt={food.title} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover" />
+                </div>
+                <h3 className="mt-4 text-base font-black">{food.title}</h3>
+                <p className="mt-2 line-clamp-2 text-xs leading-5 text-stone-600">{food.description}</p>
+              </Link>
+            ))}
           </div>
         </SectionShell>
       </section>
 
       <SectionShell>
-        <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-          <ImageTile title="Bulbule, Kakrebihar, Gurase and Bheri moments" subtitle="Visual guide" image={images.bulbule} href="/experiences" tall />
-          <div className="rounded-[28px] border border-emerald-900/10 bg-white p-7 shadow-lg shadow-emerald-900/5">
-            <SectionHeader eyebrow="Local tips" title="Before you confirm the plan" />
-            <ul className="mt-6 space-y-4">
-              {localTips.map((tip) => (
-                <li key={tip} className="flex gap-3 text-sm leading-6 text-stone-600">
-                  <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-600" />
-                  {tip}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/contact">Send Inquiry</ButtonLink>
-              <ButtonLink href="/experiences" variant="secondary">Open Experiences</ButtonLink>
-            </div>
+        <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+          <ImageTile title="Bulbule, Kakrebihar, Deuti Bajai, Gurase" subtitle="Surkhet anchors" image={images.bulbule} href="/experiences" tall />
+          <div className="space-y-3">
+            {routeCards.slice(0, 4).map((route) => (
+              <Link key={route.route} href="/routes" className="block rounded-[8px] border border-emerald-100 bg-white p-5 shadow-sm">
+                <p className="text-sm font-black">{route.route}</p>
+                <p className="mt-2 text-xs leading-5 text-stone-600">{route.note}</p>
+              </Link>
+            ))}
           </div>
         </div>
       </SectionShell>
 
       <SiteFooter />
     </main>
-  );
-}
-
-function InfoCard({ title, href, items }: { title: string; href: string; items: string[] }) {
-  return (
-    <div className="rounded-[26px] border border-emerald-900/10 bg-white p-6 shadow-sm">
-      <div className="flex items-center justify-between gap-4">
-        <h3 className="text-lg font-black">{title}</h3>
-        <Link href={href} className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800 hover:bg-emerald-100">Open</Link>
-      </div>
-      <ul className="mt-5 space-y-3">
-        {items.slice(0, 4).map((item) => (
-          <li key={item} className="text-sm leading-6 text-stone-600">• {item}</li>
-        ))}
-      </ul>
-    </div>
   );
 }
