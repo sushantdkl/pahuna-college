@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { images } from "@/lib/pahuna-content";
 import { getRouteSegments, getTransportRoutes, type RouteSegment, type TransportRoute } from "@/lib/actions/final-crud-actions";
 
 const fallbackSegments: RouteSegment[] = [
@@ -72,82 +75,112 @@ export default function RoutesPage() {
   }, [mode, query, segments]);
 
   const modes = Array.from(new Set(segments.map((segment) => segment.mode))).sort();
+  const highlighted = visibleSegments[0] || fallbackSegments[0];
 
   return (
     <PageShell>
       <SiteHeader />
-      <SectionShell className="pt-14">
-        <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          <div>
-            <SectionHeader
-              eyebrow="Routes"
-              title="Karnali route planning with cost, time, and reliability notes."
-              description="Browse public route segments and transport summaries. Use this as planning guidance, then confirm road, weather, and vehicle availability before travel."
-            />
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="#route-segments">Browse routes</ButtonLink>
-              <ButtonLink href="/contact" variant="secondary">Confirm route</ButtonLink>
-            </div>
-          </div>
-          <div className="rounded-[32px] border border-emerald-900/10 bg-white p-8 shadow-xl shadow-emerald-900/5">
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-700">Travel note</p>
-            <h2 className="mt-3 text-3xl font-black">Route data is advisory.</h2>
-            <p className="mt-4 text-sm leading-7 text-stone-600">
-              Karnali travel can change because of weather, road work, festivals, and seasonal transport. Pahuna keeps route data structured, but final movement should always be confirmed locally.
-            </p>
+      <section className="bg-gradient-to-b from-emerald-50/90 to-[#fffaf0]">
+        <div className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 lg:px-8">
+          <p className="mx-auto inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">AI route & cost planning</p>
+          <h1 className="mt-5 text-4xl font-black tracking-tight sm:text-5xl">Karnali Route &<br />Cost Estimator</h1>
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-stone-600">Plan routes from Kathmandu, Nepalgunj, and Surkhet to Karnali destinations with estimated travel time, cost range, reliability notes, and local route guidance.</p>
+          <div className="mt-7 flex flex-wrap justify-center gap-3">
+            <ButtonLink href="#route-segments">Build trip route</ButtonLink>
+            <ButtonLink href="/destinations" variant="secondary">Explore destinations</ButtonLink>
           </div>
         </div>
-      </SectionShell>
+      </section>
 
-      <SectionShell id="route-segments" className="pt-8">
-        <div className="rounded-[30px] border border-emerald-900/10 bg-white p-4 shadow-lg shadow-emerald-900/5">
+      <SectionShell id="route-segments">
+        <div className="rounded-[18px] border border-stone-200 bg-white p-5 shadow-sm">
+          <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">Route planner</p>
+              <h2 className="text-2xl font-black">Build a cautious Karnali travel plan</h2>
+              <p className="mt-2 text-sm text-stone-600">Choose a planning direction, then review route steps and suggested stopovers.</p>
+            </div>
+            <Link href="/contact" className="rounded-md border border-emerald-200 px-4 py-2 text-sm font-black text-emerald-800">Submit planning request</Link>
+          </div>
           <div className="grid gap-3 md:grid-cols-[1fr_220px]">
-            <input value={query} onChange={(event) => setQuery(event.target.value)} className="rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500" placeholder="Search Surkhet, Rara, bus, jeep, season..." />
-            <select value={mode} onChange={(event) => setMode(event.target.value)} className="rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500">
+            <input value={query} onChange={(event) => setQuery(event.target.value)} className="rounded-md border border-stone-300 px-4 py-3 text-sm outline-none focus:border-emerald-500" placeholder="Search Surkhet, Rara, bus, jeep, season..." />
+            <select value={mode} onChange={(event) => setMode(event.target.value)} className="rounded-md border border-stone-300 px-4 py-3 text-sm outline-none focus:border-emerald-500">
               <option value="">All modes</option>
               {modes.map((item) => <option key={item} value={item}>{item}</option>)}
             </select>
           </div>
           <p className="mt-4 text-sm font-semibold text-stone-600">{loading ? "Loading live route data..." : `Showing ${visibleSegments.length} route segments.`}</p>
           {error ? <p className="mt-2 text-sm text-amber-700">{error}</p> : null}
+
+          <div className="mt-6 rounded-[14px] border border-amber-200 bg-amber-50 p-4">
+            <p className="font-black text-amber-950">{highlighted.from} to {highlighted.to}</p>
+            <p className="mt-1 text-sm text-amber-900">Cost: {highlighted.currency} {highlighted.costMin || 0} - {highlighted.costMax || 0} | Duration: {durationLabel(highlighted)}</p>
+          </div>
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          {visibleSegments.map((segment) => (
-            <article key={segment._id} className="rounded-[28px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">{segment.mode} · {segment.reliability} reliability</p>
-                  <h2 className="mt-2 text-2xl font-black">{segment.from} → {segment.to}</h2>
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_330px]">
+          <div className="space-y-4">
+            {visibleSegments.map((segment, index) => (
+              <article key={segment._id} className="rounded-[14px] border border-stone-200 bg-white p-5 shadow-sm">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">Step {index + 1} | {segment.mode} | {segment.reliability} reliability</p>
+                    <h2 className="mt-2 text-2xl font-black">{segment.from} to {segment.to}</h2>
+                  </div>
+                  {segment.requiresConfirmation ? <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-900">Confirm before travel</span> : null}
                 </div>
-                {segment.requiresConfirmation ? <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-900">Confirm before travel</span> : null}
+                <div className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
+                  <Info label="Distance" value={segment.distanceKm ? `${segment.distanceKm} km` : "Varies"} />
+                  <Info label="Duration" value={durationLabel(segment)} />
+                  <Info label="Cost" value={`${segment.currency} ${segment.costMin || 0} - ${segment.costMax || 0}`} />
+                </div>
+                {segment.notes ? <p className="mt-5 text-sm leading-7 text-stone-600">{segment.notes}</p> : null}
+                {segment.riskNotes ? <p className="mt-4 rounded-xl bg-red-50 p-4 text-sm leading-6 text-red-700">{segment.riskNotes}</p> : null}
+              </article>
+            ))}
+          </div>
+          <aside className="h-fit rounded-[14px] border border-stone-200 bg-white p-5 shadow-sm">
+            <h3 className="text-lg font-black">Recommended stopover</h3>
+            <p className="mt-3 rounded-xl bg-emerald-50 p-4 text-sm font-bold text-emerald-900">{highlighted.recommendedStopover || "Surkhet or Dailekh, depending on route and daylight."}</p>
+            <h3 className="mt-6 text-lg font-black">Suggested stay options</h3>
+            <div className="mt-3 grid gap-3">
+              {visibleSegments.slice(0, 3).map((segment) => (
+                <div key={`${segment._id}-stay`} className="rounded-xl border border-stone-100 bg-stone-50 p-3">
+                  <p className="text-sm font-black">{segment.recommendedStopover || segment.from}</p>
+                  <p className="mt-1 text-xs text-stone-500">{segment.from} to {segment.to}</p>
+                </div>
+              ))}
+            </div>
+          </aside>
+        </div>
+
+        <SectionHeader eyebrow="Featured route cards" title="Common Karnali route options" description="Use these as a starting point. Weather, road condition, and operator schedules change in this region." />
+        <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {visibleSegments.slice(0, 6).map((segment, index) => (
+            <article key={`${segment._id}-card`} className="overflow-hidden rounded-[12px] border border-emerald-100 bg-white shadow-sm">
+              <div className="relative h-40">
+                <Image src={[images.hero, images.rara, images.phoksundo, images.karnaliRiver][index % 4]} alt={`${segment.from} to ${segment.to}`} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
               </div>
-              <div className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
-                <Info label="Distance" value={segment.distanceKm ? `${segment.distanceKm} km` : "Varies"} />
-                <Info label="Duration" value={durationLabel(segment)} />
-                <Info label="Cost" value={`${segment.currency} ${segment.costMin || 0} - ${segment.costMax || 0}`} />
-              </div>
-              {segment.notes ? <p className="mt-5 text-sm leading-7 text-stone-600">{segment.notes}</p> : null}
-              {segment.riskNotes ? <p className="mt-4 rounded-2xl bg-red-50 p-4 text-sm leading-6 text-red-700">{segment.riskNotes}</p> : null}
-              <div className="mt-6 flex flex-wrap gap-3">
-                <ButtonLink href="/contact" variant="secondary">Ask about this route</ButtonLink>
-                {segment.recommendedStopover ? <span className="rounded-full bg-stone-100 px-4 py-3 text-sm font-semibold text-stone-700">Stopover: {segment.recommendedStopover}</span> : null}
+              <div className="p-5">
+                <h3 className="font-black">{segment.from} to {segment.to}</h3>
+                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                  <Info label="Time" value={durationLabel(segment)} />
+                  <Info label="Range" value={`${segment.currency} ${segment.costMin || 0}`} />
+                </div>
+                <Link href="/contact" className="mt-5 inline-flex w-full justify-center rounded-md border border-emerald-200 px-4 py-2 text-sm font-black text-emerald-800">Use this route</Link>
               </div>
             </article>
           ))}
         </div>
 
         {transportRoutes.length ? (
-          <div className="mt-12 rounded-[30px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
-            <SectionHeader eyebrow="Transport summaries" title="Simple route frequency and cost notes." />
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {transportRoutes.map((route) => (
-                <div key={route._id} className="rounded-2xl border border-stone-100 bg-stone-50 p-4">
-                  <p className="font-black">{route.fromLocation} → {route.toLocation}</p>
-                  <p className="mt-2 text-sm text-stone-600">{route.mode} · {route.durationHours || "Flexible"} hours · NPR {route.costMin || 0}-{route.costMax || 0}</p>
-                  {route.frequency ? <p className="mt-2 text-xs font-semibold text-emerald-700">{route.frequency}</p> : null}
-                </div>
-              ))}
+          <div className="mt-12 rounded-[14px] border border-emerald-100 bg-white p-6 shadow-sm">
+            <SectionHeader eyebrow="Transport table" title="Getting around Surkhet" />
+            <div className="mt-6 overflow-x-auto">
+              <table className="w-full min-w-[720px] text-sm">
+                <thead><tr className="border-b text-left text-stone-500"><th className="py-3">Route</th><th>Mode</th><th>Duration</th><th>Cost</th><th>Frequency</th></tr></thead>
+                <tbody>{transportRoutes.map((route) => <tr key={route._id} className="border-b last:border-0"><td className="py-4 font-bold">{route.fromLocation} to {route.toLocation}</td><td>{route.mode}</td><td>{route.durationHours || "Flexible"} hrs</td><td>NPR {route.costMin || 0}-{route.costMax || 0}</td><td>{route.frequency || "Confirm locally"}</td></tr>)}</tbody>
+              </table>
             </div>
           </div>
         ) : null}
@@ -158,7 +191,7 @@ export default function RoutesPage() {
 }
 
 function Info({ label, value }: { label: string; value: string }) {
-  return <div className="rounded-2xl bg-stone-50 p-4"><p className="text-xs font-black uppercase tracking-[0.18em] text-stone-500">{label}</p><p className="mt-1 font-bold text-stone-900">{value}</p></div>;
+  return <div className="rounded-xl bg-stone-50 p-3"><p className="text-xs font-black uppercase tracking-[0.14em] text-stone-500">{label}</p><p className="mt-1 font-bold text-stone-900">{value}</p></div>;
 }
 
 function durationLabel(segment: RouteSegment) {

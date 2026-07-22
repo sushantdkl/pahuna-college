@@ -7,38 +7,40 @@ import {
 import { PartnerApplicationForm } from "@/app/partner/partner-application-form";
 
 const partnerTypes = [
-  ["HT", "Hotels & Resorts", "Present rooms, amenities, and local hospitality to Pahuna travelers."],
-  ["HS", "Homestays & Lodges", "Bring community-led stays and authentic Karnali hosting into view."],
-  ["TO", "Tour Operators", "Coordinate guides, experiences, and practical regional trip support."],
-  ["TR", "Transport & Services", "Help travelers move safely with locally informed service options."],
+  ["HT", "Hotels & Resorts", "Get listed, boost bookings, and connect with guests."],
+  ["RS", "Restaurants & Cafes", "Partner your dining experience with tourism visibility."],
+  ["TO", "Travel Agencies", "Collaborate on curated tour packages and itineraries."],
+  ["TP", "Transport Providers", "Offer reliable transportation to our platform guests."],
 ];
 
 const benefits = [
-  "Reach travelers already planning Surkhet and Karnali journeys",
-  "Receive relevant inquiries through a clear Pahuna workflow",
-  "Present accurate business details with local destination context",
-  "Work with a platform focused on responsible regional tourism",
+  "Free listing on our platform with detailed business profile",
+  "Access to qualified leads and booking inquiries",
+  "Co-marketing opportunities and social media features",
+  "Consulting support for branding and operations",
+  "Training discounts for your staff through our academy",
+  "Priority placement for verified and trusted partners",
 ];
 
 export default function PartnerPage() {
   return (
     <main className="min-h-screen bg-[#fffaf0] text-stone-950">
       <SiteHeader />
-      <section className="border-b border-emerald-900/10 bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-800 text-white">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <p className="text-xs font-black uppercase tracking-[0.28em] text-emerald-200">Pahuna partner network</p>
-          <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight sm:text-6xl">Grow local tourism with a trusted Karnali travel platform.</h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-emerald-50/80">Hotels, homestays, resorts, tour operators, restaurants, transport providers, and local services can apply publicly. Our team reviews every application before approval.</p>
-          <a href="#apply" className="mt-8 inline-flex rounded-full bg-amber-400 px-6 py-3 text-sm font-black text-emerald-950 transition hover:bg-amber-300">Apply to partner</a>
+      <section className="border-b border-emerald-900/10 bg-gradient-to-br from-white via-emerald-50/60 to-[#fffaf0]">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">Partner with Pahuna</p>
+          <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-tight sm:text-5xl">Grow Together With Us</h1>
+          <p className="mt-4 max-w-2xl text-sm leading-6 text-stone-600">Join Pahuna&apos;s partner network and connect with travelers exploring Nepal&apos;s Karnali region. Whether you run a hotel, restaurant, or travel agency, there is a place for you.</p>
+          <a href="#apply" className="mt-7 inline-flex rounded-md bg-emerald-700 px-5 py-3 text-sm font-black text-white transition hover:bg-emerald-800">Apply now</a>
         </div>
       </section>
 
       <SectionShell>
-        <SectionHeader eyebrow="Who can apply" title="Partnerships built around real local service." description="Pahuna welcomes businesses that can improve a traveler’s stay, route, food, or destination experience." />
+        <SectionHeader align="center" title="Who Can Partner?" description="We welcome all hospitality and tourism businesses in the region." />
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {partnerTypes.map(([icon, title, description]) => (
-            <article key={title} className="rounded-[26px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-xs font-black text-emerald-800">{icon}</span>
+            <article key={title} className="rounded-[8px] border border-stone-200 bg-white p-6 text-center shadow-sm">
+              <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-800">{icon}</span>
               <h2 className="mt-5 text-lg font-black">{title}</h2>
               <p className="mt-3 text-sm leading-6 text-stone-600">{description}</p>
             </article>
@@ -46,19 +48,21 @@ export default function PartnerPage() {
         </div>
       </SectionShell>
 
-      <section className="border-y border-emerald-900/10 bg-emerald-50/70">
+      <section className="border-y border-emerald-900/10 bg-white/70">
         <SectionShell>
-          <SectionHeader eyebrow="Why Pahuna" title="Practical visibility, not empty promises." description="Applications are reviewed by the Pahuna admin team so every partnership starts with accurate expectations." />
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {benefits.map((benefit) => <div key={benefit} className="flex gap-3 rounded-2xl bg-white p-5 text-sm font-semibold leading-6 text-stone-700 shadow-sm"><span className="mt-0.5 text-emerald-700">✓</span><span>{benefit}</span></div>)}
+          <SectionHeader align="center" title="Partner Benefits" description="Here is what you get when you join our network." />
+          <div className="mx-auto mt-8 grid max-w-4xl gap-4 md:grid-cols-2">
+            {benefits.map((benefit) => <div key={benefit} className="flex gap-3 rounded-[8px] bg-emerald-50 p-4 text-sm font-semibold leading-6 text-stone-700"><span className="mt-0.5 text-emerald-700">OK</span><span>{benefit}</span></div>)}
           </div>
         </SectionShell>
       </section>
 
       <SectionShell id="apply">
-        <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
-          <SectionHeader eyebrow="Partner application" title="Tell us about your business." description="Complete the form with real contact and operating details. Pahuna will review the application and record follow-up notes securely in the admin dashboard." />
-          <PartnerApplicationForm />
+        <div className="mx-auto max-w-2xl">
+          <SectionHeader align="center" title="Apply to Become a Partner" description="Fill out the form below and our team will review your application within 48 hours." />
+          <div className="mt-8">
+            <PartnerApplicationForm />
+          </div>
         </div>
       </SectionShell>
       <SiteFooter />

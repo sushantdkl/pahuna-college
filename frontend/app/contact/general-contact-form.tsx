@@ -27,7 +27,7 @@ export function GeneralContactForm({ initialSubject = "" }: { initialSubject?: s
 
   return (
     <form
-      className="rounded-[32px] border border-emerald-900/10 bg-white p-6 shadow-xl shadow-emerald-900/5"
+      className="rounded-[8px] border border-stone-200 bg-white p-6 shadow-sm"
       onSubmit={async (event) => {
         event.preventDefault();
         setFeedback(null);
@@ -86,7 +86,7 @@ export function GeneralContactForm({ initialSubject = "" }: { initialSubject?: s
         </div>
       </div>
       {feedback ? <p aria-live="polite" className={`mt-4 rounded-2xl px-4 py-3 text-sm font-semibold ${feedback.tone === "success" ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-700"}`}>{feedback.message}</p> : null}
-      <button type="submit" disabled={submitting} className="mt-6 inline-flex rounded-full bg-emerald-700 px-6 py-3 text-sm font-black text-white shadow-lg shadow-emerald-800/15 transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">
+      <button type="submit" disabled={submitting} className="mt-6 inline-flex w-full justify-center rounded-md bg-emerald-700 px-6 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">
         {submitting ? "Sending message..." : "Send message"}
       </button>
     </form>
@@ -97,4 +97,4 @@ function Field({ label, htmlFor, children }: { label: string; htmlFor: string; c
   return <label htmlFor={htmlFor} className="grid gap-2 text-sm font-bold text-stone-700"><span>{label}</span>{children}</label>;
 }
 
-const inputClassName = "w-full rounded-2xl border border-stone-200 px-4 py-3 text-sm font-normal outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100";
+const inputClassName = "w-full rounded-sm border border-stone-300 px-3 py-2 text-sm font-normal outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100";

@@ -99,14 +99,22 @@ export default function HotelsPage() {
   return (
     <PageShell>
       <SiteHeader />
-      <SectionShell className="pb-8 pt-14">
+      <section className="bg-gradient-to-br from-[#071121] via-[#111630] to-[#08121f] text-white">
+        <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8">
+          <p className="mx-auto inline-flex rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-white/75">Stay Map & Services</p>
+          <h1 className="mt-5 text-4xl font-black tracking-tight sm:text-6xl">Stays & Services<br /><span className="text-amber-300">across Karnali</span></h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/70">Find verified stays and local travel services across Surkhet and Karnali. Browse public listings, compare providers, and send an inquiry before you travel.</p>
+        </div>
+      </section>
+      <div className="h-36 bg-emerald-50/40" />
+      <SectionShell className="pb-8 pt-8">
         <div className="grid gap-8 lg:grid-cols-[1fr_390px] lg:items-end">
           <div>
             <SectionHeader
               as="h1"
-              eyebrow="Stays & services"
-              title="Search Surkhet stays with provider-style details."
-              description="A richer Pahuna stay explorer inspired by the reference: filters, verified/public listing badges, details pages, Google Maps, and inquiry-first booking safety."
+              eyebrow="Explore stays"
+              title="Explore stays on map."
+              description="View nearby stays, resorts, and lodges around Surkhet with a quick planning map and public listing context."
             />
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
               <StatTile value={`${stays.length}`} label="stays & services" />
