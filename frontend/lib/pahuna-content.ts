@@ -67,18 +67,21 @@ export type FoodProvider = {
 };
 
 export const navItems: NavItem[] = [
+  { label: "Home", href: "/" },
   { label: "Explore Surkhet", href: "/explore" },
   { label: "Stays", href: "/hotels" },
   { label: "Food", href: "/food" },
   { label: "Destinations", href: "/destinations" },
-  { label: "Experiences", href: "/experiences" },
   { label: "Trip Planner", href: "/trip-planner" },
-  { label: "Routes", href: "/routes" },
-  { label: "Packages", href: "/trip-packages" },
+  { label: "Contact", href: "/contact" },
   { label: "Training", href: "/training" },
   { label: "Consulting", href: "/consulting" },
   { label: "Partner", href: "/partner" },
-  { label: "Contact", href: "/contact" },
+  { label: "Routes", href: "/routes" },
+  { label: "Trip Cost", href: "/trip-cost" },
+  { label: "Experiences", href: "/experiences" },
+  { label: "Packages", href: "/trip-packages" },
+  { label: "Itineraries", href: "/itineraries" },
 ];
 
 export const images = {
@@ -157,7 +160,7 @@ export const quickActions: FeatureCard[] = [
   {
     title: "Estimate route/cost",
     description: "Preview route difficulty, transport options, and practical costs.",
-    href: "/trip-planner#routes",
+    href: "/trip-cost",
     meta: "Cost",
   },
   {

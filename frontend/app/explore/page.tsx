@@ -79,7 +79,7 @@ export default function ExploreSurkhetPage() {
                 <h2 className="mt-2 text-2xl font-black">{place.title}</h2>
                 <p className="mt-3 text-sm leading-6 text-stone-600">{place.description}</p>
                 <div className="mt-5 flex gap-2">
-                  <Link href="/gallery" className="rounded-full border border-emerald-200 px-4 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-50">View photos</Link>
+                  <Link href="/experiences" className="rounded-full border border-emerald-200 px-4 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-50">View experiences</Link>
                   <Link href="/contact" className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-800">Ask local tip</Link>
                 </div>
               </div>
@@ -103,7 +103,7 @@ export default function ExploreSurkhetPage() {
               <InfoCard title="Where to stay" href="/hotels" items={featuredStays.slice(0, 3).map((stay) => `${stay.name} · ${stay.area}`)} />
               <InfoCard title="Where to eat" href="/food" items={foodHighlights.map((food) => food.title)} />
               <InfoCard title="Short Surkhet trip ideas" href="/trip-planner" items={tripIdeas} />
-              <InfoCard title="Routes from Surkhet" href="/trip-planner#routes" items={routeCards.map((route) => `${route.route} · ${route.status}`)} />
+              <InfoCard title="Routes from Surkhet" href="/routes" items={routeCards.map((route) => `${route.route} - ${route.status}`)} />
             </div>
           </div>
         </SectionShell>
@@ -111,7 +111,7 @@ export default function ExploreSurkhetPage() {
 
       <SectionShell>
         <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-          <ImageTile title="Bulbule, Kakrebihar, Gurase and Bheri moments" subtitle="Visual guide" image={images.bulbule} href="/gallery" tall />
+          <ImageTile title="Bulbule, Kakrebihar, Gurase and Bheri moments" subtitle="Visual guide" image={images.bulbule} href="/experiences" tall />
           <div className="rounded-[28px] border border-emerald-900/10 bg-white p-7 shadow-lg shadow-emerald-900/5">
             <SectionHeader eyebrow="Local tips" title="Before you confirm the plan" />
             <ul className="mt-6 space-y-4">
@@ -124,7 +124,7 @@ export default function ExploreSurkhetPage() {
             </ul>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/contact">Send Inquiry</ButtonLink>
-              <ButtonLink href="/gallery" variant="secondary">Open Gallery</ButtonLink>
+              <ButtonLink href="/experiences" variant="secondary">Open Experiences</ButtonLink>
             </div>
           </div>
         </div>

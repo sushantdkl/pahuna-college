@@ -157,9 +157,9 @@ export default function Home() {
         <SectionShell>
           <SectionHeader align="center" eyebrow="Culture & adventure" title="Beyond the stay, discover the soul of the valley." />
           <div className="mt-10 grid gap-5 lg:grid-cols-2">
-            <ImageTile title="Bheri River and rafting routes" subtitle="Adventure" image={images.bheriRiver} href="/gallery" tall />
+            <ImageTile title="Bheri River and rafting routes" subtitle="Adventure" image={images.bheriRiver} href="/experiences" tall />
             <div className="grid gap-5 sm:grid-cols-2">
-              <ImageTile title="Tharu cultural evening" subtitle="Culture" image={images.tharuCulture} href="/gallery" />
+              <ImageTile title="Tharu cultural evening" subtitle="Culture" image={images.tharuCulture} href="/experiences" />
               <ImageTile title="Kakrebihar heritage" subtitle="History" image={images.kakrebiharAlt} href="/explore#kakrebihar" />
               <ImageTile title="Bulbule sunset" subtitle="City escape" image={images.bulbule} href="/explore#bulbule-lake" />
               <ImageTile title="Gurase viewpoint" subtitle="Hill route" image={images.gurase} href="/explore#gurase-view-tower" />
@@ -223,7 +223,7 @@ export default function Home() {
           </div>
           <div className="mt-8 flex flex-wrap gap-3 lg:mt-0">
             <ButtonLink href="/contact" variant="secondary">Send Inquiry</ButtonLink>
-            <ButtonLink href="/gallery" variant="ghost">View Gallery</ButtonLink>
+            <ButtonLink href="/experiences" variant="ghost">View Experiences</ButtonLink>
           </div>
         </div>
       </SectionShell>
