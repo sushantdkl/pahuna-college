@@ -21,6 +21,7 @@ export class InquiryController {
 
       const parsedData = CreateInquiryDTO.safeParse({
         hotelId: req.body.hotelId || req.body.hotel_id,
+        tripPackageId: req.body.tripPackageId || req.body.trip_package_id,
         hotelName: req.body.hotelName || req.body.hotel_name,
         title: req.body.title,
         message: req.body.message,
@@ -47,6 +48,7 @@ export class InquiryController {
           `Customer: ${req.user.fullName}`,
           `Email: ${req.user.email}`,
           `Hotel: ${parsedData.data.hotelName || parsedData.data.hotelId || "General"}`,
+          `Package: ${parsedData.data.tripPackageId || "None"}`,
           `Type: ${parsedData.data.inquiryType}`,
           `Subject: ${parsedData.data.title}`,
           "",

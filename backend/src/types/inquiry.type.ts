@@ -19,6 +19,7 @@ export const InquiryStatusSchema = z.enum([
 export const InquirySchema = z.object({
   userId: z.string().trim().min(1),
   hotelId: z.string().trim().optional(),
+  tripPackageId: z.string().trim().optional(),
   title: z.string().trim().min(1).max(160),
   message: z.string().trim().min(1).max(5000),
   inquiryType: InquiryTypeSchema,

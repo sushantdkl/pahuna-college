@@ -2,11 +2,12 @@ import mongoose, { Document, Schema } from "mongoose";
 import { InquiryType } from "../types/inquiry.type";
 
 export interface IInquiry
-  extends Omit<InquiryType, "userId" | "hotelId" | "assignedTo">,
+  extends Omit<InquiryType, "userId" | "hotelId" | "tripPackageId" | "assignedTo">,
     Document {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   hotelId?: mongoose.Types.ObjectId;
+  tripPackageId?: mongoose.Types.ObjectId;
   assignedTo?: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -23,6 +24,11 @@ const InquiryMongoSchema: Schema<IInquiry> = new Schema(
     hotelId: {
       type: Schema.Types.ObjectId,
       ref: "Hotel",
+      index: true,
+    },
+    tripPackageId: {
+      type: Schema.Types.ObjectId,
+      ref: "TripPackage",
       index: true,
     },
     title: {

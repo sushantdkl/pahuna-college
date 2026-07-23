@@ -3,6 +3,7 @@ import { AdminInquiryListQueryDTO, AdminUpdateInquiryDTO } from "../dtos/inquiry
 import { HttpException } from "../exceptions/http-exception";
 import { HotelModel } from "../models/hotel.model";
 import { InquiryModel } from "../models/inquiry.model";
+import { TripPackageModel } from "../models/trip-package.model";
 import { UserModel } from "../models/user.model";
 
 function escapeRegex(value: string) {
@@ -20,6 +21,7 @@ export class AdminInquiryService {
     return query
       .populate("userId", "fullName email phoneNumber")
       .populate("hotelId", "name address propertyType")
+      .populate("tripPackageId", "title slug durationDays")
       .populate("assignedTo", "fullName email");
   }
 
@@ -38,13 +40,20 @@ export class AdminInquiryService {
       filter.hotelId = params.hotelId;
     }
 
+    if (params.tripPackageId) {
+      filter.tripPackageId = params.tripPackageId;
+    }
+
     if (params.search) {
       const regex = { $regex: escapeRegex(params.search), $options: "i" };
-      const [users, hotels] = await Promise.all([
+      const [users, hotels, tripPackages] = await Promise.all([
         UserModel.find({
           $or: [{ fullName: regex }, { email: regex }],
         }).select("_id"),
         HotelModel.find({ name: regex }).select("_id"),
+        TripPackageModel.find({
+          $or: [{ title: regex }, { slug: regex }],
+        }).select("_id"),
       ]);
 
       filter.$or = [
@@ -54,6 +63,7 @@ export class AdminInquiryService {
         { status: regex },
         { userId: { $in: users.map((user) => user._id) } },
         { hotelId: { $in: hotels.map((hotel) => hotel._id) } },
+        { tripPackageId: { $in: tripPackages.map((tripPackage) => tripPackage._id) } },
       ];
     }
 
@@ -75,6 +85,7 @@ export class AdminInquiryService {
       InquiryModel.find(filter)
         .populate("userId", "fullName email phoneNumber")
         .populate("hotelId", "name address propertyType")
+        .populate("tripPackageId", "title slug durationDays")
         .populate("assignedTo", "fullName email")
         .sort({ createdAt: -1 })
         .skip(skip)

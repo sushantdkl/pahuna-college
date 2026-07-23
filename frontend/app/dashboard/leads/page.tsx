@@ -187,13 +187,13 @@ export default function DashboardLeadsPage() {
             <div className="py-14 text-center text-sm font-medium text-stone-500">Loading inquiries...</div>
           ) : inquiries.length ? (
             <table className="min-w-[980px] w-full text-sm">
-              <thead><tr className="border-b text-left text-stone-500"><th className="pb-3 pr-4 font-medium">Title</th><th className="pb-3 pr-4 font-medium">User</th><th className="pb-3 pr-4 font-medium">Hotel</th><th className="pb-3 pr-4 font-medium">Type</th><th className="pb-3 pr-4 font-medium">Status</th><th className="pb-3 pr-4 font-medium">Created</th><th className="pb-3 font-medium">Actions</th></tr></thead>
+              <thead><tr className="border-b text-left text-stone-500"><th className="pb-3 pr-4 font-medium">Title</th><th className="pb-3 pr-4 font-medium">User</th><th className="pb-3 pr-4 font-medium">Related listing</th><th className="pb-3 pr-4 font-medium">Type</th><th className="pb-3 pr-4 font-medium">Status</th><th className="pb-3 pr-4 font-medium">Created</th><th className="pb-3 font-medium">Actions</th></tr></thead>
               <tbody>
                 {inquiries.map((inquiry) => (
                   <tr key={inquiry._id} className="border-b border-stone-100 align-top last:border-0">
                     <td className="py-4 pr-4"><p className="font-semibold text-stone-900">{inquiry.title}</p><p className="mt-1 max-w-52 truncate text-xs text-stone-500">{inquiry.message}</p></td>
                     <td className="py-4 pr-4"><p className="font-medium">{customerName(inquiry)}</p><p className="text-xs text-stone-500">{inquiry.userId?.email || "Account unavailable"}</p></td>
-                    <td className="py-4 pr-4 text-stone-600">{hotelLabel(inquiry)}</td>
+                    <td className="py-4 pr-4 text-stone-600">{relationLabel(inquiry)}</td>
                     <td className="py-4 pr-4 text-stone-600">{formatLabel(inquiry.inquiryType)}</td>
                     <td className="py-4 pr-4"><StatusBadge status={inquiry.status} /></td>
                     <td className="py-4 pr-4 text-stone-500">{formatDate(inquiry.createdAt)}</td>
@@ -230,7 +230,7 @@ export default function DashboardLeadsPage() {
 }
 
 function InquiryDetailDialog({ inquiry, onClose }: { inquiry: AdminInquiry; onClose: () => void }) {
-  return <ModalShell title={inquiry.title} eyebrow={formatLabel(inquiry.inquiryType)} onClose={onClose}><div className="grid gap-3 sm:grid-cols-2"><Detail label="Customer" value={`${customerName(inquiry)} (${inquiry.userId?.email || "Account unavailable"})`} /><Detail label="Hotel" value={hotelLabel(inquiry)} /><Detail label="Status" value={formatLabel(inquiry.status)} /><Detail label="Created" value={formatDate(inquiry.createdAt)} /></div><MessageBlock label="Customer message" value={inquiry.message} />{inquiry.response ? <MessageBlock label="Admin response" value={inquiry.response} /> : null}</ModalShell>;
+  return <ModalShell title={inquiry.title} eyebrow={formatLabel(inquiry.inquiryType)} onClose={onClose}><div className="grid gap-3 sm:grid-cols-2"><Detail label="Customer" value={`${customerName(inquiry)} (${inquiry.userId?.email || "Account unavailable"})`} /><Detail label="Related listing" value={relationLabel(inquiry)} /><Detail label="Status" value={formatLabel(inquiry.status)} /><Detail label="Created" value={formatDate(inquiry.createdAt)} /></div><MessageBlock label="Customer message" value={inquiry.message} />{inquiry.response ? <MessageBlock label="Admin response" value={inquiry.response} /> : null}</ModalShell>;
 }
 
 function RespondDialog({ inquiry, onClose, onSaved }: { inquiry: AdminInquiry; onClose: () => void; onSaved: () => Promise<void> }) {
@@ -252,7 +252,8 @@ function Detail({ label, value }: { label: string; value: string }) { return <di
 function MessageBlock({ label, value }: { label: string; value: string }) { return <div className="mt-4 rounded-xl border border-stone-200 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-stone-400">{label}</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-stone-700">{value}</p></div>; }
 function StatusBadge({ status }: { status: InquiryStatus }) { const tone = status === "NEW" ? "bg-amber-100 text-amber-800" : status === "CLOSED" ? "bg-stone-100 text-stone-600" : "bg-emerald-50 text-emerald-700"; return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${tone}`}>{formatLabel(status)}</span>; }
 function customerName(inquiry: AdminInquiry) { return inquiry.userId?.fullName || "Deleted user"; }
-function hotelLabel(inquiry: AdminInquiry) {
+function relationLabel(inquiry: AdminInquiry) {
+  if (inquiry.tripPackageId?.title) return inquiry.tripPackageId.title;
   if (inquiry.hotelId?.name) return inquiry.hotelId.name;
   if (!["HOTEL", "AVAILABILITY", "BOOKING", "RESERVATION"].includes(inquiry.inquiryType)) return "General";
   const titleMatch = inquiry.title.match(/(?:availability|booking|reservation) for (.+)$/i);

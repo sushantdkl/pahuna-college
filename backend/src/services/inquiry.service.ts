@@ -4,6 +4,7 @@ import { CreateInquiryDTO } from "../dtos/inquiry.dto";
 import { HttpException } from "../exceptions/http-exception";
 import { HotelModel } from "../models/hotel.model";
 import { InquiryModel } from "../models/inquiry.model";
+import { TripPackageModel } from "../models/trip-package.model";
 
 const hotelInquiryTypes = new Set([
   "HOTEL",
@@ -60,8 +61,28 @@ export class InquiryService {
     return undefined;
   }
 
+  private async resolveTripPackageId(payload: CreateInquiryDTO) {
+    if (!payload.tripPackageId) return undefined;
+
+    if (!mongoose.Types.ObjectId.isValid(payload.tripPackageId)) {
+      throw new HttpException(400, "Invalid trip package id");
+    }
+
+    const tripPackage = await TripPackageModel.findOne({
+      _id: payload.tripPackageId,
+      isActive: true,
+    }).select("_id");
+
+    if (!tripPackage) {
+      throw new HttpException(404, "Trip package not found");
+    }
+
+    return tripPackage._id;
+  }
+
   async createInquiry(userId: string, payload: CreateInquiryDTO) {
     const hotelId = await this.resolveHotelId(payload);
+    const tripPackageId = await this.resolveTripPackageId(payload);
 
     if (
       hotelInquiryTypes.has(payload.inquiryType) &&
@@ -77,6 +98,7 @@ export class InquiryService {
     const inquiry = await InquiryModel.create({
       userId,
       hotelId,
+      tripPackageId,
       title: payload.title,
       message: payload.message,
       inquiryType: payload.inquiryType,
@@ -87,6 +109,7 @@ export class InquiryService {
       _id: inquiry._id.toString(),
       userId: inquiry.userId.toString(),
       hotelId: inquiry.hotelId?.toString(),
+      tripPackageId: inquiry.tripPackageId?.toString(),
       title: inquiry.title,
       message: inquiry.message,
       inquiryType: inquiry.inquiryType,

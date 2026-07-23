@@ -8,6 +8,7 @@ const mongoId = z
 
 export const CreateInquiryDTO = z.object({
   hotelId: mongoId.optional(),
+  tripPackageId: mongoId.optional(),
   hotelName: z.string().trim().min(1).max(160).optional(),
   title: z.string().trim().min(1, "Title is required").max(160),
   message: z.string().trim().min(1, "Message is required").max(5000),
@@ -37,6 +38,7 @@ export const AdminInquiryListQueryDTO = z.object({
   status: InquiryStatusSchema.optional(),
   inquiryType: InquiryTypeSchema.optional(),
   hotelId: mongoId.optional(),
+  tripPackageId: mongoId.optional(),
 });
 
 export type AdminInquiryListQueryDTO = z.infer<

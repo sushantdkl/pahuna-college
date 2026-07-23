@@ -61,6 +61,7 @@ export function createTripPackageInquiry(tripPackage: TripPackage) {
   return apiPost(
     "/inquiries",
     {
+      tripPackageId: tripPackage._id,
       title: `Trip package reservation: ${tripPackage.title}`,
       message: `I want to reserve or discuss the ${tripPackage.title} package.`,
       inquiryType: "TRAVEL_SUPPORT",

@@ -26,6 +26,7 @@ export class AdminInquiryController {
         inquiryType:
           req.query.inquiryType || req.query.inquiry_type || req.query.type,
         hotelId: req.query.hotelId || req.query.hotel_id,
+        tripPackageId: req.query.tripPackageId || req.query.trip_package_id,
       });
 
       if (!parsedQuery.success) {
