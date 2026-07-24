@@ -4,18 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink, PageHero, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { TourismMap, type TourismMapMarker } from "@/app/_components/tourism-map";
 import { getExperiences, type PublicExperience } from "@/lib/api/public-catalog";
 import { resolveApiAssetUrl } from "@/lib/api/axios-instance";
 import { images, safeImage } from "@/lib/pahuna-content";
-
-const mapPins = [
-  "left-[42%] top-[38%]",
-  "left-[48%] top-[45%]",
-  "left-[52%] top-[34%]",
-  "left-[58%] top-[50%]",
-  "left-[61%] top-[42%]",
-  "left-[47%] top-[56%]",
-];
 
 export default function ExperiencesPage() {
   const [experiences, setExperiences] = useState<PublicExperience[]>([]);
@@ -32,6 +24,24 @@ export default function ExperiencesPage() {
 
   const categories = useMemo(() => ["All", ...Array.from(new Set(experiences.map((item) => item.category))).sort()], [experiences]);
   const visible = category === "All" ? experiences : experiences.filter((item) => item.category === category);
+  const mapMarkers = useMemo<TourismMapMarker[]>(
+    () =>
+      visible.map((experience) => ({
+        id: experience._id,
+        name: experience.name,
+        category: "experience",
+        latitude: experience.latitude,
+        longitude: experience.longitude,
+        type: experience.category,
+        location: experience.location,
+        price: experience.price !== undefined ? `NPR ${experience.price.toLocaleString()}` : "Ask price",
+        duration: experience.duration,
+        href: `/experiences/${experience.slug}`,
+        secondaryHref: "/trip-planner",
+        secondaryLabel: "Build Route",
+      })),
+    [visible],
+  );
 
   return (
     <PageShell>
@@ -57,11 +67,13 @@ export default function ExperiencesPage() {
           </div>
         </div>
 
-        <div className="relative mt-8 h-64 overflow-hidden rounded-[8px] border border-emerald-100 bg-[linear-gradient(135deg,#eaf4ee,#f8fbf7)]">
-          <div className="absolute inset-0 opacity-70" style={{ backgroundImage: "radial-gradient(circle at 20% 30%, #cfe7d6 0 8%, transparent 9%), radial-gradient(circle at 72% 45%, #dbe7dd 0 12%, transparent 13%), linear-gradient(120deg, transparent 45%, #c9ddd2 46%, transparent 48%)" }} />
-          {mapPins.map((pin, index) => (
-            <span key={pin} className={`absolute ${pin} flex h-7 w-7 items-center justify-center rounded-full bg-violet-600 text-[11px] font-black text-white shadow-lg ring-4 ring-white`}>{index + 1}</span>
-          ))}
+        <div className="mt-8">
+          <TourismMap
+            markers={mapMarkers}
+            heightClass="h-[300px]"
+            emptyTitle="Experience locations not available"
+            emptyDescription="Published experiences without valid coordinates remain listed below, but exact markers appear only when backend latitude and longitude are available."
+          />
         </div>
 
         {loading || error || !visible.length ? (

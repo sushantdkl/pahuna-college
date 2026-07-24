@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { TourismMap, type TourismMapMarker } from "@/app/_components/tourism-map";
 import { foodProviders as fallbackFoodProviders, images, safeImage } from "@/lib/pahuna-content";
 import { getFoodProviders, type FoodProvider as ApiFoodProvider } from "@/lib/actions/final-crud-actions";
 
@@ -71,6 +72,23 @@ export default function FoodPage() {
   }, [activeArea, activeCuisine, activeFeature, activeType, foodProviders, query]);
 
   const featured = foodProviders.filter((provider) => provider.featured).slice(0, 4);
+  const mapMarkers = useMemo<TourismMapMarker[]>(
+    () =>
+      visibleProviders.map((provider) => ({
+        id: provider.slug,
+        name: provider.name,
+        category: "food",
+        latitude: coordinateFor(provider, "latitude"),
+        longitude: coordinateFor(provider, "longitude"),
+        type: typeLabel(provider),
+        location: `${provider.area}, ${provider.district}`,
+        price: provider.priceLevel || "Ask price",
+        href: `/food/${provider.slug}`,
+        secondaryHref: "/trip-planner",
+        secondaryLabel: "Build Route",
+      })),
+    [visibleProviders],
+  );
 
   return (
     <PageShell>
@@ -139,6 +157,14 @@ export default function FoodPage() {
           <p className="mt-4 text-sm font-semibold text-stone-600">Showing {visibleProviders.length} of {foodProviders.length} food listings.</p>
           {apiNotice ? <p className="mt-2 text-sm font-semibold text-amber-700">{apiNotice}</p> : null}
         </div>
+        <div className="mt-8">
+          <TourismMap
+            markers={mapMarkers}
+            heightClass="h-[320px]"
+            emptyTitle="Food provider locations not available"
+            emptyDescription="Food listings without valid coordinates remain visible below. Exact map markers appear only after backend latitude and longitude are available."
+          />
+        </div>
 
         {visibleProviders.length ? (
           <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -201,6 +227,11 @@ function typeLabel(provider: FoodProviderCard) {
 function imageFor(provider: FoodProviderCard) {
   if ("image" in provider) return provider.image;
   return provider.images?.[0] || images.foodFallback;
+}
+
+function coordinateFor(provider: FoodProviderCard, key: "latitude" | "longitude") {
+  if (!(key in provider)) return undefined;
+  return (provider as ApiFoodProvider)[key];
 }
 
 function FilterSelect({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: string[] }) {

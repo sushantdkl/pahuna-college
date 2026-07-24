@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink, PageHero, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { TourismMap, type TourismMapMarker } from "@/app/_components/tourism-map";
 import { getDestinations, type PublicDestination } from "@/lib/api/public-catalog";
 import { resolveApiAssetUrl } from "@/lib/api/axios-instance";
 import { images, safeImage } from "@/lib/pahuna-content";
@@ -26,6 +27,22 @@ export default function DestinationsPage() {
     if (!needle) return destinations;
     return destinations.filter((destination) => [destination.name, destination.description, destination.category, destination.district, ...destination.attractions].filter(Boolean).join(" ").toLowerCase().includes(needle));
   }, [destinations, query]);
+  const mapMarkers = useMemo<TourismMapMarker[]>(
+    () =>
+      filtered.map((destination) => ({
+        id: destination._id,
+        name: destination.name,
+        category: "destination",
+        latitude: destination.latitude,
+        longitude: destination.longitude,
+        type: destination.category || "Destination",
+        location: destination.district || "Karnali",
+        href: `/destinations/${destination.slug}`,
+        secondaryHref: "/trip-planner",
+        secondaryLabel: "Build Route",
+      })),
+    [filtered],
+  );
 
   return (
     <PageShell>
@@ -60,6 +77,14 @@ export default function DestinationsPage() {
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <SectionHeader eyebrow="Explore Karnali" title="Places worth building a journey around." description="Every published destination comes from the same catalog managed in the dashboard." />
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search place, district, or attraction" className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 md:max-w-sm" />
+        </div>
+        <div className="mt-8">
+          <TourismMap
+            markers={mapMarkers}
+            heightClass="h-[330px]"
+            emptyTitle="Destination coordinates not available"
+            emptyDescription="Destination guides remain available in the grid. Exact map markers appear only when valid backend coordinates exist."
+          />
         </div>
         {loading || error || !filtered.length ? (
           <CatalogState title={loading ? "Loading destinations" : error ? "Destinations are temporarily unavailable" : "No destinations found"} description={error || (loading ? "Fetching the latest published places." : "Try a broader search term.")} />

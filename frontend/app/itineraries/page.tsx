@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ButtonLink, PageHero, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { TourismMap, type TourismMapMarker } from "@/app/_components/tourism-map";
 import { destinations, featuredStays, foodProviders, images, routeCards } from "@/lib/pahuna-content";
 
 const ideas = [
@@ -39,6 +40,20 @@ const suggestionCards = [
 ];
 
 export default function ItinerariesPage() {
+  const itineraryMarkers: TourismMapMarker[] = [
+    ...featuredStays.slice(0, 2).map((stay) => ({
+      id: `stay-${stay.slug}`,
+      name: stay.name,
+      category: "stay" as const,
+      latitude: stay.latitude,
+      longitude: stay.longitude,
+      type: stay.typeLabel || stay.type,
+      location: `${stay.area}, ${stay.district}`,
+      price: stay.priceFrom,
+      href: `/hotels/${stay.slug}`,
+    })),
+  ];
+
   return (
     <PageShell>
       <SiteHeader />
@@ -83,6 +98,14 @@ export default function ItinerariesPage() {
           </div>
           <div className="rounded-[18px] border border-stone-200 bg-white p-5 shadow-sm">
             <SectionHeader eyebrow="Map context" title="Start in Surkhet, then expand outward." description="Use route and destination context from the final Pahuna CRUD modules before confirming travel." />
+            <div className="mt-6">
+              <TourismMap
+                markers={itineraryMarkers}
+                heightClass="h-[360px]"
+                emptyTitle="Itinerary map coordinates not available"
+                emptyDescription="This itinerary can still be reviewed through the route cards. Map markers appear only for selected stops with valid backend coordinates."
+              />
+            </div>
             <div className="mt-6 grid gap-3">
               {routeCards.map((route) => (
                 <Link key={route.route} href="/routes" className="rounded-xl border border-emerald-100 p-4 text-sm transition hover:bg-emerald-50">

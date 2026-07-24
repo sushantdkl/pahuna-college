@@ -52,7 +52,7 @@ export default function PartnerPage() {
         <SectionShell>
           <SectionHeader align="center" title="Partner Benefits" description="Here is what you get when you join our network." />
           <div className="mx-auto mt-8 grid max-w-4xl gap-4 md:grid-cols-2">
-            {benefits.map((benefit) => <div key={benefit} className="flex gap-3 rounded-[8px] bg-emerald-50 p-4 text-sm font-semibold leading-6 text-stone-700"><span className="mt-0.5 text-emerald-700">OK</span><span>{benefit}</span></div>)}
+            {benefits.map((benefit) => <div key={benefit} className="flex gap-3 rounded-[8px] bg-emerald-50 p-4 text-sm font-semibold leading-6 text-stone-700"><span className="mt-0.5 text-emerald-700" aria-hidden="true">✅</span><span>{benefit}</span></div>)}
           </div>
         </SectionShell>
       </section>

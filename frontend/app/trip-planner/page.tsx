@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { TourismMap, type TourismMapMarker } from "@/app/_components/tourism-map";
 import { featuredStays, foodProviders, routeCards, surkhetPlaces } from "@/lib/pahuna-content";
 
 const plannerSteps = [
@@ -34,6 +35,20 @@ const costCards = [
 ];
 
 export default function TripPlannerPage() {
+  const plannerMapMarkers: TourismMapMarker[] = featuredStays.slice(0, 3).map((stay) => ({
+    id: `stay-${stay.slug}`,
+    name: stay.name,
+    category: "stay",
+    latitude: stay.latitude,
+    longitude: stay.longitude,
+    type: stay.typeLabel || stay.type,
+    location: `${stay.area}, ${stay.district}`,
+    price: stay.priceFrom,
+    href: `/hotels/${stay.slug}`,
+    secondaryHref: "/routes",
+    secondaryLabel: "Build Route",
+  }));
+
   return (
     <PageShell>
       <SiteHeader />
@@ -208,12 +223,12 @@ export default function TripPlannerPage() {
           ))}
         </div>
         <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_340px]">
-          <div className="relative h-72 overflow-hidden rounded-[8px] border border-emerald-100 bg-[linear-gradient(135deg,#eaf4ee,#f8fbf7)]">
-            <div className="absolute inset-0 opacity-70" style={{ backgroundImage: "radial-gradient(circle at 22% 35%, #cfe7d6 0 8%, transparent 9%), radial-gradient(circle at 72% 42%, #dbe7dd 0 12%, transparent 13%), linear-gradient(120deg, transparent 46%, #c9ddd2 47%, transparent 49%)" }} />
-            {["left-[42%] top-[40%] bg-emerald-700", "left-[48%] top-[48%] bg-violet-600", "left-[53%] top-[42%] bg-pink-600", "left-[58%] top-[55%] bg-violet-600", "left-[64%] top-[36%] bg-emerald-700"].map((pin, index) => (
-              <span key={pin} className={`absolute ${pin} flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-black text-white shadow-lg ring-4 ring-white`}>{index + 1}</span>
-            ))}
-          </div>
+          <TourismMap
+            markers={plannerMapMarkers}
+            heightClass="h-[300px]"
+            emptyTitle="Trip map coordinates not available"
+            emptyDescription="Trip planner suggestions remain available. Exact markers appear only for selected stays, food providers, experiences, and destinations with valid coordinates."
+          />
           <aside className="rounded-[8px] border border-stone-200 bg-white p-5 shadow-sm">
             <h3 className="font-black">Cost by category</h3>
             <div className="mt-4 grid gap-3 text-sm">

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { TourismMap } from "@/app/_components/tourism-map";
 import { images } from "@/lib/pahuna-content";
 import { getRouteSegments, getTransportRoutes, type RouteSegment, type TransportRoute } from "@/lib/actions/final-crud-actions";
 
@@ -111,6 +112,15 @@ export default function RoutesPage() {
           </div>
           <p className="mt-4 text-sm font-semibold text-stone-600">{loading ? "Loading live route data..." : `Showing ${visibleSegments.length} route segments.`}</p>
           {error ? <p className="mt-2 text-sm text-amber-700">{error}</p> : null}
+          <div className="mt-6">
+            <TourismMap
+              markers={[]}
+              routes={[]}
+              heightClass="h-[300px]"
+              emptyTitle="Route coordinates not available"
+              emptyDescription="Current route records provide textual origin, destination, cost, duration, reliability, and safety notes. A route polyline will render here when valid backend coordinate points are added."
+            />
+          </div>
 
           <div className="mt-6 rounded-[14px] border border-amber-200 bg-amber-50 p-4">
             <p className="font-black text-amber-950">{highlighted.from} to {highlighted.to}</p>

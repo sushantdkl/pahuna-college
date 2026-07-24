@@ -21,11 +21,13 @@ const hotelInquiryTypes = new Set<InquiryKind>([
 ]);
 
 const contactCards = [
-  ["Visit Us", "Birendranagar, Surkhet, Karnali Province, Nepal"],
-  ["Call Us", "+977-083-520000"],
-  ["Email Us", "hello@pahuna.com"],
-  ["Office Hours", "Sun - Fri, 10:00 AM - 6:00 PM"],
+  ["📍", "Visit Us", "Birendranagar, Surkhet, Karnali Province, Nepal"],
+  ["☎️", "Call Us", "+977-083-520000"],
+  ["✉️", "Email Us", "hello@pahuna.com"],
+  ["🕒", "Office Hours", "Sun - Fri, 10:00 AM - 6:00 PM"],
 ];
+
+const softwaricaMapSrc = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.3609923548934!2d85.32740427638603!3d27.70613837618334!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb190a74aa1f23%3A0x74ebef82ad0e5c15!2sSoftwarica%20College%20of%20IT%20and%20E-Commerce!5e0!3m2!1sen!2snp!4v1784867879176!5m2!1sen!2snp";
 
 export default async function ContactPage({ searchParams }: { searchParams: ContactSearchParams }) {
   const params = await searchParams;
@@ -46,9 +48,9 @@ export default async function ContactPage({ searchParams }: { searchParams: Cont
 
       <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 lg:px-8">
         <div className="grid gap-5 md:grid-cols-4">
-          {contactCards.map(([title, text]) => (
+          {contactCards.map(([icon, title, text]) => (
             <div key={title} className="rounded-[8px] border border-stone-200 bg-white p-6 text-center shadow-sm">
-              <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-sm font-black text-emerald-700">{title.slice(0, 2)}</div>
+              <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-lg" aria-hidden="true">{icon}</div>
               <h2 className="mt-4 font-black">{title}</h2>
               <p className="mt-2 text-xs leading-5 text-stone-500">{text}</p>
             </div>
@@ -76,18 +78,28 @@ export default async function ContactPage({ searchParams }: { searchParams: Cont
           <p className="mt-3 text-sm text-stone-600">Visit us at our office in Birendranagar, Surkhet.</p>
         </div>
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
-          <div className="min-h-[330px] rounded-[8px] border border-stone-200 bg-[linear-gradient(135deg,#f4f6f4,#e9eeeb)] p-4 shadow-sm">
-            <div className="flex h-full items-center justify-center rounded-[6px] border border-dashed border-emerald-200 text-sm font-semibold text-stone-500">Map preview - Birendranagar, Surkhet</div>
+          <div className="overflow-hidden rounded-[8px] border border-stone-200 bg-white shadow-sm">
+            <iframe
+              src={softwaricaMapSrc}
+              width="600"
+              height="450"
+              style={{ border: 0, width: "100%", height: "100%", minHeight: 340 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              title="Softwarica College of IT and E-Commerce location"
+              className="block h-[300px] w-full sm:h-[380px] lg:h-[420px]"
+            />
           </div>
           <aside className="h-fit rounded-[8px] border border-stone-200 bg-white p-5 shadow-sm">
             <h3 className="font-black">Find Us</h3>
             <div className="mt-4 grid gap-3 text-sm text-stone-600">
-              <p><strong className="text-stone-900">Address:</strong><br />Birendranagar, Surkhet, Karnali Province, Nepal</p>
-              <p><strong className="text-stone-900">Phone:</strong><br />+977-083-520000</p>
-              <p><strong className="text-stone-900">Email:</strong><br />hello@pahuna.com</p>
-              <p><strong className="text-stone-900">Hours:</strong><br />Sun - Fri, 10 AM - 6 PM</p>
+              <p><strong className="text-stone-900">📍 Address:</strong><br />Softwarica College of IT and E-Commerce, Kathmandu, Nepal</p>
+              <p><strong className="text-stone-900">☎️ Phone:</strong><br />+977-083-520000</p>
+              <p><strong className="text-stone-900">✉️ Email:</strong><br />hello@pahuna.com</p>
+              <p><strong className="text-stone-900">🕒 Hours:</strong><br />Sun - Fri, 10 AM - 6 PM</p>
             </div>
-            <a href="https://maps.google.com/?q=Birendranagar+Surkhet" target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full justify-center rounded-lg bg-emerald-700 px-4 py-2 text-sm font-black text-white">Open in Google Maps</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Softwarica%20College%20of%20IT%20and%20E-Commerce" target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full justify-center rounded-lg bg-emerald-700 px-4 py-2 text-sm font-black text-white">🧭 Get Directions</a>
           </aside>
         </div>
       </section>
