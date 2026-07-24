@@ -1,11 +1,11 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client"
 
 import * as React from "react"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 import { Select as SelectPrimitive } from "radix-ui"
 
-import { cn } from "@backend/lib/utils"
+import { cn } from "@/lib/utils"
 
 function Select({
   ...props

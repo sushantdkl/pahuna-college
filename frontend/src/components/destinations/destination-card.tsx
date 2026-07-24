@@ -1,11 +1,11 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Image from "next/image";
 import Link from "next/link";
 import { Clock, MapPin, Mountain, Route } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getImageOrPlaceholder } from "@backend/lib/assets";
-import type { PublicDestination } from "@backend/services/destinations";
+import { getImageOrPlaceholder } from "@/lib/assets";
+import type { PublicDestination } from "@/lib/services/destinations";
 
 interface DestinationCardProps {
   destination: PublicDestination;

@@ -7,8 +7,8 @@ import {
   MapPin,
 } from "lucide-react";
 import { Container } from "@/components/layout/container";
-import { SITE_CONFIG } from "@backend/lib/constants";
-import { footerNavigation } from "@backend/data/navigation";
+import { SITE_CONFIG } from "@/lib/constants";
+import { footerNavigation } from "@/lib/data/navigation";
 import { Separator } from "@/components/ui/separator";
 
 export function Footer() {

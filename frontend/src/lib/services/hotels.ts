@@ -1,4 +1,4 @@
-import type { HotelFilters } from "../lib/validations";
+import type { HotelFilters } from "../validations";
 
 export function filterAndSortHotels<T>(hotels: T[], filters?: HotelFilters) {
   void filters;

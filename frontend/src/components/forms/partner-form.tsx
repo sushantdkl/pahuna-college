@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { partnerSchema, type PartnerInput } from "@backend/lib/validations";
+import { partnerSchema, type PartnerInput } from "@/lib/validations";
 import { submitPartnerApplication } from "@/actions/partner";
 
 const partnerTypes = [

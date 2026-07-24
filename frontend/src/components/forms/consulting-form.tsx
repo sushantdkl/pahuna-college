@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -22,14 +22,14 @@ import { FormSuccess } from "@/components/shared/form-success";
 import {
   consultingLeadSchema,
   type ConsultingLeadInput,
-} from "@backend/lib/validations";
+} from "@/lib/validations";
 import { submitConsultingLead } from "@/actions/consulting";
 import {
   CONSULTING_SERVICES,
   BUSINESS_TYPES,
   BUSINESS_STAGES,
   PROJECT_TIMELINES,
-} from "@backend/lib/constants";
+} from "@/lib/constants";
 
 interface ConsultingFormProps {
   /** Pre-select a service (e.g. when coming from a service detail page) */
@@ -89,7 +89,7 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* ── Section 1: Contact ── */}
+      {/* â”€â”€ Section 1: Contact â”€â”€ */}
       <div>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em] mb-4">
           Contact Details
@@ -151,7 +151,7 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
 
       <Separator />
 
-      {/* ── Section 2: Business Context ── */}
+      {/* â”€â”€ Section 2: Business Context â”€â”€ */}
       <div>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em] mb-4">
           About Your Business
@@ -223,7 +223,7 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
 
       <Separator />
 
-      {/* ── Section 3: Service Requirements ── */}
+      {/* â”€â”€ Section 3: Service Requirements â”€â”€ */}
       <div>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em] mb-4">
           Service Requirements
@@ -275,7 +275,7 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
           <Label htmlFor="c-budget">Approximate Budget</Label>
           <Input
             id="c-budget"
-            placeholder="e.g. NPR 50,000 – 1,00,000"
+            placeholder="e.g. NPR 50,000 â€“ 1,00,000"
             {...register("budget")}
           />
         </div>
@@ -309,7 +309,7 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
       </Button>
 
       <p className="text-xs text-center text-muted-foreground">
-        Free initial consultation · No obligation · Response within 24 hours
+        Free initial consultation Â· No obligation Â· Response within 24 hours
       </p>
     </form>
   );

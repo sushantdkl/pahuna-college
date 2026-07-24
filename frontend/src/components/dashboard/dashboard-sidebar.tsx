@@ -1,12 +1,12 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@backend/lib/utils";
-import { hasPermission } from "@backend/lib/roles";
-import type { UserRole } from "@backend/lib/user-role";
+import { cn } from "@/lib/utils";
+import { hasPermission } from "@/lib/roles";
+import type { UserRole } from "@/lib/user-role";
 import {
   LayoutDashboard,
   Hotel,
@@ -196,7 +196,7 @@ export function DashboardSidebar({
             href="/"
             className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
-            ← Back to site
+            â† Back to site
           </Link>
         </div>
       </aside>

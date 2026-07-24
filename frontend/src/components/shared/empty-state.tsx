@@ -1,8 +1,8 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Link from "next/link";
 import { SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface EmptyStateProps {
   icon?: React.ReactNode;

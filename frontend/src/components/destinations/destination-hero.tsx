@@ -1,12 +1,12 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Route } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout/container";
-import type { PublicDestination } from "@backend/services/destinations";
-import { getImageOrPlaceholder } from "@backend/lib/assets";
+import type { PublicDestination } from "@/lib/services/destinations";
+import { getImageOrPlaceholder } from "@/lib/assets";
 
 interface DestinationHeroProps {
   destination: PublicDestination;

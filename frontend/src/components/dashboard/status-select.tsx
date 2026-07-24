@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useTransition } from "react";
@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface StatusOption {
   value: string;
@@ -25,7 +25,7 @@ interface StatusSelectProps {
 }
 
 /**
- * Inline status dropdown — calls a server action on change.
+ * Inline status dropdown â€” calls a server action on change.
  * Shows pending state while updating.
  */
 export function StatusSelect({

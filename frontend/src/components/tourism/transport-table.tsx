@@ -1,9 +1,9 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { Plane, Bus, Car, Bike } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { transportRoutes } from "@backend/services";
-import { formatPrice } from "@backend/lib/utils";
+import { transportRoutes } from "@/lib/services";
+import { formatPrice } from "@/lib/utils";
 
 const modeIcons: Record<string, React.ReactNode> = {
   Flight: <Plane className="h-4 w-4" />,
@@ -48,7 +48,7 @@ export function TransportTable() {
                 {intercity.map((route, i) => (
                   <tr key={i} className="hover:bg-muted/50">
                     <td className="py-3 font-medium">
-                      {route.from} → {route.to}
+                      {route.from} â†’ {route.to}
                     </td>
                     <td className="py-3">
                       <Badge variant="outline" className="text-xs gap-1">
@@ -60,7 +60,7 @@ export function TransportTable() {
                       {route.durationHours}h
                     </td>
                     <td className="py-3 font-medium text-primary">
-                      {formatPrice(route.costMin)} – {formatPrice(route.costMax)}
+                      {formatPrice(route.costMin)} â€“ {formatPrice(route.costMax)}
                     </td>
                     <td className="py-3 text-muted-foreground hidden sm:table-cell">
                       {route.frequency}
@@ -102,7 +102,7 @@ export function TransportTable() {
                 </div>
                 <div className="text-right">
                   <div className="font-medium text-sm text-primary">
-                    {formatPrice(route.costMin)} – {formatPrice(route.costMax)}
+                    {formatPrice(route.costMin)} â€“ {formatPrice(route.costMax)}
                   </div>
                   <div className="text-xs text-muted-foreground">
                     {route.frequency}

@@ -1,11 +1,11 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
-import type { DestinationCategory, TravelDifficulty } from "@backend/lib/prisma-types";
+import type { DestinationCategory, TravelDifficulty } from "@/lib/prisma-types";
 import type React from "react";
 import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 type FilterOption<T extends string> = {
   value: T;

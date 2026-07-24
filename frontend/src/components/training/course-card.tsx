@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import Link from "next/link";
@@ -26,8 +26,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { TrainingCourse, TrainingIconName } from "@backend/services";
-import { formatPrice } from "@backend/lib/utils";
+import type { TrainingCourse, TrainingIconName } from "@/lib/services";
+import { formatPrice } from "@/lib/utils";
 
 export const trainingIconMap: Record<TrainingIconName, LucideIcon> = {
   Coffee,
@@ -79,7 +79,7 @@ const colorMap: Record<string, { bg: string; text: string; badge: string; border
   },
 };
 
-// ── Compact Course Card (for grids) ──
+// â”€â”€ Compact Course Card (for grids) â”€â”€
 
 interface CourseCardProps {
   course: TrainingCourse;
@@ -144,7 +144,7 @@ export function CourseCard({ course, compact = false }: CourseCardProps) {
     );
   }
 
-  // ── Full Featured Card (horizontal layout for featured section) ──
+  // â”€â”€ Full Featured Card (horizontal layout for featured section) â”€â”€
   return (
     <Card className={`overflow-hidden border ${colors.border} hover:shadow-xl transition-all duration-300 group`}>
       <div className="grid grid-cols-1 md:grid-cols-[280px_1fr]">
@@ -218,7 +218,7 @@ export function CourseCard({ course, compact = false }: CourseCardProps) {
   );
 }
 
-// ── Testimonial Card ──
+// â”€â”€ Testimonial Card â”€â”€
 
 interface StudentTestimonialCardProps {
   testimonial: {

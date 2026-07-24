@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormSuccess } from "@/components/shared/form-success";
-import { callbackSchema, type CallbackInput } from "@backend/lib/validations";
+import { callbackSchema, type CallbackInput } from "@/lib/validations";
 import { submitCallbackRequest } from "@/actions/callback";
 
 interface CallbackFormProps {
@@ -90,7 +90,7 @@ export function CallbackForm({ hotelId, hotelName, compact = false }: CallbackFo
           </div>
           <div>
             <h3 className="font-semibold text-sm">Request a Callback</h3>
-            <p className="text-xs text-muted-foreground">We&apos;ll call you — no waiting on hold.</p>
+            <p className="text-xs text-muted-foreground">We&apos;ll call you â€” no waiting on hold.</p>
           </div>
         </div>
       )}

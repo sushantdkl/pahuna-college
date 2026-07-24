@@ -1,5 +1,5 @@
-// @ts-nocheck
-import { cn } from "@backend/lib/utils";
+﻿// @ts-nocheck
+import { cn } from "@/lib/utils";
 
 interface ContainerProps {
   children: React.ReactNode;

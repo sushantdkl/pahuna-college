@@ -1,11 +1,11 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { Quote, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getInitials } from "@backend/lib/utils";
-import type { CaseStudy, ConsultingTestimonial } from "@backend/services";
+import { getInitials } from "@/lib/utils";
+import type { CaseStudy, ConsultingTestimonial } from "@/lib/services";
 
-// ── Case Study Card ──
+// â”€â”€ Case Study Card â”€â”€
 
 interface CaseStudyCardProps {
   study: CaseStudy;
@@ -82,7 +82,7 @@ export function CaseStudyCard({ study }: CaseStudyCardProps) {
   );
 }
 
-// ── Testimonial Card ──
+// â”€â”€ Testimonial Card â”€â”€
 
 interface TestimonialCardProps {
   testimonial: ConsultingTestimonial;

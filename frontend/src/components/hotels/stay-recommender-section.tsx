@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
@@ -35,7 +35,7 @@ import {
   STAY_PREFERENCES,
   TRAVEL_TYPES,
   type StayRecommenderResponse,
-} from "@backend/lib/recommendations/stay-recommender";
+} from "@/lib/recommendations/stay-recommender";
 
 const DEFAULT_FORM = {
   destinationDistrict: "",
@@ -114,7 +114,7 @@ function RecommendationCard({
                 <MapPin className="h-3.5 w-3.5" />
                 {recommendation.district}
               </span>
-              <span>•</span>
+              <span>â€¢</span>
               <span>{recommendation.area}</span>
             </CardDescription>
           </div>
@@ -135,7 +135,7 @@ function RecommendationCard({
                 Best fit
               </p>
               <p className="mt-1 text-sm text-slate-700">
-                {recommendation.bestFor.slice(0, 2).join(" • ") || "Flexible stay"}
+                {recommendation.bestFor.slice(0, 2).join(" â€¢ ") || "Flexible stay"}
               </p>
             </div>
           </div>
@@ -191,7 +191,7 @@ export function StayRecommenderSection() {
 
   const amenitySummary = useMemo(() => {
     if (form.requiredAmenities.length === 0) return "No amenity preferences yet";
-    return form.requiredAmenities.slice(0, 3).join(" • ");
+    return form.requiredAmenities.slice(0, 3).join(" â€¢ ");
   }, [form.requiredAmenities]);
 
   function updateField<K extends keyof StayRecommenderForm>(key: K, value: StayRecommenderForm[K]) {

@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Link from "next/link";
 import {
   ArrowRight,
@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { ConsultingService, ConsultingIconName } from "@backend/services";
+import type { ConsultingService, ConsultingIconName } from "@/lib/services";
 
 const iconMap: Record<ConsultingIconName, LucideIcon> = {
   Hotel,
@@ -153,7 +153,7 @@ export function ServiceCard({ service, compact = false }: ServiceCardProps) {
               <span className="text-muted-foreground">From </span>
               <span className="font-semibold">{service.startingPrice}</span>
               <span className="text-muted-foreground ml-2">
-                · {service.duration}
+                Â· {service.duration}
               </span>
             </div>
             <Button asChild size="sm">

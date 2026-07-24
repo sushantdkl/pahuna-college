@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import {
   Coffee,
   Hotel,
@@ -7,7 +7,7 @@ import {
   Sparkles,
   type LucideIcon,
 } from "lucide-react";
-import type { TrainingIconName } from "@backend/services";
+import type { TrainingIconName } from "@/lib/services";
 
 const iconMap: Record<string, LucideIcon> = {
   Coffee,

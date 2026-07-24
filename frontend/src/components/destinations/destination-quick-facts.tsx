@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import {
   CalendarDays,
   Compass,
@@ -8,7 +8,7 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
-import type { PublicDestination } from "@backend/services/destinations";
+import type { PublicDestination } from "@/lib/services/destinations";
 
 interface DestinationQuickFactsProps {
   destination: PublicDestination;

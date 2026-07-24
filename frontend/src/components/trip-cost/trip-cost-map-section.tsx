@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -19,7 +19,7 @@ import { PahunaMap } from "@/components/maps/pahuna-map";
 import { PahunaMarker } from "@/components/maps/pahuna-marker";
 import { PahunaInfoCard } from "@/components/maps/pahuna-info-card";
 import { SURKHET_CENTER, ZOOM, type MarkerCategory } from "@/components/maps/map-constants";
-import { distanceKm } from "@backend/lib/geo-utils";
+import { distanceKm } from "@/lib/geo-utils";
 
 interface CostPlace {
   name: string;
@@ -103,7 +103,7 @@ export function TripCostMapSection({
 
   return (
     <div className="space-y-4">
-      {/* ── Filter pills ── */}
+      {/* â”€â”€ Filter pills â”€â”€ */}
       <div className="flex flex-wrap items-center gap-2">
         {COST_FILTERS.map(({ value, label, icon: Icon }) => (
           <Badge
@@ -131,7 +131,7 @@ export function TripCostMapSection({
               center={SURKHET_CENTER}
               zoom={ZOOM.city}
               className="w-full h-[350px] md:h-[400px] rounded-xl overflow-hidden"
-              fallbackLabel="Trip Cost Map — Surkhet"
+              fallbackLabel="Trip Cost Map â€” Surkhet"
             >
               {mappable.map((place) => (
                 <PahunaMarker
@@ -168,20 +168,20 @@ export function TripCostMapSection({
               </div>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">🏨 Hotels</span>
-                  <span className="font-medium">NPR 1,500 – 8,000/night</span>
+                  <span className="text-muted-foreground">ðŸ¨ Hotels</span>
+                  <span className="font-medium">NPR 1,500 â€“ 8,000/night</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">🏔 Attractions</span>
-                  <span className="font-medium">Free – NPR 50</span>
+                  <span className="text-muted-foreground">ðŸ” Attractions</span>
+                  <span className="font-medium">Free â€“ NPR 50</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">🧭 Experiences</span>
-                  <span className="font-medium">NPR 500 – 2,500</span>
+                  <span className="text-muted-foreground">ðŸ§­ Experiences</span>
+                  <span className="font-medium">NPR 500 â€“ 2,500</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">🚌 Transport</span>
-                  <span className="font-medium">NPR 500 – 800/trip</span>
+                  <span className="text-muted-foreground">ðŸšŒ Transport</span>
+                  <span className="font-medium">NPR 500 â€“ 800/trip</span>
                 </div>
               </div>
             </CardContent>
@@ -196,7 +196,7 @@ export function TripCostMapSection({
                 </p>
                 {selectedPlace.costHint && (
                   <p className="text-xs text-muted-foreground mb-2">
-                    💰 {selectedPlace.costHint}
+                    ðŸ’° {selectedPlace.costHint}
                   </p>
                 )}
                 {nearbyDistances.length > 0 && (

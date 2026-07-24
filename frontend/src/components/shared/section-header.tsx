@@ -1,6 +1,6 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Link from "next/link";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface SectionHeaderProps {
   title: string;
@@ -72,7 +72,7 @@ export function SectionHeader({
             className="group inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline underline-offset-4 transition-colors"
           >
             {action.label}
-            <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            <span className="transition-transform group-hover:translate-x-0.5">â†’</span>
           </Link>
         </div>
       )}

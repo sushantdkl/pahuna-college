@@ -1,9 +1,9 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Link from "next/link";
 import { ArrowRight, Phone, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@backend/lib/utils";
-import { SITE_CONFIG } from "@backend/lib/constants";
+import { cn } from "@/lib/utils";
+import { SITE_CONFIG } from "@/lib/constants";
 
 interface TrainingCtaProps {
   variant?: "gradient" | "dark" | "light";

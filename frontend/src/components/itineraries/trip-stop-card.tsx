@@ -1,8 +1,8 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { MapPin, Utensils, Moon, Navigation } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface TripStopCardProps {
   dayNumber: number;

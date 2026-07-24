@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import Image from "next/image";
@@ -8,8 +8,8 @@ import { Menu, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Container } from "@/components/layout/container";
-import { mainNavigation } from "@backend/data/navigation";
-import { SITE_CONFIG } from "@backend/lib/constants";
+import { mainNavigation } from "@/lib/data/navigation";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);

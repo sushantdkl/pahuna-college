@@ -1,7 +1,7 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { Card, CardContent } from "@/components/ui/card";
 import type { LucideIcon } from "lucide-react";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface StatCardProps {
   title: string;
@@ -37,7 +37,7 @@ export function StatCard({
                   trend.positive ? "text-success" : "text-destructive",
                 )}
               >
-                {trend.positive ? "↑" : "↓"} {trend.value}
+                {trend.positive ? "â†‘" : "â†“"} {trend.value}
               </p>
             )}
           </div>

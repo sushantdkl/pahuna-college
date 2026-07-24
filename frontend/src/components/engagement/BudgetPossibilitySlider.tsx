@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BUDGET_OPTIONS } from "@/lib/engagement-data";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface BudgetPossibilitySliderProps {
   compact?: boolean;

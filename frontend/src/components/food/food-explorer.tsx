@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useMemo, useState } from "react";
@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { FoodCard } from "./food-card";
-import type { PublicFoodProvider } from "@backend/services/food";
+import type { PublicFoodProvider } from "@/lib/services/food";
 
 const ALL = "ALL";
 

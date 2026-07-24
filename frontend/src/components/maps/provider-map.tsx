@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useMemo, useState } from "react";
@@ -8,7 +8,7 @@ import { PahunaMap } from "./pahuna-map";
 import { PahunaMarker } from "./pahuna-marker";
 import { SURKHET_CENTER, ZOOM } from "./map-constants";
 import { ProviderMapPopup, type ProviderMapPopupProvider } from "./provider-map-popup";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 export interface MapProvider extends ProviderMapPopupProvider {
   latitude?: number | null;

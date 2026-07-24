@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { newsletterSchema, type NewsletterInput } from "@backend/lib/validations";
+import { newsletterSchema, type NewsletterInput } from "@/lib/validations";
 import { subscribeNewsletter } from "@/actions/newsletter";
 
 export function NewsletterForm() {

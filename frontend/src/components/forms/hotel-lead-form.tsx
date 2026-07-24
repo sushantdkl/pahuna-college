@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -18,9 +18,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormSuccess } from "@/components/shared/form-success";
-import { hotelLeadSchema, type HotelLeadInput } from "@backend/lib/validations";
+import { hotelLeadSchema, type HotelLeadInput } from "@/lib/validations";
 import { submitHotelLead } from "@/actions/hotel-lead";
-import { PROPERTY_TYPES, PRICE_RANGES } from "@backend/lib/constants";
+import { PROPERTY_TYPES, PRICE_RANGES } from "@/lib/constants";
 
 export function HotelLeadForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);

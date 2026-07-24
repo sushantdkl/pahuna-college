@@ -1,11 +1,11 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useMemo, useState } from "react";
-import type { DestinationCategory, TravelDifficulty } from "@backend/lib/prisma-types";
+import type { DestinationCategory, TravelDifficulty } from "@/lib/prisma-types";
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { PublicDestination } from "@backend/services/destinations";
+import type { PublicDestination } from "@/lib/services/destinations";
 import { DestinationCard } from "./destination-card";
 import { DestinationFilters } from "./destination-filters";
 

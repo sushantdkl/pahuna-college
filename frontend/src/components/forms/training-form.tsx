@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -21,9 +21,9 @@ import { FormSuccess } from "@/components/shared/form-success";
 import {
   trainingEnrollmentSchema,
   type TrainingEnrollmentInput,
-} from "@backend/lib/validations";
+} from "@/lib/validations";
 import { submitTrainingEnrollment } from "@/actions/training";
-import { trainingCourses } from "@backend/services";
+import { trainingCourses } from "@/lib/services";
 
 interface TrainingFormProps {
   defaultCourse?: string;
@@ -97,7 +97,7 @@ export function TrainingForm({ defaultCourse }: TrainingFormProps) {
             <SelectContent>
               {trainingCourses.map((course) => (
                 <SelectItem key={course.slug} value={course.slug}>
-                  {course.title} — {course.duration}
+                  {course.title} â€” {course.duration}
                 </SelectItem>
               ))}
             </SelectContent>

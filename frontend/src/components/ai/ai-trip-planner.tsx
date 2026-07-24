@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -40,8 +40,8 @@ import {
   TRANSPORT_PREFERENCES,
   STAY_PREFERENCES,
   FITNESS_LEVELS,
-} from "@backend/lib/ai/travel-concierge";
-import { cn } from "@backend/lib/utils";
+} from "@/lib/ai/travel-concierge";
+import { cn } from "@/lib/utils";
 import { unlockPassportBadge } from "@/lib/passport";
 
 const formSchema = travelConciergeRequestSchema.omit({
@@ -517,10 +517,10 @@ export function AITripPlanner() {
                               <Badge variant="outline">{step.mode}</Badge>
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                              Duration: {step.durationRange} · Cost: {step.costRange}
+                              Duration: {step.durationRange} Â· Cost: {step.costRange}
                             </p>
                             <p className="mt-2 text-xs text-muted-foreground">
-                              {step.reliability} reliability · {step.notes}
+                              {step.reliability} reliability Â· {step.notes}
                             </p>
                           </div>
                         ))
@@ -588,10 +588,10 @@ export function AITripPlanner() {
                                 <Badge variant="outline">{stay.verificationLabel}</Badge>
                               </div>
                               <p className="mt-1 text-xs text-muted-foreground">
-                                {stay.type} · {stay.district}
+                                {stay.type} Â· {stay.district}
                               </p>
                               <p className="mt-1 text-xs text-muted-foreground">
-                                {stay.area} · {stay.currency} {stay.priceFrom ?? "—"}
+                                {stay.area} Â· {stay.currency} {stay.priceFrom ?? "â€”"}
                               </p>
                               <p className="mt-2 text-xs text-muted-foreground">
                                 {stay.reason}
@@ -622,7 +622,7 @@ export function AITripPlanner() {
                                 <Badge variant="outline">{service.verificationLabel}</Badge>
                               </div>
                               <p className="mt-1 text-xs text-muted-foreground">
-                                {service.type} · {service.district}
+                                {service.type} Â· {service.district}
                               </p>
                               <p className="mt-1 text-xs text-muted-foreground">
                                 {service.area}
@@ -657,7 +657,7 @@ export function AITripPlanner() {
                               <Badge variant="outline">{provider.verificationLabel}</Badge>
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                              {provider.type.replace(/_/g, " ")} Â· {provider.area}
+                              {provider.type.replace(/_/g, " ")} Ã‚Â· {provider.area}
                             </p>
                             <div className="mt-2 flex flex-wrap gap-1.5">
                               {provider.cuisines.slice(0, 3).map((cuisine) => (

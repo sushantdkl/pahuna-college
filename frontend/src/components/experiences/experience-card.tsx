@@ -1,11 +1,11 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Link from "next/link";
 import Image from "next/image";
 import { Clock, Mountain, DollarSign } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@backend/lib/utils";
-import { getImageOrPlaceholder } from "@backend/lib/assets";
+import { cn } from "@/lib/utils";
+import { getImageOrPlaceholder } from "@/lib/assets";
 
 interface ExperienceCardProps {
   title: string;

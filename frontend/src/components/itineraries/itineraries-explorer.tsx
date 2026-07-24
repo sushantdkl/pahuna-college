@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -18,7 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ItinerariesInteractiveMap } from "@/components/maps/itineraries-interactive-map";
 import { TripStopCard } from "@/components/itineraries/trip-stop-card";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface ItineraryDay {
   dayNumber: number;
@@ -50,7 +50,7 @@ interface ItinerariesExplorerProps {
 }
 
 /**
- * Interactive itineraries explorer — trip cards + map with route previews,
+ * Interactive itineraries explorer â€” trip cards + map with route previews,
  * bidirectional selection, and expandable stop previews.
  */
 export function ItinerariesExplorer({
@@ -73,7 +73,7 @@ export function ItinerariesExplorer({
 
   return (
     <div>
-      {/* ── Mobile view toggle ── */}
+      {/* â”€â”€ Mobile view toggle â”€â”€ */}
       <div className="flex items-center justify-between mb-4 lg:hidden">
         <div className="flex rounded-lg border p-0.5">
           <Button
@@ -95,9 +95,9 @@ export function ItinerariesExplorer({
         </div>
       </div>
 
-      {/* ── Desktop: side-by-side | Mobile: toggle ── */}
+      {/* â”€â”€ Desktop: side-by-side | Mobile: toggle â”€â”€ */}
       <div className="lg:grid lg:grid-cols-5 lg:gap-6">
-        {/* Trip cards — left panel */}
+        {/* Trip cards â€” left panel */}
         <div
           className={`lg:col-span-3 ${
             mobileView === "map" ? "hidden lg:block" : ""
@@ -220,7 +220,7 @@ export function ItinerariesExplorer({
           </div>
         </div>
 
-        {/* Map — right panel (sticky on desktop) */}
+        {/* Map â€” right panel (sticky on desktop) */}
         <div
           className={`lg:col-span-2 ${
             mobileView === "list" ? "hidden lg:block" : ""

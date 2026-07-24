@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Link from "next/link";
 import Image from "next/image";
 import { CheckCircle, ExternalLink, Map, MapPin, Star } from "lucide-react";
@@ -6,8 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { InquiryCollectorButton } from "@/components/inquiries/InquiryCollectorButton";
-import { getImageOrPlaceholder } from "@backend/lib/assets";
-import { cn, formatPrice } from "@backend/lib/utils";
+import { getImageOrPlaceholder } from "@/lib/assets";
+import { cn, formatPrice } from "@/lib/utils";
 
 interface HotelCardProps {
   name: string;
@@ -74,7 +74,7 @@ export function HotelCard({
   const displayRating = rating ?? starRating ?? null;
   const displayPrice = priceFrom ?? priceMin ?? null;
   const chips = [...(services ?? []), ...amenities].filter(Boolean);
-  const displayLocation = [district, area || address].filter(Boolean).join(" · ");
+  const displayLocation = [district, area || address].filter(Boolean).join(" Â· ");
   const isStay = STAY_TYPES.has(propertyType);
   const inquiryLabel = isStay ? "Ask Availability" : "Send Inquiry";
   const image = getImageOrPlaceholder(coverImage, isStay ? "stay" : "service");

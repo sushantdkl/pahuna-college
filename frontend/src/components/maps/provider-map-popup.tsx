@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import Image from "next/image";
@@ -7,8 +7,8 @@ import { ExternalLink, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { InquiryCollectorButton } from "@/components/inquiries/InquiryCollectorButton";
-import { getImageOrPlaceholder } from "@backend/lib/assets";
-import { formatPrice } from "@backend/lib/utils";
+import { getImageOrPlaceholder } from "@/lib/assets";
+import { formatPrice } from "@/lib/utils";
 
 export interface ProviderMapPopupProvider {
   name: string;
@@ -36,7 +36,7 @@ export function ProviderMapPopup({ provider }: { provider: ProviderMapPopupProvi
   const price = provider.priceFrom ?? provider.priceMin ?? null;
   const image = getImageOrPlaceholder(provider.images?.[0], "stay");
   const typeLabel = provider.typeLabel ?? provider.propertyType?.replace(/_/g, " ") ?? "Stay";
-  const location = [provider.area, provider.district].filter(Boolean).join(" · ");
+  const location = [provider.area, provider.district].filter(Boolean).join(" Â· ");
 
   return (
     <div className="w-[280px] space-y-3">

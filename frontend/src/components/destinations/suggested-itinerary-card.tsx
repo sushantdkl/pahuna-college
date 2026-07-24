@@ -1,8 +1,8 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Link from "next/link";
 import { CalendarRange, CheckCircle2, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { PublicDestination } from "@backend/services/destinations";
+import type { PublicDestination } from "@/lib/services/destinations";
 
 interface SuggestedItineraryCardProps {
   destination: PublicDestination;

@@ -1,7 +1,7 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/layout/container";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface PageHeroProps {
   badge?: {
@@ -39,7 +39,7 @@ export function PageHero({
         className
       )}
     >
-      {/* Decorative blurs — refined for premium feel */}
+      {/* Decorative blurs â€” refined for premium feel */}
       {isGradient && (
         <>
           <div className="absolute -top-20 right-0 w-96 h-96 bg-white/[0.04] rounded-full blur-3xl" />

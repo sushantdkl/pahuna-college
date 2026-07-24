@@ -1,6 +1,6 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { Container } from "@/components/layout";
-import { consultingProcess } from "@backend/services";
+import { consultingProcess } from "@/lib/services";
 
 export function ProcessTimeline() {
   return (

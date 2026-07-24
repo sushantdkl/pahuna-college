@@ -1,9 +1,9 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Link from "next/link";
 import { Phone, Calendar } from "lucide-react";
 import { Container } from "@/components/layout";
 import { Button } from "@/components/ui/button";
-import { SITE_CONFIG } from "@backend/lib/constants";
+import { SITE_CONFIG } from "@/lib/constants";
 
 interface ConsultingCtaProps {
   /** Primary heading */
@@ -16,7 +16,7 @@ interface ConsultingCtaProps {
 
 export function ConsultingCta({
   title = "Ready to Transform Your Business?",
-  subtitle = "Book a free discovery call. We\u2019ll analyze your challenges and outline a realistic plan — no commitment required.",
+  subtitle = "Book a free discovery call. We\u2019ll analyze your challenges and outline a realistic plan â€” no commitment required.",
   variant = "gradient",
 }: ConsultingCtaProps) {
   const bgClass =
@@ -77,7 +77,7 @@ export function ConsultingCta({
           </div>
 
           <p className="text-xs mt-6 opacity-60">
-            Free consultation · No obligation · Response within 24 hours
+            Free consultation Â· No obligation Â· Response within 24 hours
           </p>
         </div>
       </Container>

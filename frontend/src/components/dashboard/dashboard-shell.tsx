@@ -1,10 +1,10 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState, type ReactNode } from "react";
 import { DashboardSidebar } from "./dashboard-sidebar";
 import { DashboardHeader } from "./dashboard-header";
-import type { UserRole } from "@backend/lib/user-role";
+import type { UserRole } from "@/lib/user-role";
 
 interface DashboardShellProps {
   user: {

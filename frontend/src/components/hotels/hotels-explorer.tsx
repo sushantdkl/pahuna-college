@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useMemo, useRef, useState } from "react";
@@ -11,10 +11,10 @@ import { HotelFilterBar } from "./hotel-filters";
 import { MapModal } from "@/components/maps/map-modal";
 import { MapPreviewCard } from "@/components/maps/map-preview-card";
 import { hasVerifiedCoordinates } from "@/components/maps/provider-map";
-import { filterAndSortHotels } from "@backend/services/hotels";
+import { filterAndSortHotels } from "@/lib/services/hotels";
 import { EmptyState } from "@/components/shared/empty-state";
-import { PRICE_RANGES, PROVIDER_TYPES } from "@backend/lib/constants";
-import type { HotelFilters } from "@backend/lib/validations";
+import { PRICE_RANGES, PROVIDER_TYPES } from "@/lib/constants";
+import type { HotelFilters } from "@/lib/validations";
 
 interface ExplorerHotel {
   id?: string;
@@ -136,7 +136,7 @@ export function HotelsExplorer({ hotels }: HotelsExplorerProps) {
             </p>
             {filterSummary.length > 0 && (
               <p className="mt-2 text-xs text-muted-foreground">
-                {filterSummary.join(" · ")}
+                {filterSummary.join(" Â· ")}
               </p>
             )}
           </div>

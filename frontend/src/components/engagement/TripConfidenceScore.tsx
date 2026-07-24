@@ -1,8 +1,8 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { CloudSun, Heart, MapPinned, ShieldAlert, ShieldCheck, UserCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CONFIDENCE_KEYWORDS } from "@/lib/engagement-data";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface TripConfidenceScoreProps {
   context?: string;

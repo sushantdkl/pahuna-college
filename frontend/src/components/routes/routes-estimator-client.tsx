@@ -1,11 +1,11 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useMemo, useState } from "react";
 import type React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import type { ConsentStatus, TravelMode, VerificationStatus } from "@backend/lib/prisma-types";
+import type { ConsentStatus, TravelMode, VerificationStatus } from "@/lib/prisma-types";
 import {
   AlertTriangle,
   ArrowRight,
@@ -20,9 +20,9 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { RouteOption, RouteStep } from "@backend/services/routes";
-import { cn } from "@backend/lib/utils";
-import { assets, getImageOrPlaceholder } from "@backend/lib/assets";
+import type { RouteOption, RouteStep } from "@/lib/services/routes";
+import { cn } from "@/lib/utils";
+import { assets, getImageOrPlaceholder } from "@/lib/assets";
 
 type SuggestedProvider = {
   name: string;

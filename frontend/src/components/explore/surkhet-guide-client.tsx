@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import Link from "next/link";
@@ -28,8 +28,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@backend/lib/utils";
-import { assets } from "@backend/lib/assets";
+import { cn } from "@/lib/utils";
+import { assets } from "@/lib/assets";
 
 type TravelStyle =
   | "All"
@@ -480,7 +480,7 @@ export function SurkhetGuideClient({ stays }: SurkhetGuideClientProps) {
                             <p className="font-semibold">{stay.name}</p>
                             <p className="mt-1 text-sm text-muted-foreground">
                               {stay.typeLabel}
-                              {stay.area ? ` · ${stay.area}` : ""}
+                              {stay.area ? ` Â· ${stay.area}` : ""}
                             </p>
                           </div>
                           {stay.verificationStatus === "PUBLIC_LISTING" && (

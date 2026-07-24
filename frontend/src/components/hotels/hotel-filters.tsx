@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
@@ -18,8 +18,8 @@ import {
   PRICE_RANGES,
   PROVIDER_TYPES,
   STAR_RATINGS,
-} from "@backend/lib/constants";
-import type { HotelFilters } from "@backend/lib/validations";
+} from "@/lib/constants";
+import type { HotelFilters } from "@/lib/validations";
 
 const AMENITY_OPTIONS = [
   "Accommodation",

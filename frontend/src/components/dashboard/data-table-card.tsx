@@ -1,7 +1,7 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface Column<T> {
   header: string;
@@ -73,7 +73,7 @@ export function DataTableCard<T extends { id: string }>({
                       >
                         {col.cell
                           ? col.cell(row[col.accessorKey], row)
-                          : String(row[col.accessorKey] ?? "—")}
+                          : String(row[col.accessorKey] ?? "â€”")}
                       </td>
                     ))}
                   </tr>

@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
@@ -9,7 +9,7 @@ import { ExperienceCard } from "@/components/experiences/experience-card";
 import { ExperiencesInteractiveMap } from "@/components/maps/experiences-interactive-map";
 import { PahunaDirections } from "@/components/maps/pahuna-directions";
 import { EmptyState } from "@/components/shared/empty-state";
-import { EXPERIENCE_CATEGORIES } from "@backend/lib/constants";
+import { EXPERIENCE_CATEGORIES } from "@/lib/constants";
 
 interface ExplorerExperience {
   title: string;
@@ -30,18 +30,18 @@ interface ExperiencesExplorerProps {
 }
 
 const categoryEmojis: Record<string, string> = {
-  ADVENTURE: "🥾",
-  CULTURE: "🎭",
-  NATURE: "🦅",
-  FOOD: "🍛",
-  HERITAGE: "🏛️",
-  WELLNESS: "🧘",
-  RELIGIOUS: "🛕",
-  EVENTS: "🎉",
+  ADVENTURE: "ðŸ¥¾",
+  CULTURE: "ðŸŽ­",
+  NATURE: "ðŸ¦…",
+  FOOD: "ðŸ›",
+  HERITAGE: "ðŸ›ï¸",
+  WELLNESS: "ðŸ§˜",
+  RELIGIOUS: "ðŸ›•",
+  EVENTS: "ðŸŽ‰",
 };
 
 /**
- * Interactive Experiences explorer — cards + map with category filters,
+ * Interactive Experiences explorer â€” cards + map with category filters,
  * bidirectional selection, and mobile list/map toggle.
  */
 export function ExperiencesExplorer({
@@ -73,7 +73,7 @@ export function ExperiencesExplorer({
 
   return (
     <div>
-      {/* ── Category Filters ── */}
+      {/* â”€â”€ Category Filters â”€â”€ */}
       <div className="flex flex-wrap justify-center gap-2 mb-6">
         <Badge
           variant={categoryFilter === "ALL" ? "default" : "outline"}
@@ -94,7 +94,7 @@ export function ExperiencesExplorer({
         ))}
       </div>
 
-      {/* ── Mobile view toggle ── */}
+      {/* â”€â”€ Mobile view toggle â”€â”€ */}
       <div className="flex items-center justify-between mb-4 lg:hidden">
         <div className="flex rounded-lg border p-0.5">
           <Button
@@ -122,9 +122,9 @@ export function ExperiencesExplorer({
         )}
       </div>
 
-      {/* ── Desktop: side-by-side | Mobile: toggle ── */}
+      {/* â”€â”€ Desktop: side-by-side | Mobile: toggle â”€â”€ */}
       <div className="lg:grid lg:grid-cols-5 lg:gap-6">
-        {/* Experience cards — left panel */}
+        {/* Experience cards â€” left panel */}
         <div
           className={`lg:col-span-3 ${
             mobileView === "map" ? "hidden lg:block" : ""
@@ -165,7 +165,7 @@ export function ExperiencesExplorer({
           )}
         </div>
 
-        {/* Map — right panel (sticky on desktop) */}
+        {/* Map â€” right panel (sticky on desktop) */}
         <div
           className={`lg:col-span-2 ${
             mobileView === "list" ? "hidden lg:block" : ""

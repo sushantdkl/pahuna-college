@@ -1,12 +1,12 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle, MapPin, MessageCircle, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getImageOrPlaceholder } from "@backend/lib/assets";
-import type { PublicFoodProvider } from "@backend/services/food";
+import { getImageOrPlaceholder } from "@/lib/assets";
+import type { PublicFoodProvider } from "@/lib/services/food";
 
 function getTrustBadge(status: PublicFoodProvider["verificationStatus"]) {
   if (status === "VERIFIED" || status === "PARTNER") return "Verified";

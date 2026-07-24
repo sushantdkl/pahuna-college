@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VIBE_OPTIONS } from "@/lib/engagement-data";
 import { unlockPassportBadge } from "@/lib/passport";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface VibeTripPlannerProps {
   compact?: boolean;

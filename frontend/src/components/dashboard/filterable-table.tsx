@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState, useMemo } from "react";
@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface Column<T> {
   header: string;
@@ -134,7 +134,7 @@ export function FilterableTable<T extends { id: string }>({
                       >
                         {col.cell
                           ? col.cell(row[col.accessorKey], row)
-                          : String(row[col.accessorKey] ?? "—")}
+                          : String(row[col.accessorKey] ?? "â€”")}
                       </td>
                     ))}
                   </tr>

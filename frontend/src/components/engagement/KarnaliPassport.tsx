@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -14,7 +14,7 @@ import {
   unlockPassportBadge,
   type StoredPassportBadge,
 } from "@/lib/passport";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface KarnaliPassportProps {
   autoUnlockBadge?: PassportBadgeId;

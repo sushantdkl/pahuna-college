@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState, useMemo } from "react";
@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HotelCard } from "@/components/hotels/hotel-card";
 import { HotelFilterBar } from "@/components/hotels/hotel-filters";
-import { filterAndSortHotels } from "@backend/services/hotels";
+import { filterAndSortHotels } from "@/lib/services/hotels";
 import { EmptyState } from "@/components/shared/empty-state";
-import type { HotelFilters } from "@backend/lib/validations";
+import type { HotelFilters } from "@/lib/validations";
 
 interface HotelListingClientProps {
   hotels: Array<{
@@ -89,7 +89,7 @@ export function HotelListingClient({ hotels }: HotelListingClientProps) {
         )}
       </div>
 
-      {/* ── List Your Hotel CTA (inline) ── */}
+      {/* â”€â”€ List Your Hotel CTA (inline) â”€â”€ */}
       <Card className="mt-12 border-dashed border-primary/30 bg-primary/5">
         <CardContent className="p-6 flex flex-col sm:flex-row items-center gap-6">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10">

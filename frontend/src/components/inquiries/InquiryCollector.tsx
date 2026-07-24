@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useMemo, useState } from "react";
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 const SUCCESS_MESSAGE =
   "Your inquiry has been sent to Pahuna. Our team will confirm availability, route, and final cost before booking.";

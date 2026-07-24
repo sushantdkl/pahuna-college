@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import { useState } from "react";
@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { FormSuccess } from "@/components/shared/form-success";
-import { inquirySchema, type InquiryInput } from "@backend/lib/validations";
+import { inquirySchema, type InquiryInput } from "@/lib/validations";
 import { submitInquiry } from "@/actions/inquiry";
 
 interface InquiryFormProps {

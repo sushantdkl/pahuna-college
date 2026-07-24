@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import Link from "next/link";
@@ -14,8 +14,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import type { TripPackage } from "@backend/services";
-import { formatPrice } from "@backend/lib/utils";
+import type { TripPackage } from "@/lib/services";
+import { formatPrice } from "@/lib/utils";
 
 const tierColors: Record<string, string> = {
   budget: "bg-green-100 text-green-800 border-green-200",
@@ -24,9 +24,9 @@ const tierColors: Record<string, string> = {
 };
 
 const tierEmoji: Record<string, string> = {
-  budget: "🎒",
-  standard: "🧳",
-  premium: "✨",
+  budget: "ðŸŽ’",
+  standard: "ðŸ§³",
+  premium: "âœ¨",
 };
 
 interface PackageCardProps {
@@ -146,7 +146,7 @@ export function PackageCard({ pkg, showCostSplit = false }: PackageCardProps) {
             <div className="text-lg font-bold text-primary">
               {formatPrice(pkg.pricePerPerson.min)}
               <span className="text-xs font-normal text-muted-foreground">
-                {" "}— {formatPrice(pkg.pricePerPerson.max)}
+                {" "}â€” {formatPrice(pkg.pricePerPerson.max)}
               </span>
             </div>
           </div>

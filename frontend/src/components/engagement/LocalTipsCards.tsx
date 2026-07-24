@@ -1,8 +1,8 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { Lightbulb, MapPinned } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LOCAL_TIPS } from "@/lib/engagement-data";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface LocalTipsCardsProps {
   variant?: keyof typeof LOCAL_TIPS;

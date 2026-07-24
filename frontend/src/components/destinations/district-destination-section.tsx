@@ -1,8 +1,8 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { PublicDestination } from "@backend/services/destinations";
+import type { PublicDestination } from "@/lib/services/destinations";
 import { DestinationCard } from "./destination-card";
 
 interface DistrictDestinationSectionProps {

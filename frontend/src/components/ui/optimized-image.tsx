@@ -1,13 +1,13 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import Image, { type ImageProps } from "next/image";
 import { useState } from "react";
-import { getImageOrPlaceholder } from "@backend/lib/assets";
-import { cn } from "@backend/lib/utils";
+import { getImageOrPlaceholder } from "@/lib/assets";
+import { cn } from "@/lib/utils";
 
 /**
- * OptimizedImage — wraps Next.js Image with:
+ * OptimizedImage â€” wraps Next.js Image with:
  * - Blur placeholder shimmer while loading
  * - Graceful error fallback
  * - Lazy loading by default

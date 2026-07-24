@@ -1,10 +1,10 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 "use client";
 
 import Link from "next/link";
 import { CheckCircle, ArrowRight, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@backend/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface FormSuccessProps {
   title: string;
