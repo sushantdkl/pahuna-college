@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { AdminReplicaFrame, ReplicaStatCard, ReplicaStatusBadge } from "@/app/_components/admin-replica-dashboard";
+import { AdminReplicaFrame, ReplicaStatCard, ReplicaStatusBadge } from "@/components/admin-replica-dashboard";
 import {
   createAdminHotelAction,
   deleteAdminHotelAction,

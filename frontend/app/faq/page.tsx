@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
 
 const faqItems = [
   {

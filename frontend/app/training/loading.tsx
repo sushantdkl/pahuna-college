@@ -1,4 +1,4 @@
-import { SectionShell } from "@/app/_components/pahuna-layout";
+import { SectionShell } from "@/components/pahuna-layout";
 
 export default function TrainingLoading() {
   return (

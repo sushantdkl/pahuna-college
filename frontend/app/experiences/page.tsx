@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ButtonLink, PageHero, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
-import { TourismMap, type TourismMapMarker } from "@/app/_components/tourism-map";
+import { ButtonLink, PageHero, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
+import { TourismMap, type TourismMapMarker } from "@/components/tourism-map";
 import { getExperiences, type PublicExperience } from "@/lib/api/public-catalog";
 import { resolveApiAssetUrl } from "@/lib/api/axios-instance";
 import { images, safeImage } from "@/lib/pahuna-content";

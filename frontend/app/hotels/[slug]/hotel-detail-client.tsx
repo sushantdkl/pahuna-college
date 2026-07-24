@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { HotelActionButtons } from "@/app/_components/hotel-action-buttons";
-import { PageShell, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
-import { StayMapCard } from "@/app/_components/stay-map-card";
+import { HotelActionButtons } from "@/components/hotel-action-buttons";
+import { PageShell, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
+import { StayMapCard } from "@/components/stay-map-card";
 import { getHotel, publicHotelToStay } from "@/lib/api/public-catalog";
 import { images, safeImage, type StayCard } from "@/lib/pahuna-content";
 

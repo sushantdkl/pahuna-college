@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
-import { TourismMap, type TourismMapMarker } from "@/app/_components/tourism-map";
+import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
+import { TourismMap, type TourismMapMarker } from "@/components/tourism-map";
 import { BudgetPlanning } from "@/app/trip-planner/budget-planning";
 import { featuredStays, foodProviders, routeCards, surkhetPlaces } from "@/lib/pahuna-content";
 

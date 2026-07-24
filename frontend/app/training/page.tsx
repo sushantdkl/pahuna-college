@@ -5,7 +5,7 @@ import {
   SectionShell,
   SiteFooter,
   SiteHeader,
-} from "@/app/_components/pahuna-layout";
+} from "@/components/pahuna-layout";
 import { TrainingClient } from "./training-client";
 
 export default function TrainingPage() {

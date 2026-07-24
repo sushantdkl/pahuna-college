@@ -6,7 +6,7 @@ import {
   SectionShell,
   SiteFooter,
   SiteHeader,
-} from "@/app/_components/pahuna-layout";
+} from "@/components/pahuna-layout";
 import { images } from "@/lib/pahuna-content";
 import { TripPackagesClient } from "./trip-packages-client";
 

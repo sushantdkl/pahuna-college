@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AdminReplicaFrame } from "@/app/_components/admin-replica-dashboard";
+import { AdminReplicaFrame } from "@/components/admin-replica-dashboard";
 import { useAuth } from "@/context/AuthContext";
 import {
   createAdminUserAction,

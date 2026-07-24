@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ButtonLink, PageHero, PageShell, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { ButtonLink, PageHero, PageShell, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
 import { getTrainingCourse, type TrainingCourse } from "@/lib/api/training";
 
 export function TrainingDetailClient({ slug }: { slug: string }) {

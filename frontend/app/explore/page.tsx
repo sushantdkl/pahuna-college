@@ -7,7 +7,7 @@ import {
   SectionShell,
   SiteFooter,
   SiteHeader,
-} from "@/app/_components/pahuna-layout";
+} from "@/components/pahuna-layout";
 import { foodHighlights, images, routeCards } from "@/lib/pahuna-content";
 
 const quickFacts = [

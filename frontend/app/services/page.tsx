@@ -1,4 +1,4 @@
-import { SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
 
 const services = ["Stay discovery", "Route and cost planning", "Food and cafe guidance", "Destination planning", "Travel inquiry support", "Local provider visibility"];
 

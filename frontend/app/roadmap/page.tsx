@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PageShell, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { PageShell, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
 
 const roadmap = [
   ["Live", "Public tourism UI", "Homepage, stays, food, destinations, routes, training, consulting, and partner flows."],

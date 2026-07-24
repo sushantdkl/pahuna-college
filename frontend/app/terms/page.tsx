@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
 
 const terms = [
   ["Inquiry-first platform", "Pahuna presents public tourism, stay, food, destination, route, training, consulting, and partner information for planning and inquiry. Final availability and commercial details must be confirmed."],

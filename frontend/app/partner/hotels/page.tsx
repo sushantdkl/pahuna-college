@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PartnerApplicationForm } from "@/app/partner/partner-application-form";
-import { SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
 
 const benefits = [
   "More qualified stay and availability inquiries",

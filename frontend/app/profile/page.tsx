@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { LiveLocationCard } from "@/app/_components/live-location-card";
+import { LiveLocationCard } from "@/components/live-location-card";
 import { MyItineraries } from "@/app/profile/my-itineraries";
-import { SiteFooter } from "@/app/_components/pahuna-layout";
-import { resolveImageUrl } from "@/app/_components/profile-forms";
+import { SiteFooter } from "@/components/pahuna-layout";
+import { resolveImageUrl } from "@/components/profile-forms";
 import { useAuth } from "@/context/AuthContext";
 import { images } from "@/lib/pahuna-content";
 

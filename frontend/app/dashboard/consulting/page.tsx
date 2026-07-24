@@ -5,7 +5,7 @@ import {
   AdminReplicaFrame,
   ReplicaDataCard,
   ReplicaStatCard,
-} from "@/app/_components/admin-replica-dashboard";
+} from "@/components/admin-replica-dashboard";
 import {
   createAdminConsultingServiceAction,
   deleteAdminConsultingLeadAction,

@@ -1,6 +1,6 @@
 import { GeneralContactForm } from "@/app/contact/general-contact-form";
 import { HotelInquiryForm } from "@/app/contact/hotel-inquiry-form";
-import { SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { SiteFooter, SiteHeader } from "@/components/pahuna-layout";
 import type { InquiryKind } from "@/schemas/inquiry.schema";
 
 type ContactSearchParams = Promise<{

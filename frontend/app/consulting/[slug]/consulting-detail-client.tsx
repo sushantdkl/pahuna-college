@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ButtonLink, PageHero, PageShell, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { ButtonLink, PageHero, PageShell, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
 import { getConsultingService, type ConsultingService } from "@/lib/api/consulting";
 
 export function ConsultingDetailClient({ slug }: { slug: string }) {

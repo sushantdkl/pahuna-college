@@ -9,7 +9,7 @@ import {
   SiteFooter,
   SiteHeader,
   StatPill,
-} from "@/app/_components/pahuna-layout";
+} from "@/components/pahuna-layout";
 import {
   destinations,
   featuredStays,

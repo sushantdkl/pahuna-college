@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
 import { useAuth } from "@/context/AuthContext";
 import { getHotels, publicHotelToStay } from "@/lib/api/public-catalog";
 import { images, safeImage, type StayCard } from "@/lib/pahuna-content";
@@ -12,7 +12,7 @@ import { images, safeImage, type StayCard } from "@/lib/pahuna-content";
 const fallbackMap = "https://www.openstreetmap.org/search?query=Surkhet%20Hotels";
 const ALL = "All";
 const HotelMap = dynamic(
-  () => import("@/app/_components/hotel-map").then((mod) => mod.HotelMap),
+  () => import("@/components/hotel-map").then((mod) => mod.HotelMap),
   {
     ssr: false,
     loading: () => (

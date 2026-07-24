@@ -5,8 +5,8 @@ import {
   AdminReplicaFrame,
   ReplicaDataCard,
   ReplicaStatCard,
-} from "@/app/_components/admin-replica-dashboard";
-import { EmptyState, ErrorState, LoadingSkeleton } from "@/app/_components/pahuna-layout";
+} from "@/components/admin-replica-dashboard";
+import { EmptyState, ErrorState, LoadingSkeleton } from "@/components/pahuna-layout";
 import type { ApiResponse } from "@/lib/api/axios-instance";
 
 type CrudRecord = Record<string, unknown> & {

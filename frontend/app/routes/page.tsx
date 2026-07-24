@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
-import { TourismMap } from "@/app/_components/tourism-map";
+import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
+import { TourismMap } from "@/components/tourism-map";
 import { images } from "@/lib/pahuna-content";
 import { getRouteSegments, getTransportRoutes, type RouteSegment, type TransportRoute } from "@/lib/actions/final-crud-actions";
 

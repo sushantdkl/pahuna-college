@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { ButtonLink, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
+import { ButtonLink, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
 import { galleryItems, images } from "@/lib/pahuna-content";
 
 const categories = ["All", "Surkhet", "Karnali", "Culture", "Adventure"];

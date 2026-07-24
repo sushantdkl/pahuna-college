@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { ProfileSettingsPanel } from "@/app/_components/profile-forms";
-import { SiteFooter } from "@/app/_components/pahuna-layout";
+import { ProfileSettingsPanel } from "@/components/profile-forms";
+import { SiteFooter } from "@/components/pahuna-layout";
 
 const navItems = [
   { label: "Profile Settings", href: "#profile-settings" },
