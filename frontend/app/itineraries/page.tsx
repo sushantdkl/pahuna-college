@@ -6,6 +6,7 @@ import { destinations, featuredStays, foodProviders, images, routeCards } from "
 
 const ideas = [
   {
+    slug: "surkhet-essentials-3-days",
     title: "Surkhet Essentials - 3 Days",
     duration: "3 days",
     budget: "NPR 8,000 - 15,000",
@@ -13,6 +14,7 @@ const ideas = [
     steps: ["Bulbule Lake", "Kakrebihar", "Deuti Bajai"],
   },
   {
+    slug: "karnali-gateway-5-days",
     title: "Karnali Gateway - 5 Days",
     duration: "5 days",
     budget: "NPR 15,000 - 30,000",
@@ -89,7 +91,7 @@ export default function ItinerariesPage() {
                     {idea.steps.map((step) => <span key={step} className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-900">{step}</span>)}
                   </div>
                   <div className="mt-6 flex flex-wrap gap-3">
-                    <ButtonLink href="/trip-planner">Build this plan</ButtonLink>
+                    <ButtonLink href={`/itineraries/${idea.slug}`}>View Full Plan</ButtonLink>
                     <ButtonLink href="/contact" variant="secondary">Request custom trip</ButtonLink>
                   </div>
                 </div>
