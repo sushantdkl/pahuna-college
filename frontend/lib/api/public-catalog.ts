@@ -124,7 +124,7 @@ export function publicHotelToStay(hotel: PublicHotel): StayCard {
     services: [],
     image: resolveApiAssetUrl(hotel.images[0]) || "/images/placeholders/stay-placeholder.svg",
     gallery: hotel.images.map((image) => resolveApiAssetUrl(image) || image),
-    googleMapLink: `https://maps.google.com/?q=${encodeURIComponent(mapsQuery)}`,
+    googleMapLink: `https://www.openstreetmap.org/search?query=${encodeURIComponent(mapsQuery)}`,
     latitude: hotel.latitude,
     longitude: hotel.longitude,
   };

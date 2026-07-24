@@ -71,7 +71,7 @@ export function HotelDetailClient({ slug }: { slug: string }) {
             <aside className="space-y-5">
               <div className="overflow-hidden rounded-[30px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
                 <StayMapCard stay={stay} />
-                <div className="p-5"><h2 className="font-black">Location preview</h2><p className="mt-2 text-sm leading-6 text-stone-600">Use the marker or Google Maps link to review the stay location.</p></div>
+                <div className="p-5"><h2 className="font-black">Location preview</h2><p className="mt-2 text-sm leading-6 text-stone-600">Use the marker or OpenStreetMap link to review the stay location.</p></div>
               </div>
               <div className="rounded-[26px] border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-900">Availability is confirmed through an inquiry so the provider can verify current rooms and pricing.</div>
             </aside>

@@ -477,7 +477,7 @@ function DestinationFormDialog({
 }
 
 function ViewDestinationDialog({ destination, onClose }: { destination: AdminDestination; onClose: () => void }) {
-  const mapHref = hasCoordinates(destination) ? `https://www.google.com/maps?q=${destination.latitude},${destination.longitude}` : "";
+  const mapHref = hasCoordinates(destination) ? `https://www.openstreetmap.org/?mlat=${destination.latitude}&mlon=${destination.longitude}#map=16/${destination.latitude}/${destination.longitude}` : "";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/55 px-4">

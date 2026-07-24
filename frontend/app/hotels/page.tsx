@@ -9,7 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { getHotels, publicHotelToStay } from "@/lib/api/public-catalog";
 import { images, safeImage, type StayCard } from "@/lib/pahuna-content";
 
-const fallbackMap = "https://maps.google.com/?q=Surkhet+Hotels";
+const fallbackMap = "https://www.openstreetmap.org/search?query=Surkhet%20Hotels";
 const ALL = "All";
 const HotelMap = dynamic(
   () => import("@/app/_components/hotel-map").then((mod) => mod.HotelMap),
@@ -126,9 +126,9 @@ export default function HotelsPage() {
             <HotelMap stays={visibleStays} />
             <div className="p-5">
               <p className="text-sm font-black text-stone-900">OpenStreetMap preview</p>
-              <p className="mt-2 text-sm leading-6 text-stone-600">Only listings with verified coordinates show exact markers. Others keep Google Maps links and the safe Surkhet preview.</p>
+              <p className="mt-2 text-sm leading-6 text-stone-600">Only listings with verified coordinates show exact markers. Others keep OpenStreetMap links and the safe Surkhet preview.</p>
               <a href={fallbackMap} target="_blank" rel="noreferrer" className="mt-4 inline-flex rounded-full border border-emerald-200 px-4 py-2 text-xs font-black text-emerald-800 hover:bg-emerald-50">
-                Open Google Maps
+                Open OpenStreetMap
               </a>
             </div>
           </div>
@@ -254,7 +254,7 @@ function StayListingCard({ stay, isAuthenticated }: { stay: StayCard; isAuthenti
                   ) : null}
                   <div className="mt-auto grid gap-2 pt-6 sm:grid-cols-2">
                     <Link href={`/hotels/${stay.slug}`} className="rounded-xl border border-emerald-200 px-3 py-2 text-center text-xs font-bold text-emerald-800 hover:bg-emerald-50">View Details</Link>
-                    <a href={stay.googleMapLink || fallbackMap} target="_blank" rel="noreferrer" className="rounded-xl border border-stone-200 px-3 py-2 text-center text-xs font-bold text-stone-700 hover:bg-stone-50">Google Maps</a>
+                    <a href={stay.googleMapLink || fallbackMap} target="_blank" rel="noreferrer" className="rounded-xl border border-stone-200 px-3 py-2 text-center text-xs font-bold text-stone-700 hover:bg-stone-50">OpenStreetMap</a>
                     <Link href={saveHref} className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-center text-xs font-bold text-amber-900 hover:bg-amber-100">Save</Link>
                     <Link href={actionHref} className="rounded-xl bg-emerald-700 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-800">Ask Availability</Link>
                   </div>

@@ -72,7 +72,7 @@ export default async function FoodDetailPage({ params }: { params: Promise<{ slu
                 </Link>
                 {food.googleMapLink ? (
                   <a href={food.googleMapLink} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center rounded-full border border-stone-200 bg-white px-5 py-3 text-sm font-bold text-stone-700 transition hover:bg-stone-50">
-                    Open Google Maps
+                    Open OpenStreetMap
                   </a>
                 ) : null}
               </div>

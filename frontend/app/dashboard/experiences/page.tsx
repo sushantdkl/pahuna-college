@@ -461,7 +461,7 @@ function ExperienceFormDialog({
 }
 
 function ViewExperienceDialog({ experience, onClose }: { experience: AdminExperience; onClose: () => void }) {
-  const mapHref = hasCoordinates(experience) ? `https://www.google.com/maps?q=${experience.latitude},${experience.longitude}` : "";
+  const mapHref = hasCoordinates(experience) ? `https://www.openstreetmap.org/?mlat=${experience.latitude}&mlon=${experience.longitude}#map=16/${experience.latitude}/${experience.longitude}` : "";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/55 px-4">

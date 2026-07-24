@@ -9,7 +9,7 @@ const LeafletMap = dynamic(
     ssr: false,
     loading: () => (
       <div className="grid h-[340px] place-items-center rounded-[8px] border border-emerald-100 bg-white text-sm font-bold text-stone-500">
-        <span><span aria-hidden="true">🗺️</span> Loading map preview...</span>
+        <span><span aria-hidden="true">{"\u{1F5FA}\u{FE0F}"}</span> Loading map preview...</span>
       </div>
     ),
   },

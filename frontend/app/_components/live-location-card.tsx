@@ -91,7 +91,7 @@ export function LiveLocationCard() {
     setMessage("Location sharing is stopped. No live tracking is active.");
   }
 
-  const mapsLink = location ? `https://www.google.com/maps?q=${location.latitude},${location.longitude}` : "";
+  const mapsLink = location ? `https://www.openstreetmap.org/?mlat=${location.latitude}&mlon=${location.longitude}#map=16/${location.latitude}/${location.longitude}` : "";
 
   return (
     <section className="overflow-hidden rounded-[30px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
@@ -132,7 +132,7 @@ export function LiveLocationCard() {
                 rel="noreferrer"
                 className="rounded-full border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-black text-emerald-800 transition hover:bg-emerald-100"
               >
-                Open in Google Maps
+                Open in OpenStreetMap
               </a>
             ) : null}
           </div>
@@ -160,7 +160,7 @@ export function LiveLocationCard() {
               </div>
               <h3 className="mt-4 text-lg font-black text-stone-950">{location ? "Location preview active" : "Map preview"}</h3>
               <p className="mt-2 text-sm leading-6 text-stone-600">
-                {location ? "Use Google Maps to inspect the exact browser-provided point." : "Allow location to show coordinates and a Google Maps link."}
+                {location ? "Use OpenStreetMap to inspect the exact browser-provided point." : "Allow location to show coordinates and an OpenStreetMap link."}
               </p>
             </div>
           </div>

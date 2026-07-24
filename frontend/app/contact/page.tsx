@@ -21,13 +21,13 @@ const hotelInquiryTypes = new Set<InquiryKind>([
 ]);
 
 const contactCards = [
-  ["📍", "Visit Us", "Birendranagar, Surkhet, Karnali Province, Nepal"],
-  ["☎️", "Call Us", "+977-083-520000"],
-  ["✉️", "Email Us", "hello@pahuna.com"],
-  ["🕒", "Office Hours", "Sun - Fri, 10:00 AM - 6:00 PM"],
+  ["\u{1F4CD}", "Visit Us", "Birendranagar, Surkhet, Karnali Province, Nepal"],
+  ["\u{260E}\u{FE0F}", "Call Us", "+977-083-520000"],
+  ["\u{2709}\u{FE0F}", "Email Us", "hello@pahuna.com"],
+  ["\u{1F552}", "Office Hours", "Sun - Fri, 10:00 AM - 6:00 PM"],
 ];
 
-const softwaricaMapSrc = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.3609923548934!2d85.32740427638603!3d27.70613837618334!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb190a74aa1f23%3A0x74ebef82ad0e5c15!2sSoftwarica%20College%20of%20IT%20and%20E-Commerce!5e0!3m2!1sen!2snp!4v1784867879176!5m2!1sen!2snp";
+const softwaricaMapSrc = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.3609923548934!2d85.32740427638603!3d27.70613837618334!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb190a74aa1f23%3A0x74ebef82ad0e5c15!2sSoftwarica%20College%20of%20IT%20and%20E-Commerce!5e0!3m2!1sen!2snp!4v1784869649163!5m2!1sen!2snp";
 
 export default async function ContactPage({ searchParams }: { searchParams: ContactSearchParams }) {
   const params = await searchParams;
@@ -94,12 +94,12 @@ export default async function ContactPage({ searchParams }: { searchParams: Cont
           <aside className="h-fit rounded-[8px] border border-stone-200 bg-white p-5 shadow-sm">
             <h3 className="font-black">Find Us</h3>
             <div className="mt-4 grid gap-3 text-sm text-stone-600">
-              <p><strong className="text-stone-900">📍 Address:</strong><br />Softwarica College of IT and E-Commerce, Kathmandu, Nepal</p>
-              <p><strong className="text-stone-900">☎️ Phone:</strong><br />+977-083-520000</p>
-              <p><strong className="text-stone-900">✉️ Email:</strong><br />hello@pahuna.com</p>
-              <p><strong className="text-stone-900">🕒 Hours:</strong><br />Sun - Fri, 10 AM - 6 PM</p>
+              <p><strong className="text-stone-900">{"\u{1F4CD}"} Address:</strong><br />Softwarica College of IT and E-Commerce, Kathmandu, Nepal</p>
+              <p><strong className="text-stone-900">{"\u{260E}\u{FE0F}"} Phone:</strong><br />+977-083-520000</p>
+              <p><strong className="text-stone-900">{"\u{2709}\u{FE0F}"} Email:</strong><br />hello@pahuna.com</p>
+              <p><strong className="text-stone-900">{"\u{1F552}"} Hours:</strong><br />Sun - Fri, 10 AM - 6 PM</p>
             </div>
-            <a href="https://www.google.com/maps/search/?api=1&query=Softwarica%20College%20of%20IT%20and%20E-Commerce" target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full justify-center rounded-lg bg-emerald-700 px-4 py-2 text-sm font-black text-white">🧭 Get Directions</a>
+            <a href="https://www.openstreetmap.org/search?query=Softwarica%20College%20of%20IT%20and%20E-Commerce" target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full justify-center rounded-lg bg-emerald-700 px-4 py-2 text-sm font-black text-white">{"\u{1F9ED}"} Open in OpenStreetMap</a>
           </aside>
         </div>
       </section>

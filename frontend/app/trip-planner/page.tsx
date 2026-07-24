@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
 import { TourismMap, type TourismMapMarker } from "@/app/_components/tourism-map";
+import { BudgetPlanning } from "@/app/trip-planner/budget-planning";
 import { featuredStays, foodProviders, routeCards, surkhetPlaces } from "@/lib/pahuna-content";
 
 const plannerSteps = [
@@ -18,20 +19,6 @@ const tripIdeas = [
   ["Jumla + Sinja Route", "A culture-forward, highland route from Karnali highland stops", "heritage"],
   ["Dolpa / Phoksundo Route", "Suitable for high-energy seasons with route and flight confirmation", "remote nature"],
   ["Humla / Simikot Route", "Flight-dependent highland route with buffer days and local coordination", "remote"],
-];
-
-const budgetTiers = [
-  ["Budget Traveler", "NPR 2,000 - NPR 4,000", "per person / day", "border-stone-200 bg-white"],
-  ["Standard Traveler", "NPR 5,000 - NPR 10,000", "per person / day", "border-blue-500 bg-blue-50"],
-  ["Premium Traveler", "NPR 12,000 - NPR 20,000", "per person / day", "border-stone-200 bg-white"],
-];
-
-const costCards = [
-  ["Accommodation", "Budget stay per night", ["NPR 2,000 - NPR 12,000", "NPR 4,000 - NPR 18,000"]],
-  ["Food & Dining", "Breakfast, lunch, dinner", ["NPR 800 - NPR 2,500", "NPR 1,500 - NPR 4,500"]],
-  ["Local Transport", "Within Birendranagar per trip", ["NPR 500 - NPR 3,000", "NPR 2,500 - NPR 8,000"]],
-  ["Activities & Experiences", "Guided tour / cultural activity", ["NPR 1,500 - NPR 5,000", "NPR 3,000 - NPR 10,000"]],
-  ["Miscellaneous", "SIM, snacks, tips, buffer", ["NPR 500 - NPR 2,000", "NPR 1,500 - NPR 5,000"]],
 ];
 
 export default function TripPlannerPage() {
@@ -120,42 +107,7 @@ export default function TripPlannerPage() {
 
       <SectionShell className="py-12">
         <SectionHeader align="center" title="Budget planning" description="Use ranges, not fixed promises. Confirm route, food, and operator details before travel." />
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {budgetTiers.map(([title, amount, note, classes]) => (
-            <div key={title} className={`rounded-[8px] border p-5 shadow-sm ${classes}`}>
-              <p className="text-sm font-black">{title}</p>
-              <p className="mt-2 text-xl font-black text-blue-700">{amount}</p>
-              <p className="mt-1 text-xs text-stone-500">{note}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-5 grid gap-4 md:grid-cols-2">
-          <CounterCard label="Trip duration" value="3" />
-          <CounterCard label="Travelers" value="2" />
-        </div>
-        <div className="mt-5 rounded-[8px] border border-blue-200 bg-blue-50 p-5">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Estimated trip cost</p>
-          <div className="mt-3 grid gap-4 sm:grid-cols-2">
-            <p className="text-2xl font-black text-blue-700">NPR 15,000 - NPR 30,000</p>
-            <p className="text-2xl font-black text-blue-700">NPR 30,000 - NPR 60,000</p>
-          </div>
-        </div>
-        <h3 className="mt-8 text-xl font-black">Cost breakdown by category</h3>
-        <div className="mt-5 grid gap-4 md:grid-cols-2">
-          {costCards.map(([title, note, ranges]) => (
-            <div key={title as string} className="rounded-[8px] border border-stone-200 bg-white p-5">
-              <p className="font-black">{title}</p>
-              <p className="mt-2 text-sm text-stone-600">{note}</p>
-              <div className="mt-3 grid gap-1 text-sm font-black text-blue-700">
-                {(ranges as string[]).map((range) => <span key={range}>{range}</span>)}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8 rounded-[8px] border border-stone-200 bg-white p-5 text-sm leading-7 text-stone-600">
-          <p className="font-black text-stone-950">Standard Traveler</p>
-          <p className="mt-2">A balanced expense profile with comfortable hotels, restaurant meals, and careful route selection. Good for couples and families.</p>
-        </div>
+        <BudgetPlanning />
       </SectionShell>
 
       <section className="bg-white/55">
@@ -260,22 +212,6 @@ export default function TripPlannerPage() {
       </section>
       <SiteFooter />
     </PageShell>
-  );
-}
-
-function CounterCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between rounded-[8px] border border-stone-200 bg-white p-5">
-      <div>
-        <p className="text-sm font-black">{label}</p>
-        <p className="mt-1 text-xs text-stone-500">Adjust in your inquiry</p>
-      </div>
-      <div className="flex items-center gap-4 text-lg font-black">
-        <span className="grid h-7 w-7 place-items-center rounded-full border border-stone-200">-</span>
-        {value}
-        <span className="grid h-7 w-7 place-items-center rounded-full border border-stone-200">+</span>
-      </div>
-    </div>
   );
 }
 

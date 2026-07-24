@@ -513,7 +513,7 @@ function HotelFormDialog({
 }
 
 function ViewHotelDialog({ hotel, onClose }: { hotel: AdminHotel; onClose: () => void }) {
-  const mapHref = hasCoordinates(hotel) ? `https://www.google.com/maps?q=${hotel.latitude},${hotel.longitude}` : "";
+  const mapHref = hasCoordinates(hotel) ? `https://www.openstreetmap.org/?mlat=${hotel.latitude}&mlon=${hotel.longitude}#map=16/${hotel.latitude}/${hotel.longitude}` : "";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/55 px-4">

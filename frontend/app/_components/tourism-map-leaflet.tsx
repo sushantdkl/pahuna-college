@@ -37,13 +37,13 @@ const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const ATTRIBUTION = "&copy; OpenStreetMap contributors";
 
 const categoryStyles: Record<TourismMarkerCategory, { emoji: string; color: string; label: string }> = {
-  stay: { emoji: "🏨", color: "#047857", label: "Stay" },
-  food: { emoji: "🍽️", color: "#d97706", label: "Food" },
-  destination: { emoji: "📍", color: "#7c3aed", label: "Destination" },
-  experience: { emoji: "🧭", color: "#db2777", label: "Experience" },
-  route: { emoji: "🗺️", color: "#2563eb", label: "Route" },
-  training: { emoji: "🎓", color: "#0891b2", label: "Training" },
-  consulting: { emoji: "💼", color: "#0f766e", label: "Consulting" },
+  stay: { emoji: "\u{1F3E8}", color: "#047857", label: "Stay" },
+  food: { emoji: "\u{1F37D}\u{FE0F}", color: "#d97706", label: "Food" },
+  destination: { emoji: "\u{1F4CD}", color: "#7c3aed", label: "Destination" },
+  experience: { emoji: "\u{1F9ED}", color: "#db2777", label: "Experience" },
+  route: { emoji: "\u{1F5FA}\u{FE0F}", color: "#2563eb", label: "Route" },
+  training: { emoji: "\u{1F393}", color: "#0891b2", label: "Training" },
+  consulting: { emoji: "\u{1F4BC}", color: "#0f766e", label: "Consulting" },
 };
 
 function parseCoordinate(value: number | string | null | undefined) {
@@ -135,7 +135,7 @@ export function TourismMapLeaflet({
     return (
       <div className={`grid ${heightClass} place-items-center rounded-[8px] border border-emerald-100 bg-emerald-50/45 p-6 text-center`}>
         <div>
-          <p className="text-3xl" aria-hidden="true">🗺️</p>
+          <p className="text-3xl" aria-hidden="true">{"\u{1F5FA}\u{FE0F}"}</p>
           <h3 className="mt-3 text-lg font-black text-stone-950">{emptyTitle}</h3>
           <p className="mt-2 max-w-md text-sm leading-6 text-stone-600">{emptyDescription}</p>
         </div>
@@ -160,8 +160,8 @@ export function TourismMapLeaflet({
                   <strong>{category.emoji} {marker.name}</strong>
                   {marker.type ? <p>{marker.type}</p> : null}
                   {marker.location ? <p>{marker.location}</p> : null}
-                  {marker.price ? <p>💰 {marker.price}</p> : null}
-                  {marker.duration ? <p>⏱️ {marker.duration}</p> : null}
+                  {marker.price ? <p>{"\u{1F4B0}"} {marker.price}</p> : null}
+                  {marker.duration ? <p>{"\u{23F1}\u{FE0F}"} {marker.duration}</p> : null}
                   <div className="mt-2 grid gap-1">
                     {marker.href ? <a href={marker.href}>View Details</a> : null}
                     {marker.secondaryHref ? <a href={marker.secondaryHref}>{marker.secondaryLabel || "Build Route"}</a> : null}

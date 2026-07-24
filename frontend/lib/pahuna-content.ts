@@ -241,7 +241,7 @@ export const featuredStays: StayCard[] = [
     services: ["Stay inquiry", "Route support", "Breakfast"],
     image: images.nightView,
     gallery: [images.nightView, images.ghantaghar, images.bheriBridge],
-    googleMapLink: "https://maps.google.com/?q=Hotel+Suva+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Hotel+Suva+Surkhet",
     latitude: 28.6019,
     longitude: 81.6339,
   },
@@ -269,7 +269,7 @@ export const featuredStays: StayCard[] = [
     services: ["Family stay", "Group inquiry", "Dining"],
     image: images.ranimatta,
     gallery: [images.ranimatta, images.nightView, images.karnaliHero],
-    googleMapLink: "https://maps.google.com/?q=Siddhartha+Sunny+Resort+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Siddhartha+Sunny+Resort+Surkhet",
     latitude: 28.6034,
     longitude: 81.6287,
   },
@@ -297,7 +297,7 @@ export const featuredStays: StayCard[] = [
     services: ["Stay inquiry", "Market access", "Transit stay"],
     image: images.ghantaghar,
     gallery: [images.ghantaghar, images.nightView, images.bulbule],
-    googleMapLink: "https://maps.google.com/?q=Hotel+De+Namaste+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Hotel+De+Namaste+Surkhet",
   },
   {
     slug: "valley-view-resort",
@@ -323,7 +323,7 @@ export const featuredStays: StayCard[] = [
     services: ["Stay inquiry", "Meals", "Family stay"],
     image: images.nightView,
     gallery: [images.nightView, images.ranimatta, images.bheriBridge],
-    googleMapLink: "https://maps.google.com/?q=Birendranagar+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Birendranagar+Surkhet",
   },
   {
     slug: "bulbule-heritage-inn",
@@ -348,7 +348,7 @@ export const featuredStays: StayCard[] = [
     services: ["Stay inquiry", "Breakfast", "Lake access"],
     image: images.bulbule,
     gallery: [images.bulbule, images.bheriBridge, images.ghantaghar],
-    googleMapLink: "https://maps.google.com/?q=Bulbule+Lake+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Bulbule+Lake+Surkhet",
   },
   {
     slug: "kakrebihar-guest-house",
@@ -370,7 +370,7 @@ export const featuredStays: StayCard[] = [
     services: ["Local host", "Simple stay", "Heritage access"],
     image: images.kakrebiharAlt,
     gallery: [images.kakrebiharAlt, images.kakrebihar, images.deutiBajai],
-    googleMapLink: "https://maps.google.com/?q=Kakrebihar+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Kakrebihar+Surkhet",
   },
   {
     slug: "gurase-hill-stay",
@@ -392,7 +392,7 @@ export const featuredStays: StayCard[] = [
     services: ["Homestay inquiry", "Local meals", "Route stop"],
     image: images.gurase,
     gallery: [images.gurase, images.gurase, images.bheriBridge],
-    googleMapLink: "https://maps.google.com/?q=Gurase+View+Tower",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Gurase+View+Tower",
   },
   {
     slug: "rara-gateway-lodge",
@@ -416,7 +416,7 @@ export const featuredStays: StayCard[] = [
     services: ["Route stay", "Rara planning", "Meal inquiry"],
     image: images.rara,
     gallery: [images.rara, images.karnaliRiver, images.bheriBridge],
-    googleMapLink: "https://maps.google.com/?q=Rara+route+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Rara+route+Surkhet",
   },
   {
     slug: "bheri-riverside-camp",
@@ -440,7 +440,7 @@ export const featuredStays: StayCard[] = [
     services: ["Adventure stay", "Group support", "Food inquiry"],
     image: images.bheriRiver,
     gallery: [images.bheriRiver, images.bheriBridge, images.camping],
-    googleMapLink: "https://maps.google.com/?q=Bheri+River+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Bheri+River+Surkhet",
   },
   {
     slug: "dailekh-route-homestay",
@@ -462,7 +462,7 @@ export const featuredStays: StayCard[] = [
     services: ["Homestay inquiry", "Local food", "Route support"],
     image: images.deutiBajai,
     gallery: [images.deutiBajai, images.gurase, images.karnaliRiver],
-    googleMapLink: "https://maps.google.com/?q=Dailekh+Nepal",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Dailekh+Nepal",
   },
 ];
 
@@ -519,7 +519,7 @@ const supplementalStaySeeds: StayCard[] = [
     [images.nightView, images.gurase, images.bheriBridge][index % 3],
     [images.rara, images.karnaliRiver, images.deutiBajai][index % 3],
   ],
-  googleMapLink: `https://maps.google.com/?q=${encodeURIComponent(`${name} ${area}`)}`,
+  googleMapLink: `https://www.openstreetmap.org/search?query=${encodeURIComponent(`${name} ${area}`)}`,
 }));
 
 const staySlugSet = new Set(featuredStays.map((stay) => stay.slug));
@@ -547,7 +547,7 @@ export const foodProviders: FoodProvider[] = [
     reviewCount: 21,
     featured: true,
     verificationStatus: "PUBLIC_LISTING",
-    googleMapLink: "https://maps.google.com/?q=Restaurant+Birendranagar+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Restaurant+Birendranagar+Surkhet",
   },
   {
     slug: "ghantaghar-momo-corner",
@@ -569,7 +569,7 @@ export const foodProviders: FoodProvider[] = [
     reviewCount: 16,
     featured: true,
     verificationStatus: "PUBLIC_LISTING",
-    googleMapLink: "https://maps.google.com/?q=Momo+Ghantaghar+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Momo+Ghantaghar+Surkhet",
   },
   {
     slug: "bulbule-lakeside-cafe",
@@ -591,7 +591,7 @@ export const foodProviders: FoodProvider[] = [
     reviewCount: 14,
     featured: true,
     verificationStatus: "PUBLIC_LISTING",
-    googleMapLink: "https://maps.google.com/?q=Bulbule+Lake+Cafe+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Bulbule+Lake+Cafe+Surkhet",
   },
   {
     slug: "cafes-near-city-core",
@@ -612,7 +612,7 @@ export const foodProviders: FoodProvider[] = [
     reviewCount: 12,
     featured: true,
     verificationStatus: "PUBLIC_LISTING",
-    googleMapLink: "https://maps.google.com/?q=Cafe+Birendranagar+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Cafe+Birendranagar+Surkhet",
   },
   {
     slug: "route-side-tea-and-snacks",
@@ -630,7 +630,7 @@ export const foodProviders: FoodProvider[] = [
     features: ["Route-side", "Budget friendly", "Quick stop"],
     priceLevel: "Budget",
     verificationStatus: "PUBLIC_LISTING",
-    googleMapLink: "https://maps.google.com/?q=Gurase+Tea+Stop",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Gurase+Tea+Stop",
   },
   {
     slug: "karnali-coffee-house",
@@ -668,7 +668,7 @@ export const foodProviders: FoodProvider[] = [
     features: ["Temple nearby", "Family friendly", "Local meals"],
     priceLevel: "Moderate",
     verificationStatus: "PUBLIC_LISTING",
-    googleMapLink: "https://maps.google.com/?q=Deuti+Bajai+Restaurant+Surkhet",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Deuti+Bajai+Restaurant+Surkhet",
   },
   {
     slug: "surkhet-bakery-and-cafe",
@@ -703,7 +703,7 @@ export const foodProviders: FoodProvider[] = [
     features: ["Route-side", "Group inquiry", "Local meals"],
     priceLevel: "Budget",
     verificationStatus: "PENDING",
-    googleMapLink: "https://maps.google.com/?q=Bheri+River+food+stop",
+    googleMapLink: "https://www.openstreetmap.org/search?query=Bheri+River+food+stop",
   },
   {
     slug: "surkhet-event-and-party-venue",
@@ -783,7 +783,7 @@ const supplementalFoodSeeds: FoodProvider[] = supplementalFoodSource.map(([slug,
   priceLevel: index % 5 === 0 ? "Premium" : index % 2 === 0 ? "Budget" : "Moderate",
   featured: index < 8 || typeLabel.includes("Viewpoint"),
   verificationStatus: "PUBLIC_LISTING",
-  googleMapLink: `https://maps.google.com/?q=${encodeURIComponent(`${name} ${area}`)}`,
+  googleMapLink: `https://www.openstreetmap.org/search?query=${encodeURIComponent(`${name} ${area}`)}`,
 }));
 
 const foodSlugSet = new Set(foodProviders.map((provider) => provider.slug));
