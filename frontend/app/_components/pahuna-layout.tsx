@@ -18,15 +18,16 @@ export function SiteHeader() {
     ["/", "/explore", "/hotels", "/food", "/destinations", "/trip-planner", "/contact"].includes(item.href),
   );
   const serviceLinks = [
-    { label: "B2B Consulting", href: "/consulting", description: "Hospitality strategy and operations support" },
-    { label: "Training Academy", href: "/training", description: "Courses for hospitality careers" },
-    { label: "Partner With Us", href: "/partner", description: "Join the Karnali tourism network" },
-    { label: "Trip Routes", href: "/routes", description: "Transport routes and route segments" },
-    { label: "Trip Cost", href: "/trip-cost", description: "Route and budget estimator" },
-    { label: "Experiences / Things To Do", href: "/experiences", description: "Culture, nature, food, and adventure" },
+    { label: "B2B Consulting", href: "/consulting", description: "Strategic hospitality support" },
+    { label: "Training Academy", href: "/training", description: "Hospitality career courses" },
+    { label: "Experiences", href: "/experiences", description: "Culture, nature, food, and adventure" },
+    { label: "Trip Ideas", href: "/itineraries", description: "Pre-planned Karnali journeys" },
+    { label: "Routes & Cost", href: "/routes", description: "Route and budget estimator" },
+    { label: "Partner With Us", href: "/partner", description: "Join the tourism network" },
   ];
   const activeService = serviceLinks.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
-  const mobileLinks = [...primaryLinks, ...serviceLinks];
+  const blogLink = { label: "Blog", href: "/blog" };
+  const mobileLinks = [...primaryLinks, ...serviceLinks, blogLink];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-stone-200/80 bg-[#fffaf0]/90 backdrop-blur-xl">
@@ -40,6 +41,7 @@ export function SiteHeader() {
             <RefDesktopLink key={item.href} label={item.label} href={item.href} pathname={pathname} />
           ))}
           <RefDesktopMenu label="Services" pathname={pathname} active={activeService} items={serviceLinks} />
+          <RefDesktopLink label="Blog" href="/blog" pathname={pathname} />
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
@@ -101,7 +103,7 @@ function RefDesktopMenu({ label, pathname, active, items }: { label: string; pat
   const menuActive = active ?? items.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
   return (
     <details className="group relative">
-      <summary className={`cursor-pointer list-none rounded-lg px-3 py-2 text-sm font-medium transition [&::-webkit-details-marker]:hidden ${menuActive ? "bg-white text-emerald-800 shadow-sm" : "text-stone-600 hover:bg-white/70 hover:text-stone-950"}`}>{label} <span aria-hidden="true" className="ml-1">⌄</span></summary>
+      <summary className={`cursor-pointer list-none rounded-lg px-3 py-2 text-sm font-medium transition [&::-webkit-details-marker]:hidden ${menuActive ? "bg-white text-emerald-800 shadow-sm" : "text-stone-600 hover:bg-white/70 hover:text-stone-950"}`}>{label} <span aria-hidden="true" className="ml-1">v</span></summary>
       <div className="absolute left-1/2 top-full z-50 mt-2 w-72 -translate-x-1/2 rounded-xl border border-stone-200 bg-white p-2 shadow-xl">
         {items.map((item) => <Link key={item.href} href={item.href} className="block rounded-lg px-4 py-3 text-sm font-semibold text-stone-800 hover:bg-emerald-50 hover:text-emerald-800"><span>{item.label}</span>{item.description ? <span className="mt-1 block text-xs font-normal leading-5 text-stone-500">{item.description}</span> : null}</Link>)}
       </div>
@@ -128,8 +130,17 @@ export function SiteFooter() {
           </div>
         </div>
         <FooterGroup title="Discover" links={["Explore Surkhet", "Destinations", "Hotels & Stays", "Things to Do", "Trip Ideas", "Trip Planner"]} />
-        <FooterGroup title="Services" links={["B2B Consulting", "Training Academy", "Partner With Us", "Trip Routes"]} />
-        <FooterGroup title="Company" links={["About Us", "Contact", "FAQ", "Privacy Policy", "Terms & Conditions"]} />
+        <FooterGroup title="Services" links={["B2B Consulting", "Training Academy", "Partner With Us", "Blog & Guides"]} />
+        <div>
+          <FooterGroup title="Company" links={["About Us", "Contact", "FAQ", "Privacy Policy", "Terms & Conditions"]} />
+          <div className="mt-8 flex gap-3">
+            {["f", "ig", "x"].map((item) => (
+              <span key={item} className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-xs font-black uppercase text-stone-300">
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
       <div className="border-t border-white/10 px-4 py-6 text-center text-xs text-stone-500 sm:flex sm:items-center sm:justify-between sm:px-8">
         <span>Copyright 2026 Pahuna. All rights reserved.</span>
@@ -157,6 +168,8 @@ function FooterGroup({ title, links }: { title: string; links: string[] }) {
           ? "/partner"
         : label === "Trip Routes"
           ? "/routes"
+        : label === "Blog & Guides"
+          ? "/blog"
         : label === "Trip Packages"
           ? "/trip-packages"
         : ["About Us", "FAQ", "Privacy Policy", "Terms & Conditions"].includes(label)
