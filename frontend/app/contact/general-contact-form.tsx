@@ -27,7 +27,7 @@ export function GeneralContactForm({ initialSubject = "" }: { initialSubject?: s
 
   return (
     <form
-      className="rounded-[8px] border border-stone-200 bg-white p-6 shadow-sm"
+      className="bg-transparent"
       onSubmit={async (event) => {
         event.preventDefault();
         setFeedback(null);
@@ -66,35 +66,36 @@ export function GeneralContactForm({ initialSubject = "" }: { initialSubject?: s
         }
       }}
     >
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Full name" htmlFor="contact-name">
+      <div className="grid gap-x-4 gap-y-3 sm:grid-cols-2">
+        <Field label="Full Name *" htmlFor="contact-name">
           <input id="contact-name" value={form.name} onChange={(event) => setField("name", event.target.value)} maxLength={120} autoComplete="name" className={inputClassName} placeholder="Your full name" />
         </Field>
-        <Field label="Email address" htmlFor="contact-email">
+        <Field label="Email *" htmlFor="contact-email">
           <input id="contact-email" type="email" value={form.email} onChange={(event) => setField("email", event.target.value)} maxLength={254} autoComplete="email" className={inputClassName} placeholder="you@example.com" />
         </Field>
-        <Field label="Phone (optional)" htmlFor="contact-phone">
-          <input id="contact-phone" value={form.phone} onChange={(event) => setField("phone", event.target.value)} maxLength={40} autoComplete="tel" className={inputClassName} placeholder="Phone number" />
+        <Field label="Phone" htmlFor="contact-phone">
+          <input id="contact-phone" value={form.phone} onChange={(event) => setField("phone", event.target.value)} maxLength={40} autoComplete="tel" className={inputClassName} placeholder="+977 ..." />
         </Field>
-        <Field label="Subject" htmlFor="contact-subject">
-          <input id="contact-subject" value={form.subject} onChange={(event) => setField("subject", event.target.value)} maxLength={160} className={inputClassName} placeholder="How can Pahuna help?" />
+        <Field label="Subject *" htmlFor="contact-subject">
+          <input id="contact-subject" value={form.subject} onChange={(event) => setField("subject", event.target.value)} maxLength={160} className={inputClassName} placeholder="What is this about?" />
         </Field>
         <div className="sm:col-span-2">
-          <Field label="Message" htmlFor="contact-message">
-            <textarea id="contact-message" value={form.message} onChange={(event) => setField("message", event.target.value)} maxLength={5000} className={`${inputClassName} min-h-40 resize-y`} placeholder="Tell us what you need help with" />
+          <Field label="Message *" htmlFor="contact-message">
+            <textarea id="contact-message" value={form.message} onChange={(event) => setField("message", event.target.value)} maxLength={5000} className={`${inputClassName} min-h-16 resize-y`} placeholder="Tell us more..." />
           </Field>
         </div>
       </div>
-      {feedback ? <p aria-live="polite" className={`mt-4 rounded-2xl px-4 py-3 text-sm font-semibold ${feedback.tone === "success" ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-700"}`}>{feedback.message}</p> : null}
-      <button type="submit" disabled={submitting} className="mt-6 inline-flex w-full justify-center rounded-md bg-emerald-700 px-6 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60">
-        {submitting ? "Sending message..." : "Send message"}
+      {feedback ? <p aria-live="polite" className={`mt-3 rounded-md px-3 py-2 text-xs font-semibold ${feedback.tone === "success" ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-700"}`}>{feedback.message}</p> : null}
+      <button type="submit" disabled={submitting} className="mt-5 inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-6 text-xs font-black text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-200 disabled:cursor-not-allowed disabled:opacity-60">
+        <span aria-hidden="true">{"\u{1F4E8}"}</span>
+        {submitting ? "Sending..." : "Send Message"}
       </button>
     </form>
   );
 }
 
 function Field({ label, htmlFor, children }: { label: string; htmlFor: string; children: React.ReactNode }) {
-  return <label htmlFor={htmlFor} className="grid gap-2 text-sm font-bold text-stone-700"><span>{label}</span>{children}</label>;
+  return <label htmlFor={htmlFor} className="grid gap-1.5 text-xs font-black text-stone-950"><span>{label}</span>{children}</label>;
 }
 
-const inputClassName = "w-full rounded-sm border border-stone-300 px-3 py-2 text-sm font-normal outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100";
+const inputClassName = "w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-xs font-normal outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100";

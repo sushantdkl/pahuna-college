@@ -22,12 +22,13 @@ const hotelInquiryTypes = new Set<InquiryKind>([
 
 const contactCards = [
   ["\u{1F4CD}", "Visit Us", "Birendranagar, Surkhet, Karnali Province, Nepal"],
-  ["\u{260E}\u{FE0F}", "Call Us", "+977-083-520000"],
+  ["\u{1F4DE}", "Call Us", "+977-083-520000"],
   ["\u{2709}\u{FE0F}", "Email Us", "hello@pahuna.com"],
-  ["\u{1F552}", "Office Hours", "Sun - Fri, 10:00 AM - 6:00 PM"],
+  ["\u{1F552}", "Office Hours", "Sun - Fri: 9:00 AM - 6:00 PM (Nepal Time)"],
 ];
 
-const softwaricaMapSrc = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.3609923548934!2d85.32740427638603!3d27.70613837618334!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb190a74aa1f23%3A0x74ebef82ad0e5c15!2sSoftwarica%20College%20of%20IT%20and%20E-Commerce!5e0!3m2!1sen!2snp!4v1784869649163!5m2!1sen!2snp";
+const softwaricaMapSrc = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.3609923548934!2d85.32740427638603!3d27.70613837618334!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb190a74aa1f23%3A0x74ebef82ad0e5c15!2sSoftwarica%20College%20of%20IT%20and%20E-Commerce!5e0!3m2!1sen!2snp!4v1784867879176!5m2!1sen!2snp";
+const softwaricaDirectionsHref = "https://www.google.com/maps/search/?api=1&query=Softwarica%20College%20of%20IT%20and%20E-Commerce%2C%20Dillibazar%2C%20Kathmandu%2C%20Nepal";
 
 export default async function ContactPage({ searchParams }: { searchParams: ContactSearchParams }) {
   const params = await searchParams;
@@ -39,31 +40,31 @@ export default async function ContactPage({ searchParams }: { searchParams: Cont
     : "AVAILABILITY";
 
   return (
-    <main className="min-h-screen bg-[#fffaf0] text-stone-950">
+    <main className="min-h-screen bg-white text-stone-950">
       <SiteHeader />
-      <section className="bg-gradient-to-b from-white to-[#fffaf0] px-4 py-16 text-center sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-black tracking-tight">Contact Us</h1>
+      <section className="border-b border-stone-100 bg-white px-4 pb-28 pt-10 text-center sm:px-6 sm:pb-32 lg:px-8">
+        <h1 className="text-3xl font-black tracking-tight sm:text-[40px]">Contact Us</h1>
         <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-stone-600">Have a question, feedback, or business inquiry? We&apos;d love to hear from you. Fill out the form below or reach us directly.</p>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 lg:px-8">
-        <div className="grid gap-5 md:grid-cols-4">
+      <section className="mx-auto -mt-16 max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {contactCards.map(([icon, title, text]) => (
-            <div key={title} className="rounded-[8px] border border-stone-200 bg-white p-6 text-center shadow-sm">
-              <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-lg" aria-hidden="true">{icon}</div>
-              <h2 className="mt-4 font-black">{title}</h2>
-              <p className="mt-2 text-xs leading-5 text-stone-500">{text}</p>
+            <div key={title} className="min-h-[172px] rounded-[8px] border border-stone-200 bg-white p-7 text-center shadow-sm">
+              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-lg" aria-hidden="true">{icon}</div>
+              <h2 className="mt-4 text-sm font-black">{title}</h2>
+              <p className="mx-auto mt-2 max-w-[170px] text-xs leading-5 text-stone-500">{text}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="bg-white/55 px-4 py-14 sm:px-6 lg:px-8">
+      <section className="bg-[#fbfaf7] px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-black">Send Us a Message</h2>
-          <p className="mt-3 text-sm text-stone-600">We typically respond within 24 hours.</p>
+          <h2 className="text-2xl font-black sm:text-3xl">Send Us a Message</h2>
+          <p className="mt-5 text-sm text-stone-600">We typically respond within 24 hours.</p>
         </div>
-        <div className="mx-auto mt-8 max-w-xl">
+        <div className="mx-auto mt-8 max-w-2xl">
           {hotelName ? (
             <HotelInquiryForm hotelName={hotelName} initialTitle={topic} inquiryType={inquiryType} />
           ) : (
@@ -74,32 +75,36 @@ export default async function ContactPage({ searchParams }: { searchParams: Cont
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2 className="text-3xl font-black">Our Location</h2>
-          <p className="mt-3 text-sm text-stone-600">Visit us at our office in Birendranagar, Surkhet.</p>
+          <h2 className="text-2xl font-black sm:text-3xl">Our Location</h2>
+          <p className="mt-5 text-sm text-stone-600">Visit us at our office in Birendranagar, Surkhet</p>
         </div>
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
-          <div className="overflow-hidden rounded-[8px] border border-stone-200 bg-white shadow-sm">
+        <div className="mt-9 grid gap-5 lg:grid-cols-[1.6fr_0.8fr]">
+          <div className="h-[300px] overflow-hidden rounded-[8px] border border-stone-200 bg-white shadow-sm sm:h-[360px] lg:h-[430px]">
             <iframe
               src={softwaricaMapSrc}
               width="600"
               height="450"
-              style={{ border: 0, width: "100%", height: "100%", minHeight: 340 }}
+              style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="strict-origin-when-cross-origin"
               title="Softwarica College of IT and E-Commerce location"
-              className="block h-[300px] w-full sm:h-[380px] lg:h-[420px]"
+              className="block h-full w-full"
             />
           </div>
-          <aside className="h-fit rounded-[8px] border border-stone-200 bg-white p-5 shadow-sm">
-            <h3 className="font-black">Find Us</h3>
-            <div className="mt-4 grid gap-3 text-sm text-stone-600">
-              <p><strong className="text-stone-900">{"\u{1F4CD}"} Address:</strong><br />Softwarica College of IT and E-Commerce, Kathmandu, Nepal</p>
-              <p><strong className="text-stone-900">{"\u{260E}\u{FE0F}"} Phone:</strong><br />+977-083-520000</p>
-              <p><strong className="text-stone-900">{"\u{2709}\u{FE0F}"} Email:</strong><br />hello@pahuna.com</p>
-              <p><strong className="text-stone-900">{"\u{1F552}"} Hours:</strong><br />Sun - Fri, 10 AM - 6 PM</p>
+          <aside className="rounded-[8px] border border-stone-200 bg-white p-6 shadow-sm lg:min-h-[430px]">
+            <h3 className="text-base font-black">Find Us</h3>
+            <p className="mt-3 text-xs leading-5 text-stone-600">Pahuna Tourism Office, Birendranagar</p>
+            <div className="mt-5 grid gap-4 text-xs text-stone-600">
+              <p className="flex gap-3"><span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50">{"\u{1F4CD}"}</span><span><strong className="block text-[10px] uppercase tracking-wide text-stone-500">Address</strong><span className="font-bold text-stone-900">Birendranagar, Surkhet, Karnali Province, Nepal</span></span></p>
+              <p className="flex gap-3"><span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50">{"\u{1F4DE}"}</span><span><strong className="block text-[10px] uppercase tracking-wide text-stone-500">Phone</strong><a href="tel:+977083520000" className="font-bold text-stone-900 hover:text-emerald-700">+977-083-520000</a></span></p>
+              <p className="flex gap-3"><span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50">{"\u{2709}\u{FE0F}"}</span><span><strong className="block text-[10px] uppercase tracking-wide text-stone-500">Email</strong><a href="mailto:hello@pahuna.com" className="break-all font-bold text-stone-900 hover:text-emerald-700">hello@pahuna.com</a></span></p>
+              <p className="flex gap-3"><span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50">{"\u{1F552}"}</span><span><strong className="block text-[10px] uppercase tracking-wide text-stone-500">Hours</strong><span className="font-bold text-stone-900">Sun - Fri: 9 AM - 6 PM (NPT)</span></span></p>
             </div>
-            <a href="https://www.openstreetmap.org/search?query=Softwarica%20College%20of%20IT%20and%20E-Commerce" target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full justify-center rounded-lg bg-emerald-700 px-4 py-2 text-sm font-black text-white">{"\u{1F9ED}"} Open in OpenStreetMap</a>
+            <div className="mt-6 grid gap-2">
+              <a href={softwaricaDirectionsHref} target="_blank" rel="noopener noreferrer" className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 text-xs font-black text-white transition hover:bg-emerald-800">{"\u{1F9ED}"} Open in Google Maps</a>
+              <a href="tel:+977083520000" className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-emerald-700 px-4 text-xs font-black text-emerald-800 transition hover:bg-emerald-50">{"\u{1F4DE}"} Call Us</a>
+            </div>
           </aside>
         </div>
       </section>
