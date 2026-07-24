@@ -1,0 +1,11 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#F8F1E4"/>
+  <circle cx="350" cy="240" r="160" fill="#DDEBCE"/>
+  <circle cx="860" cy="520" r="220" fill="#F2D6A2"/>
+  <rect x="300" y="250" width="600" height="330" rx="36" fill="#FFFDF8" stroke="#D7A64A" stroke-width="12"/>
+  <path d="M430 470C490 545 710 545 770 470" stroke="#2F6B4F" stroke-width="24" stroke-linecap="round"/>
+  <path d="M430 380H770" stroke="#2F6B4F" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="500" cy="380" r="24" fill="#D7A64A"/>
+  <circle cx="700" cy="380" r="24" fill="#D7A64A"/>
+  <text x="600" y="665" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#2F4F3D">Pahuna Food Listing</text>
+</svg>

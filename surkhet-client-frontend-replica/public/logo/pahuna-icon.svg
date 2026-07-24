@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Pahuna icon">
+  <rect width="256" height="256" rx="56" fill="#f8f3e8"/>
+  <path d="M44 158 L124 72 L160 112 L188 82 L232 158 Z" fill="#113f75"/>
+  <path d="M56 190 C104 168, 165 161, 218 174 C202 198, 116 215, 56 210 Z" fill="#ff9f0a"/>
+  <path d="M82 158 C105 134, 135 133, 158 158" fill="none" stroke="#0f6b46" stroke-width="14" stroke-linecap="round"/>
+</svg>

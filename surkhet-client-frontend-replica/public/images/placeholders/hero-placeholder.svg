@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Pahuna hero placeholder">
+  <rect width="1600" height="900" fill="#f6eddc"/>
+  <circle cx="1260" cy="210" r="128" fill="#f0c36d" opacity=".72"/>
+  <path d="M0 610 275 334l180 174 246-278 291 333 188-183 420 316v204H0z" fill="#244f3a"/>
+  <path d="M0 704c178-67 345-77 502-30 184 55 316 56 498 6 184-50 384-42 600 36v184H0z" fill="#87a86f"/>
+  <text x="800" y="762" text-anchor="middle" font-family="Arial, sans-serif" font-size="56" font-weight="700" fill="#fffaf0">Pahuna Karnali</text>
+</svg>
