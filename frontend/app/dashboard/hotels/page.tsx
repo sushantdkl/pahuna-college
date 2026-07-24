@@ -274,11 +274,11 @@ export default function DashboardHotelsPage() {
 
     try {
       await deleteAdminHotelAction(deleteTarget._id);
-      setNotice("Hotel deleted successfully");
+      setNotice("Hotel removed successfully");
       setDeleteTarget(null);
       await loadHotels();
     } catch (deleteError) {
-      setError(deleteError instanceof Error ? deleteError.message : "Unable to delete hotel");
+      setError(deleteError instanceof Error ? deleteError.message : "Unable to remove hotel");
     } finally {
       setIsDeleting(false);
     }
@@ -298,11 +298,11 @@ export default function DashboardHotelsPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-          <ReplicaStatCard title="Total Providers" value={meta.total} subtitle="All matching records" icon="providers" />
+          <ReplicaStatCard title="Total Providers" value={meta.total} subtitle="All matching listings" icon="providers" />
           <ReplicaStatCard title="Active Listings" value={stats.active} subtitle="On this page" icon="active" />
           <ReplicaStatCard title="Verified Listings" value={stats.verifiedCount} subtitle="On this page" icon="verified" />
           <ReplicaStatCard title="Featured Listings" value={stats.featuredCount} subtitle="On this page" icon="featured" />
-          <ReplicaStatCard title="Map Coverage" value={`${stats.coverage}%`} subtitle={`${stats.mapped}/${hotels.length} visible records`} icon="map" />
+          <ReplicaStatCard title="Map Coverage" value={`${stats.coverage}%`} subtitle={`${stats.mapped}/${hotels.length} visible listings`} icon="map" />
         </div>
 
         <section className="rounded-xl border border-stone-200 bg-white shadow-sm">
@@ -374,7 +374,7 @@ export default function DashboardHotelsPage() {
                           <button onClick={() => openEditForm(hotel)} className="rounded-lg border border-emerald-200 px-3 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-50">Edit</button>
                           <button onClick={() => void quickPatchHotel(hotel, { isVerified: !hotel.isVerified })} className="rounded-lg border border-emerald-200 px-3 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-50">{hotel.isVerified ? "Unverify" : "Verify"}</button>
                           <button onClick={() => void quickPatchHotel(hotel, { isFeatured: !hotel.isFeatured })} className="rounded-lg border border-amber-200 px-3 py-2 text-xs font-semibold text-amber-800 hover:bg-amber-50">{hotel.isFeatured ? "Unfeature" : "Feature"}</button>
-                          <button onClick={() => setDeleteTarget(hotel)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">Delete</button>
+                          <button onClick={() => setDeleteTarget(hotel)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">Archive</button>
                         </div>
                       </td>
                     </tr>
@@ -543,12 +543,12 @@ function DeleteHotelDialog({ hotel, isDeleting, onCancel, onConfirm }: { hotel: 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/55 px-4">
       <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-600">Delete hotel</p>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-600">Remove hotel</p>
         <h2 className="mt-3 text-2xl font-bold text-stone-950">Confirm deletion</h2>
         <p className="mt-3 text-sm leading-6 text-stone-600">This will delete <span className="font-bold">{hotel.name}</span> from admin hotel management.</p>
         <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button onClick={onCancel} disabled={isDeleting} className="rounded-lg border border-stone-200 px-5 py-3 text-sm font-semibold text-stone-600 hover:bg-stone-50 disabled:opacity-50">Cancel</button>
-          <button onClick={onConfirm} disabled={isDeleting} className="rounded-lg bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50">{isDeleting ? "Deleting..." : "Delete hotel"}</button>
+          <button onClick={onConfirm} disabled={isDeleting} className="rounded-lg bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50">{isDeleting ? "Removing..." : "Remove hotel"}</button>
         </div>
       </section>
     </div>

@@ -48,6 +48,10 @@ type CrudPageProps<T extends CrudRecord> = {
 
 const inputClassName =
   "w-full rounded-lg border border-stone-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100";
+const softButtonClassName =
+  "rounded-lg border border-stone-200 bg-white px-3 py-2 text-xs font-semibold text-stone-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800";
+const dangerButtonClassName =
+  "rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-100";
 
 export function SimpleCrudPage<T extends CrudRecord>({
   title,
@@ -63,6 +67,9 @@ export function SimpleCrudPage<T extends CrudRecord>({
   statLabels,
   defaultValues,
 }: CrudPageProps<T>) {
+  const itemLabel = title.replace(/s$/, "");
+  const listingTitle = `${title} workspace`;
+  const listingDescription = "Search, review, publish, and refine public-facing information.";
   const [records, setRecords] = useState<T[]>([]);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState({ total: 0, totalPages: 1 });
@@ -176,10 +183,10 @@ export function SimpleCrudPage<T extends CrudRecord>({
     try {
       if (editing === "create") {
         await create(payload());
-        setNotice(`${title} record created successfully.`);
+        setNotice(`${itemLabel} added successfully.`);
       } else if (editing) {
         await update(editing._id, payload());
-        setNotice(`${title} record updated successfully.`);
+        setNotice(`${itemLabel} updated successfully.`);
       }
       setEditing(null);
       await loadRecords();
@@ -194,10 +201,10 @@ export function SimpleCrudPage<T extends CrudRecord>({
     setSavingId(record._id);
     try {
       await update(record._id, data);
-      setNotice(`${title} record updated.`);
+      setNotice(`${itemLabel} updated.`);
       await loadRecords();
     } catch (updateError) {
-      setError(updateError instanceof Error ? updateError.message : "Unable to update record");
+      setError(updateError instanceof Error ? updateError.message : `Unable to update ${itemLabel.toLowerCase()}`);
     } finally {
       setSavingId("");
     }
@@ -208,11 +215,11 @@ export function SimpleCrudPage<T extends CrudRecord>({
     setSaving(true);
     try {
       await remove(deleting._id);
-      setNotice(`${title} record deleted successfully.`);
+      setNotice(`${itemLabel} removed successfully.`);
       setDeleting(null);
       await loadRecords();
     } catch (deleteError) {
-      setError(deleteError instanceof Error ? deleteError.message : "Unable to delete record");
+      setError(deleteError instanceof Error ? deleteError.message : `Unable to remove ${itemLabel.toLowerCase()}`);
     } finally {
       setSaving(false);
     }
@@ -240,8 +247,9 @@ export function SimpleCrudPage<T extends CrudRecord>({
         {notice ? <p className="rounded-[8px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">{notice}</p> : null}
         {error ? <ErrorState description={error} action={<button type="button" onClick={() => void loadRecords()} className="rounded-[8px] border border-red-200 bg-white px-3 py-2 text-xs font-black text-red-700">Retry</button>} /> : null}
 
-        <ReplicaDataCard title={`${title} records`} description="Search, filter, view, update, or delete" count={meta.total}>
-          <form onSubmit={(event) => { event.preventDefault(); setPage(1); setSearch(query.trim()); }} className="mb-5 grid gap-3 xl:grid-cols-[1fr_repeat(3,180px)_auto]">
+        <ReplicaDataCard title={listingTitle} description={listingDescription} count={meta.total}>
+          <form onSubmit={(event) => { event.preventDefault(); setPage(1); setSearch(query.trim()); }} className="mb-5 rounded-[8px] border border-stone-200 bg-stone-50/70 p-3">
+            <div className="grid gap-3 xl:grid-cols-[1fr_repeat(3,180px)_auto]">
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={`Search ${title.toLowerCase()}...`} className={inputClassName} />
             {filters.map((filter) => (
               <select key={filter.key} value={filterValues[filter.key] || ""} onChange={(event) => { setPage(1); setFilterValues((current) => ({ ...current, [filter.key]: event.target.value })); }} className={inputClassName}>
@@ -250,6 +258,7 @@ export function SimpleCrudPage<T extends CrudRecord>({
               </select>
             ))}
             <button type="submit" className="rounded-lg bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white">Search</button>
+            </div>
           </form>
 
           {loading ? (
@@ -272,12 +281,14 @@ export function SimpleCrudPage<T extends CrudRecord>({
                     ))}
                     <td className="py-4">
                       <div className="flex min-w-[360px] flex-wrap gap-2">
-                        <button onClick={() => setViewing(record)} className="rounded-lg border border-stone-200 px-3 py-2 text-xs font-semibold">View</button>
-                        <button onClick={() => openEdit(record)} className="rounded-lg border border-stone-200 px-3 py-2 text-xs font-semibold">Edit</button>
-                        {"active" in record ? <button disabled={savingId === record._id} onClick={() => void quickUpdate(record, { active: !record.active })} className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 disabled:opacity-50">{record.active ? "Deactivate" : "Activate"}</button> : null}
-                        {"isActive" in record ? <button disabled={savingId === record._id} onClick={() => void quickUpdate(record, { isActive: !record.isActive })} className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 disabled:opacity-50">{record.isActive ? "Deactivate" : "Activate"}</button> : null}
+                        <button onClick={() => setViewing(record)} className={softButtonClassName}>Preview</button>
+                        <button onClick={() => openEdit(record)} className={softButtonClassName}>Edit</button>
+                        {hasMediaFields(record) ? <button onClick={() => openEdit(record)} className={softButtonClassName}>Media</button> : null}
+                        {hasLocationFields(record) ? <button onClick={() => openEdit(record)} className={softButtonClassName}>Location</button> : null}
+                        {"active" in record ? <button disabled={savingId === record._id} onClick={() => void quickUpdate(record, { active: !record.active })} className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 disabled:opacity-50">{record.active ? "Pause" : "Publish"}</button> : null}
+                        {"isActive" in record ? <button disabled={savingId === record._id} onClick={() => void quickUpdate(record, { isActive: !record.isActive })} className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 disabled:opacity-50">{record.isActive ? "Pause" : "Publish"}</button> : null}
                         {"isPublished" in record ? <button disabled={savingId === record._id} onClick={() => void quickUpdate(record, { isPublished: !record.isPublished })} className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900 disabled:opacity-50">{record.isPublished ? "Unpublish" : "Publish"}</button> : null}
-                        <button onClick={() => setDeleting(record)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">Delete</button>
+                        <button onClick={() => setDeleting(record)} className={dangerButtonClassName}>Archive</button>
                       </div>
                     </td>
                   </tr>
@@ -285,7 +296,7 @@ export function SimpleCrudPage<T extends CrudRecord>({
               </tbody>
             </table>
           ) : (
-            <EmptyState title="No records found" description="Create a record or adjust your filters to continue managing this module." action={<button type="button" onClick={openCreate} className="rounded-[8px] bg-emerald-700 px-4 py-2 text-sm font-semibold text-white">{createLabel}</button>} />
+            <EmptyState title={`No ${title.toLowerCase()} found`} description="Add a new listing or adjust filters to continue managing this workspace." action={<button type="button" onClick={openCreate} className="rounded-[8px] bg-emerald-700 px-4 py-2 text-sm font-semibold text-white">{createLabel}</button>} />
           )}
 
           <div className="mt-5 flex items-center justify-between border-t border-stone-200 pt-4 text-sm text-stone-500">
@@ -300,35 +311,34 @@ export function SimpleCrudPage<T extends CrudRecord>({
 
       {editing ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/40 p-4" role="dialog" aria-modal="true" aria-label={editing === "create" ? createLabel : `Edit ${title}`}>
-          <form onSubmit={saveRecord} className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-[8px] bg-white p-6 shadow-2xl">
+          <form onSubmit={saveRecord} className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-[12px] bg-white p-6 shadow-2xl">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold">{editing === "create" ? createLabel : `Edit ${title}`}</h2>
-                <p className="text-sm text-stone-500">Required fields must be filled before saving.</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">{editing === "create" ? "New listing" : "Listing editor"}</p>
+                <h2 className="mt-2 text-xl font-bold">{editing === "create" ? createLabel : `Edit ${displayTitle(editing)}`}</h2>
+                <p className="text-sm text-stone-500">Update only the selected item, then return to the workspace.</p>
               </div>
               <button type="button" onClick={() => setEditing(null)} className="rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold">Cancel</button>
             </div>
             {formError ? <p className="mb-4 rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{formError}</p> : null}
-            <div className="grid gap-4 md:grid-cols-2">
-              {fields.map((field) => (
-                <label key={field.key} className={field.type === "textarea" || field.type === "list" ? "md:col-span-2" : ""}>
-                  <span className="text-sm font-semibold text-stone-700">{field.label}{field.required ? " *" : ""}</span>
-                  {field.type === "textarea" || field.type === "list" ? (
-                    <textarea value={String(form[field.key] ?? "")} onChange={(event) => setForm((current) => ({ ...current, [field.key]: event.target.value }))} rows={field.type === "list" ? 3 : 5} className={`${inputClassName} mt-1`} placeholder={field.type === "list" ? "Comma separated values" : undefined} />
-                  ) : field.type === "boolean" ? (
-                    <select value={String(Boolean(form[field.key]))} onChange={(event) => setForm((current) => ({ ...current, [field.key]: event.target.value === "true" }))} className={`${inputClassName} mt-1`}>
-                      <option value="true">Yes</option>
-                      <option value="false">No</option>
-                    </select>
-                  ) : field.type === "select" ? (
-                    <select value={String(form[field.key] ?? "")} onChange={(event) => setForm((current) => ({ ...current, [field.key]: event.target.value }))} className={`${inputClassName} mt-1`}>
-                      <option value="">Select {field.label}</option>
-                      {field.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                    </select>
-                  ) : (
-                    <input type={field.type === "number" ? "number" : "text"} value={String(form[field.key] ?? "")} onChange={(event) => setForm((current) => ({ ...current, [field.key]: event.target.value }))} className={`${inputClassName} mt-1`} />
-                  )}
-                </label>
+            <div className="space-y-5">
+              {groupFields(fields).map((group) => (
+                <section key={group.title} className="rounded-[10px] border border-stone-200 bg-stone-50/60 p-4">
+                  <div className="mb-4">
+                    <h3 className="text-sm font-bold text-stone-950">{group.title}</h3>
+                    <p className="mt-1 text-xs text-stone-500">{group.description}</p>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {group.fields.map((field) => (
+                      <FormField
+                        key={field.key}
+                        field={field}
+                        value={form[field.key]}
+                        onChange={(value) => setForm((current) => ({ ...current, [field.key]: value }))}
+                      />
+                    ))}
+                  </div>
+                </section>
               ))}
             </div>
             <div className="mt-6 flex justify-end gap-3">
@@ -341,31 +351,36 @@ export function SimpleCrudPage<T extends CrudRecord>({
 
       {viewing ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/40 p-4" role="dialog" aria-modal="true" aria-label={`${title} details`}>
-          <div className="max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-[8px] bg-white p-6 shadow-2xl">
+          <div className="max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-[12px] bg-white p-6 shadow-2xl">
             <div className="mb-4 flex items-start justify-between">
-              <h2 className="text-xl font-bold">{title} details</h2>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">Preview listing</p>
+                <h2 className="mt-2 text-xl font-bold">{displayTitle(viewing)}</h2>
+                <p className="mt-1 text-sm text-stone-500">{statusSummary(viewing)}</p>
+              </div>
               <button onClick={() => setViewing(null)} className="rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold">Close</button>
             </div>
-            <dl className="grid gap-3 text-sm">
-              {Object.entries(viewing).filter(([key]) => !key.startsWith("__")).map(([key, value]) => (
-                <div key={key} className="rounded-[8px] border border-stone-100 bg-stone-50 p-3">
-                  <dt className="font-semibold text-stone-500">{key}</dt>
-                  <dd className="mt-1 whitespace-pre-wrap text-stone-800">{valueLabel(value)}</dd>
-                </div>
+            <div className="grid gap-3 text-sm sm:grid-cols-2">
+              {fields.map((field) => (
+                <DetailTile key={field.key} label={field.label} value={viewing[field.key]} wide={field.type === "textarea" || field.type === "list"} />
               ))}
-            </dl>
+            </div>
+            <div className="mt-5 flex justify-end gap-3 border-t border-stone-200 pt-4">
+              <button type="button" onClick={() => { openEdit(viewing); setViewing(null); }} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white">Edit listing</button>
+            </div>
           </div>
         </div>
       ) : null}
 
       {deleting ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/40 p-4" role="dialog" aria-modal="true" aria-label="Delete record confirmation">
-          <div className="w-full max-w-md rounded-[8px] bg-white p-6 shadow-2xl">
-            <h2 className="text-xl font-bold">Delete record?</h2>
-            <p className="mt-2 text-sm text-stone-600">This action removes the selected record from the database.</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/40 p-4" role="dialog" aria-modal="true" aria-label={`${itemLabel} removal confirmation`}>
+          <div className="w-full max-w-md rounded-[12px] bg-white p-6 shadow-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-red-600">Archive listing</p>
+            <h2 className="mt-2 text-xl font-bold">Remove {displayTitle(deleting)}?</h2>
+            <p className="mt-2 text-sm text-stone-600">This removes the item from the management workspace and public data feed.</p>
             <div className="mt-6 flex justify-end gap-3">
               <button onClick={() => setDeleting(null)} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button>
-              <button disabled={saving} onClick={() => void confirmDelete()} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Delete</button>
+              <button disabled={saving} onClick={() => void confirmDelete()} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Removing..." : "Remove"}</button>
             </div>
           </div>
         </div>
@@ -380,4 +395,129 @@ function valueLabel(value: unknown) {
   if (typeof value === "boolean") return value ? "Yes" : "No";
   if (typeof value === "object") return JSON.stringify(value);
   return String(value);
+}
+
+function FormField({
+  field,
+  value,
+  onChange,
+}: {
+  field: CrudField;
+  value: unknown;
+  onChange: (value: unknown) => void;
+}) {
+  const wide = field.type === "textarea" || field.type === "list";
+
+  return (
+    <label className={wide ? "md:col-span-2" : ""}>
+      <span className="text-sm font-semibold text-stone-700">{field.label}{field.required ? " *" : ""}</span>
+      {field.type === "textarea" || field.type === "list" ? (
+        <textarea value={String(value ?? "")} onChange={(event) => onChange(event.target.value)} rows={field.type === "list" ? 3 : 5} className={`${inputClassName} mt-1`} placeholder={field.type === "list" ? "Add items separated by commas" : undefined} />
+      ) : field.type === "boolean" ? (
+        <select value={String(Boolean(value))} onChange={(event) => onChange(event.target.value === "true")} className={`${inputClassName} mt-1`}>
+          <option value="true">Visible</option>
+          <option value="false">Hidden</option>
+        </select>
+      ) : field.type === "select" ? (
+        <select value={String(value ?? "")} onChange={(event) => onChange(event.target.value)} className={`${inputClassName} mt-1`}>
+          <option value="">Select {field.label}</option>
+          {field.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+      ) : (
+        <input type={field.type === "number" ? "number" : "text"} value={String(value ?? "")} onChange={(event) => onChange(event.target.value)} className={`${inputClassName} mt-1`} />
+      )}
+    </label>
+  );
+}
+
+function DetailTile({ label, value, wide }: { label: string; value: unknown; wide?: boolean }) {
+  return (
+    <div className={`rounded-[8px] border border-stone-100 bg-stone-50 p-3 ${wide ? "sm:col-span-2" : ""}`}>
+      <p className="text-xs font-bold uppercase tracking-[0.14em] text-stone-400">{label}</p>
+      <p className="mt-1 whitespace-pre-wrap text-stone-800">{valueLabel(value)}</p>
+    </div>
+  );
+}
+
+function groupFields(fields: CrudField[]) {
+  const overviewKeys = ["name", "title", "slug", "type", "category", "district", "area", "address", "description"];
+  const locationKeys = ["latitude", "longitude", "route", "origin", "destination", "duration", "cost", "distance", "price"];
+  const mediaKeys = ["image", "gallery", "cover", "photo"];
+  const statusKeys = ["active", "isActive", "featured", "isFeatured", "isPublished", "status", "verificationStatus", "published"];
+
+  const groups = [
+    {
+      title: "Overview",
+      description: "Name, public copy, category, and key listing context.",
+      fields: fields.filter((field) => keyIncludes(field.key, overviewKeys)),
+    },
+    {
+      title: "Location, Route & Pricing",
+      description: "Travel context, map coordinates, route relationships, and price guidance.",
+      fields: fields.filter((field) => keyIncludes(field.key, locationKeys)),
+    },
+    {
+      title: "Media & Highlights",
+      description: "Images, amenities, highlights, services, and public tags.",
+      fields: fields.filter((field) => keyIncludes(field.key, mediaKeys) || field.type === "list"),
+    },
+    {
+      title: "Publishing",
+      description: "Visibility, verification, featured placement, and workflow status.",
+      fields: fields.filter((field) => statusKeys.some((key) => field.key.toLowerCase() === key.toLowerCase())),
+    },
+  ];
+
+  const assigned = new Set(groups.flatMap((group) => group.fields.map((field) => field.key)));
+  const details = fields.filter((field) => !assigned.has(field.key));
+
+  return [
+    ...groups.map((group) => ({ ...group, fields: uniqueFields(group.fields) })).filter((group) => group.fields.length),
+    ...(details.length
+      ? [{
+          title: "Additional Details",
+          description: "Supporting details required by this workflow.",
+          fields: details,
+        }]
+      : []),
+  ];
+}
+
+function uniqueFields(fields: CrudField[]) {
+  const seen = new Set<string>();
+  return fields.filter((field) => {
+    if (seen.has(field.key)) return false;
+    seen.add(field.key);
+    return true;
+  });
+}
+
+function keyIncludes(key: string, values: string[]) {
+  const normalized = key.toLowerCase();
+  return values.some((value) => normalized.includes(value.toLowerCase()));
+}
+
+function displayTitle(record: CrudRecord | null | "create") {
+  if (!record || record === "create") return "selected item";
+  const title = record.name || record.title || record.businessName || record.fullName || record.email || record._id;
+  return String(title);
+}
+
+function statusSummary(record: CrudRecord) {
+  const status = record.status || record.verificationStatus;
+  const active = "active" in record ? record.active : "isActive" in record ? record.isActive : undefined;
+  const featured = "featured" in record ? record.featured : "isFeatured" in record ? record.isFeatured : undefined;
+  return [
+    status ? valueLabel(status) : null,
+    typeof active === "boolean" ? (active ? "Visible" : "Hidden") : null,
+    typeof featured === "boolean" ? (featured ? "Featured" : "Standard placement") : null,
+  ].filter(Boolean).join(" / ") || "Workspace item";
+}
+
+function hasMediaFields(record: CrudRecord) {
+  return ["image", "images", "gallery", "coverImage", "photos"].some((key) => key in record);
+}
+
+function hasLocationFields(record: CrudRecord) {
+  return ["latitude", "longitude", "location", "address", "district", "area"].some((key) => key in record);
 }

@@ -35,7 +35,7 @@ export default function DashboardFoodPage() {
   return (
     <SimpleCrudPage<FoodProvider>
       title="Food Providers"
-      subtitle="Manage cafes, restaurants, tea shops, momo spots, and route food records"
+      subtitle="Manage cafes, restaurants, tea shops, momo spots, and route food listings"
       createLabel="New Food Provider"
       fields={fields}
       columns={[
