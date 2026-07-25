@@ -19,6 +19,9 @@ export class AdminUserController {
         page: req.query.page?.toString(),
         limit: req.query.limit?.toString(),
         search: req.query.search?.toString(),
+        role: req.query.role?.toString(),
+        active: req.query.active?.toString(),
+        verified: req.query.verified?.toString(),
       });
 
       return ApiResponseHelper.success(

@@ -13,6 +13,8 @@ export type AuthUser = {
   location?: string;
   bio?: string;
   profileImage?: string;
+  isActive?: boolean;
+  emailVerified?: boolean;
   role?: string;
   createdAt?: string;
 };

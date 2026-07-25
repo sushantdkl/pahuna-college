@@ -59,11 +59,15 @@ const courseFields = z.object({
       z.coerce.number().int().min(1).optional(),
     ),
     image: localImagePath,
-    status: TrainingCourseStatusSchema.default("DRAFT"),
-  isActive: z.boolean().default(true),
+    status: TrainingCourseStatusSchema.optional(),
+  isActive: z.boolean().optional(),
 });
 
 export const CreateTrainingCourseDTO = courseFields
+  .extend({
+    status: TrainingCourseStatusSchema.default("DRAFT"),
+    isActive: z.boolean().default(true),
+  })
   .refine(
     (payload) =>
       !payload.startDate ||
@@ -125,12 +129,34 @@ export type AdminTrainingCourseListQueryDTO = z.infer<
 export const CreateTrainingEnrollmentDTO = z
   .object({
     courseId: z.string().trim().min(1, "Course is required"),
-    name: z.string().trim().min(2).max(120),
+    name: optionalText(120),
+    fullName: optionalText(120),
     email: z.string().trim().email().max(254),
     phone: z.string().trim().min(7).max(40),
+    age: z.preprocess(
+      (value) => (value === "" || value === null ? undefined : value),
+      z.coerce.number().int().min(0).max(120).optional(),
+    ),
+    education: optionalText(120),
+    educationLevel: optionalText(120),
+    experience: optionalText(120),
+    priorExperience: optionalText(120),
     message: optionalText(3000),
+    motivation: optionalText(3000),
   })
-  .strict();
+  .strict()
+  .transform((payload) => ({
+    ...payload,
+    name: payload.name || payload.fullName || "",
+    fullName: payload.fullName || payload.name || "",
+    education: payload.education || payload.educationLevel,
+    educationLevel: payload.educationLevel || payload.education,
+    experience: payload.experience || payload.priorExperience,
+    priorExperience: payload.priorExperience || payload.experience,
+    message: payload.message || payload.motivation,
+    motivation: payload.motivation || payload.message,
+  }))
+  .refine((payload) => payload.name.length >= 2, "Name is required");
 
 export type CreateTrainingEnrollmentDTO = z.infer<
   typeof CreateTrainingEnrollmentDTO

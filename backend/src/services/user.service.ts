@@ -36,6 +36,8 @@ export class UserService {
       location: user.location,
       bio: user.bio,
       profileImage: user.profileImage,
+      isActive: user.isActive ?? true,
+      emailVerified: user.emailVerified ?? false,
       role: user.role,
       createdAt: user.createdAt,
     };
@@ -66,6 +68,10 @@ export class UserService {
 
     if (!user) {
       throw new HttpException(400, "Invalid email or password");
+    }
+
+    if (user.isActive === false) {
+      throw new HttpException(403, "Account is inactive");
     }
 
     // bcrypt compares the submitted password against the stored hash without revealing the original password.

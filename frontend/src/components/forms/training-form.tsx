@@ -1,7 +1,7 @@
 ﻿// @ts-nocheck
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -24,6 +24,7 @@ import {
 } from "@/lib/validations";
 import { submitTrainingEnrollment } from "@/actions/training";
 import { trainingCourses } from "@/lib/services";
+import { getTrainingCourses, type TrainingCourse } from "@/lib/api/training";
 
 interface TrainingFormProps {
   defaultCourse?: string;
@@ -32,6 +33,7 @@ interface TrainingFormProps {
 export function TrainingForm({ defaultCourse }: TrainingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [courses, setCourses] = useState<TrainingCourse[]>([]);
 
   const {
     register,
@@ -45,6 +47,34 @@ export function TrainingForm({ defaultCourse }: TrainingFormProps) {
       courseId: defaultCourse || "",
     },
   });
+
+  useEffect(() => {
+    let active = true;
+
+    getTrainingCourses({ limit: 50 })
+      .then((response) => {
+        if (active) setCourses((response.data || []).filter((course) => course.isActive && course.status === "PUBLISHED"));
+      })
+      .catch(() => {
+        if (active) setCourses([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const courseOptions = courses.length
+    ? courses.map((course) => ({
+        id: course._id,
+        title: course.title,
+        duration: course.duration,
+      }))
+    : trainingCourses.map((course) => ({
+        id: course.id || course.slug,
+        title: course.title,
+        duration: course.duration,
+      }));
 
   async function onSubmit(data: TrainingEnrollmentInput) {
     setIsSubmitting(true);
@@ -95,8 +125,8 @@ export function TrainingForm({ defaultCourse }: TrainingFormProps) {
               <SelectValue placeholder="Choose a course" />
             </SelectTrigger>
             <SelectContent>
-              {trainingCourses.map((course) => (
-                <SelectItem key={course.slug} value={course.slug}>
+              {courseOptions.map((course) => (
+                <SelectItem key={course.id} value={course.id}>
                   {course.title} â€” {course.duration}
                 </SelectItem>
               ))}

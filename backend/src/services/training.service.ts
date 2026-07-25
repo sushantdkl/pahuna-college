@@ -46,7 +46,7 @@ export class TrainingService {
     const skip = (params.page - 1) * params.limit;
     const [courses, total] = await Promise.all([
       TrainingCourseModel.find(filter)
-        .sort({ startDate: 1, createdAt: -1 })
+        .sort({ createdAt: -1, updatedAt: -1 })
         .skip(skip)
         .limit(params.limit),
       TrainingCourseModel.countDocuments(filter),
@@ -81,12 +81,12 @@ export class TrainingService {
     payload: CreateTrainingEnrollmentDTO,
     userId?: string,
   ) {
-    if (!mongoose.Types.ObjectId.isValid(payload.courseId)) {
-      throw new HttpException(400, "Invalid training course id");
-    }
+    const courseLookup = mongoose.Types.ObjectId.isValid(payload.courseId)
+      ? { _id: payload.courseId }
+      : { slug: payload.courseId };
 
     const course = await TrainingCourseModel.findOne({
-      _id: payload.courseId,
+      ...courseLookup,
       status: "PUBLISHED",
       isActive: true,
     });
@@ -97,6 +97,7 @@ export class TrainingService {
 
     return TrainingEnrollmentModel.create({
       ...payload,
+      courseId: course._id,
       userId: userId && mongoose.Types.ObjectId.isValid(userId) ? userId : undefined,
       status: "PENDING",
     });

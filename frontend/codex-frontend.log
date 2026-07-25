@@ -1,0 +1,46 @@
+
+> pahuna-college@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.18.67:3001
+- Environments: .env.local
+✓ Ready in 1433ms
+
+○ Compiling / ...
+ GET / 200 in 10.8s (next.js: 7.3s, application-code: 3.5s)
+ GET / 200 in 521ms (next.js: 9ms, application-code: 512ms)
+ GET / 200 in 377ms (next.js: 8ms, application-code: 369ms)
+ GET /login 200 in 1450ms (next.js: 1287ms, application-code: 163ms)
+ GET /register 200 in 989ms (next.js: 745ms, application-code: 244ms)
+ GET /admin 200 in 1393ms (next.js: 1133ms, proxy.ts: 128ms, application-code: 131ms)
+ GET /dashboard 200 in 792ms (next.js: 679ms, proxy.ts: 13ms, application-code: 100ms)
+ GET /dashboard/users 200 in 1086ms (next.js: 897ms, proxy.ts: 10ms, application-code: 180ms)
+ GET /dashboard/hotels 200 in 1311ms (next.js: 1111ms, proxy.ts: 10ms, application-code: 190ms)
+ GET /dashboard/content 200 in 997ms (next.js: 827ms, proxy.ts: 10ms, application-code: 160ms)
+ GET /dashboard/experiences 200 in 1272ms (next.js: 1099ms, proxy.ts: 12ms, application-code: 162ms)
+ GET /dashboard/food 200 in 1036ms (next.js: 898ms, proxy.ts: 10ms, application-code: 128ms)
+ GET /dashboard/inquiries 200 in 1218ms (next.js: 946ms, proxy.ts: 9ms, application-code: 263ms)
+ GET /dashboard/messages 200 in 1178ms (next.js: 1048ms, proxy.ts: 17ms, application-code: 112ms)
+ GET /dashboard/partners 200 in 736ms (next.js: 621ms, proxy.ts: 9ms, application-code: 106ms)
+ GET /dashboard/reservations 200 in 856ms (next.js: 722ms, proxy.ts: 7ms, application-code: 127ms)
+ GET /dashboard/packages 200 in 1258ms (next.js: 1025ms, proxy.ts: 10ms, application-code: 223ms)
+ GET /dashboard/routes 200 in 1419ms (next.js: 1233ms, proxy.ts: 8ms, application-code: 178ms)
+ GET /dashboard/training 200 in 909ms (next.js: 801ms, proxy.ts: 9ms, application-code: 98ms)
+ GET /dashboard/consulting 200 in 895ms (next.js: 774ms, proxy.ts: 8ms, application-code: 113ms)
+ GET /dashboard/blog 200 in 1065ms (next.js: 940ms, proxy.ts: 10ms, application-code: 115ms)
+ GET /dashboard/locations 200 in 887ms (next.js: 725ms, proxy.ts: 8ms, application-code: 154ms)
+ GET /dashboard/settings 200 in 1210ms (next.js: 1005ms, proxy.ts: 11ms, application-code: 195ms)
+ GET /hotels 200 in 2.9s (next.js: 2.3s, application-code: 606ms)
+ GET /food 200 in 1478ms (next.js: 1001ms, application-code: 477ms)
+ GET /destinations 200 in 1042ms (next.js: 715ms, application-code: 327ms)
+ GET /experiences 200 in 1246ms (next.js: 764ms, application-code: 481ms)
+ GET /packages 200 in 1847ms (next.js: 1186ms, application-code: 661ms)
+ GET /routes 200 in 1165ms (next.js: 955ms, application-code: 210ms)
+ GET /training 200 in 2.6s (next.js: 1601ms, application-code: 964ms)
+ GET /consulting 200 in 2.7s (next.js: 1249ms, application-code: 1490ms)
+ GET /blog 200 in 1306ms (next.js: 923ms, application-code: 382ms)
+ GET /blog/qa-dashboard-20260725063135-blog 200 in 3.1s (next.js: 2.9s, generate-params: 2.1s, application-code: 260ms)
+✓ Finished filesystem cache database compaction in 28.5s
+✓ Finished filesystem cache database compaction in 27.1s

@@ -39,6 +39,14 @@ const UserMongoSchema: Schema<IUser> = new Schema(
       type: String,
       trim: true,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
     password: {
       // This field stores only the hashed password created in the service layer.
       type: String,

@@ -1,7 +1,7 @@
 ﻿// @ts-nocheck
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -24,6 +24,7 @@ import {
   type ConsultingLeadInput,
 } from "@/lib/validations";
 import { submitConsultingLead } from "@/actions/consulting";
+import { getConsultingServices, type ConsultingService } from "@/lib/api/consulting";
 import {
   CONSULTING_SERVICES,
   BUSINESS_TYPES,
@@ -39,6 +40,7 @@ interface ConsultingFormProps {
 export function ConsultingForm({ defaultService }: ConsultingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [services, setServices] = useState<ConsultingService[]>([]);
 
   const {
     register,
@@ -52,6 +54,26 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
       serviceType: defaultService || "",
     },
   });
+
+  useEffect(() => {
+    let active = true;
+
+    getConsultingServices({ limit: 50 })
+      .then((response) => {
+        if (active) setServices((response.data || []).filter((service) => service.isActive));
+      })
+      .catch(() => {
+        if (active) setServices([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const serviceOptions = services.length
+    ? services.map((service) => ({ value: service._id, label: service.title }))
+    : CONSULTING_SERVICES.map((service) => ({ value: service, label: service }));
 
   async function onSubmit(data: ConsultingLeadInput) {
     setIsSubmitting(true);
@@ -239,9 +261,9 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
                 <SelectValue placeholder="Select service" />
               </SelectTrigger>
               <SelectContent>
-                {CONSULTING_SERVICES.map((service) => (
-                  <SelectItem key={service} value={service}>
-                    {service}
+                {serviceOptions.map((service) => (
+                  <SelectItem key={service.value} value={service.value}>
+                    {service.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -309,7 +331,7 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
       </Button>
 
       <p className="text-xs text-center text-muted-foreground">
-        Free initial consultation Â· No obligation Â· Response within 24 hours
+        Free initial consultation / No obligation / Response within 24 hours
       </p>
     </form>
   );

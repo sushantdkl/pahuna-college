@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
       if (user.role?.toLowerCase() !== "admin") {
         clearAuthCookies();
         flushSync(() => setUser(null));
-        throw new Error("This portal is only for admin users");
+        throw new Error("This portal is only for administrator accounts");
       }
 
       storeAuthCookies(token, user);
@@ -125,7 +125,7 @@ export default function AdminLoginPage() {
             <div className="max-w-2xl">
               <p className="text-xs font-black uppercase tracking-[0.32em] text-emerald-200">Dashboard access</p>
               <h2 className="mt-4 text-5xl font-black leading-tight">A quieter control room for users, stays, and travel content.</h2>
-              <p className="mt-5 text-base leading-8 text-white/82">Inspired by the reference dashboard structure, adapted to the current Pahuna auth and API flow.</p>
+              <p className="mt-5 text-base leading-8 text-white/82">Manage users, listings, inquiries, training, consulting, and publishing from one focused workspace.</p>
             </div>
             <p className="text-sm font-semibold text-white/70">Admin: admin@pahuna.com</p>
           </div>

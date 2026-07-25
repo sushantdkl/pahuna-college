@@ -103,8 +103,8 @@ export function HotelFilterBar({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative min-w-0 flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={filters.search}
@@ -126,7 +126,7 @@ export function HotelFilterBar({
           variant={showAdvanced ? "secondary" : "outline"}
           size="sm"
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="shrink-0"
+          className="w-full shrink-0 sm:w-auto"
         >
           <SlidersHorizontal className="mr-2 h-4 w-4" />
           Filters
@@ -322,18 +322,18 @@ export function HotelFilterBar({
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted-foreground">
           Showing <span className="font-semibold text-foreground">{totalResults}</span> of{" "}
           {totalHotels} stays & services
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <span className="text-sm text-muted-foreground">Sort:</span>
           <Select
             value={filters.sortBy}
             onValueChange={(v) => updateFilter("sortBy", v as HotelFilters["sortBy"])}
           >
-            <SelectTrigger className="h-8 w-[150px] text-sm">
+            <SelectTrigger className="h-8 min-w-0 flex-1 text-sm sm:w-[150px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

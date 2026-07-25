@@ -249,11 +249,11 @@ export default function DashboardContentPage() {
 
     try {
       await deleteAdminDestinationAction(deleteTarget._id);
-      setNotice("Destination removed successfully");
+      setNotice("Destination deleted successfully");
       setDeleteTarget(null);
       await loadDestinations();
     } catch (deleteError) {
-      setError(deleteError instanceof Error ? deleteError.message : "Unable to remove destination");
+      setError(deleteError instanceof Error ? deleteError.message : "Unable to delete destination");
     } finally {
       setIsDeleting(false);
     }
@@ -265,7 +265,7 @@ export default function DashboardContentPage() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Destinations</h1>
-            <p className="text-sm text-stone-500">Manage public destination guides, map context, and image galleries</p>
+            <p className="text-sm text-stone-500">Manage public destination records and image galleries</p>
           </div>
           <button onClick={openCreateForm} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800">
             New Destination
@@ -273,10 +273,10 @@ export default function DashboardContentPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <ReplicaStatCard title="Total Destinations" value={meta.total} subtitle="All matching guides" icon="destination" />
+          <ReplicaStatCard title="Total Destinations" value={meta.total} subtitle="All matching records" icon="destination" />
           <ReplicaStatCard title="Featured Destinations" value={stats.featuredCount} subtitle="On this page" icon="featured" />
           <ReplicaStatCard title="Active Destinations" value={stats.activeCount} subtitle="On this page" icon="active" />
-          <ReplicaStatCard title="With Coordinates" value={stats.coordinateCount} subtitle={`${destinations.length} visible guides`} icon="map" />
+          <ReplicaStatCard title="With Coordinates" value={stats.coordinateCount} subtitle={`${destinations.length} visible records`} icon="map" />
         </div>
 
         <section className="rounded-xl border border-stone-200 bg-white shadow-sm">
@@ -344,7 +344,7 @@ export default function DashboardContentPage() {
                           <button onClick={() => openEditForm(destination)} className="rounded-lg border border-emerald-200 px-3 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-50">Edit</button>
                           <button onClick={() => void quickPatchDestination(destination, { isFeatured: !destination.isFeatured })} className="rounded-lg border border-amber-200 px-3 py-2 text-xs font-semibold text-amber-800 hover:bg-amber-50">{destination.isFeatured ? "Unfeature" : "Feature"}</button>
                           <button onClick={() => void quickPatchDestination(destination, { isActive: !destination.isActive })} className="rounded-lg border border-emerald-200 px-3 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-50">{destination.isActive ? "Deactivate" : "Activate"}</button>
-                          <button onClick={() => setDeleteTarget(destination)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">Archive</button>
+                          <button onClick={() => setDeleteTarget(destination)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">Delete</button>
                         </div>
                       </td>
                     </tr>
@@ -477,7 +477,7 @@ function DestinationFormDialog({
 }
 
 function ViewDestinationDialog({ destination, onClose }: { destination: AdminDestination; onClose: () => void }) {
-  const mapHref = hasCoordinates(destination) ? `https://www.openstreetmap.org/?mlat=${destination.latitude}&mlon=${destination.longitude}#map=16/${destination.latitude}/${destination.longitude}` : "";
+  const mapHref = hasCoordinates(destination) ? `https://www.google.com/maps?q=${destination.latitude},${destination.longitude}` : "";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/55 px-4">
@@ -507,12 +507,12 @@ function DeleteDestinationDialog({ destination, isDeleting, onCancel, onConfirm 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/55 px-4">
       <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-600">Remove destination</p>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-600">Delete destination</p>
         <h2 className="mt-3 text-2xl font-bold text-stone-950">Confirm deletion</h2>
         <p className="mt-3 text-sm leading-6 text-stone-600">This will delete <span className="font-bold">{destination.name}</span> from destination management.</p>
         <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button onClick={onCancel} disabled={isDeleting} className="rounded-lg border border-stone-200 px-5 py-3 text-sm font-semibold text-stone-600 hover:bg-stone-50 disabled:opacity-50">Cancel</button>
-          <button onClick={onConfirm} disabled={isDeleting} className="rounded-lg bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50">{isDeleting ? "Removing..." : "Remove destination"}</button>
+          <button onClick={onConfirm} disabled={isDeleting} className="rounded-lg bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50">{isDeleting ? "Deleting..." : "Delete destination"}</button>
         </div>
       </section>
     </div>
@@ -538,3 +538,4 @@ function formatDate(value: string) {
     day: "numeric",
   });
 }
+

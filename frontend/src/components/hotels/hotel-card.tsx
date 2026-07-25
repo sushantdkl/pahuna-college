@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { InquiryCollectorButton } from "@/components/inquiries/InquiryCollectorButton";
+import { AddToTripButton } from "@/components/trip-planner/add-to-trip-button";
 import { getImageOrPlaceholder } from "@/lib/assets";
 import { cn, formatPrice } from "@/lib/utils";
 
@@ -74,7 +75,7 @@ export function HotelCard({
   const displayRating = rating ?? starRating ?? null;
   const displayPrice = priceFrom ?? priceMin ?? null;
   const chips = [...(services ?? []), ...amenities].filter(Boolean);
-  const displayLocation = [district, area || address].filter(Boolean).join(" Â· ");
+  const displayLocation = [district, area || address].filter(Boolean).join(" / ");
   const isStay = STAY_TYPES.has(propertyType);
   const inquiryLabel = isStay ? "Ask Availability" : "Send Inquiry";
   const image = getImageOrPlaceholder(coverImage, isStay ? "stay" : "service");
@@ -186,10 +187,13 @@ export function HotelCard({
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <Button asChild size="sm" variant="outline">
             <Link href={`/hotels/${slug}`}>View Details</Link>
           </Button>
+          <AddToTripButton listKey="selectedStays" itemId={slug} label={name} />
+        </div>
+        <div className="mt-2">
           <InquiryCollectorButton
             label={inquiryLabel}
             leadType={isStay ? "STAY_INQUIRY" : "SERVICE_INQUIRY"}
@@ -198,6 +202,7 @@ export function HotelCard({
             sourcePage="/hotels"
             leadSource="stays-listing-card"
             size="sm"
+            className="w-full"
           />
         </div>
         {googleMapLink && (

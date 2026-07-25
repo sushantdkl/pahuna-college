@@ -35,7 +35,7 @@ export default function AccountSettingsPage() {
           <p className="text-xs font-black uppercase tracking-[0.28em] text-emerald-700">Traveler Account</p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">Account Settings</h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-600">
-            Manage your profile, password, preferences, and Pahuna account details with clean spacing and connected Sprint 3 forms.
+            Manage your profile, password, preferences, and Pahuna account details from one focused account workspace.
           </p>
         </div>
 

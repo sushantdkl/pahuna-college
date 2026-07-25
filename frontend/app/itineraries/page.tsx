@@ -1,138 +1,102 @@
+import { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
-import { ButtonLink, PageHero, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
-import { TourismMap, type TourismMapMarker } from "@/components/tourism-map";
-import { destinations, featuredStays, foodProviders, images, routeCards } from "@/lib/pahuna-content";
+import { ArrowRight, DollarSign, Map, Compass } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Container } from "@/components/layout/container";
+import { PageHero } from "@/components/shared/page-hero";
+import { EmptyState } from "@/components/shared/empty-state";
+import { ItinerariesExplorerClient } from "@/components/itineraries/itineraries-explorer-client";
+import { getLiveItineraries } from "@server/services/public-live";
 
-const ideas = [
-  {
-    slug: "surkhet-essentials-3-days",
-    title: "Surkhet Essentials - 3 Days",
-    duration: "3 days",
-    budget: "NPR 8,000 - 15,000",
-    image: images.bulbule,
-    steps: ["Bulbule Lake", "Kakrebihar", "Deuti Bajai"],
+export const metadata: Metadata = {
+  title: "Trip Ideas & Itineraries — Surkhet",
+  description:
+    "Pre-planned itineraries for Surkhet, Nepal. Choose from curated 3-day or 5-day trips with estimated costs and detailed day-by-day plans.",
+  alternates: { canonical: "/itineraries" },
+  openGraph: {
+    title: "Trip Ideas & Itineraries — Surkhet",
+    description: "Pre-planned travel itineraries for your Surkhet adventure.",
   },
-  {
-    slug: "karnali-gateway-5-days",
-    title: "Karnali Gateway - 5 Days",
-    duration: "5 days",
-    budget: "NPR 15,000 - 30,000",
-    image: images.nightView,
-    steps: ["Surkhet base", "Dailekh route", "Local food stops", "Viewpoints"],
-  },
-];
+};
 
-const suggestionCards = [
-  {
-    title: featuredStays[0]?.name || "Featured stay",
-    href: featuredStays[0] ? `/hotels/${featuredStays[0].slug}` : "/hotels",
-    description: featuredStays[0]?.shortDescription || "Compare active stay listings before confirming your route.",
-  },
-  {
-    title: foodProviders[0]?.name || "Featured food stop",
-    href: foodProviders[0] ? `/food/${foodProviders[0].slug}` : "/food",
-    description: foodProviders[0]?.shortDescription || "Find cafes, restaurants, and food providers around Surkhet.",
-  },
-  {
-    title: destinations[0]?.title || "Featured destination",
-    href: destinations[0]?.href || "/destinations",
-    description: destinations[0]?.description || "Explore Karnali destination guides with practical travel context.",
-  },
-];
-
-export default function ItinerariesPage() {
-  const itineraryMarkers: TourismMapMarker[] = [
-    ...featuredStays.slice(0, 2).map((stay) => ({
-      id: `stay-${stay.slug}`,
-      name: stay.name,
-      category: "stay" as const,
-      latitude: stay.latitude,
-      longitude: stay.longitude,
-      type: stay.typeLabel || stay.type,
-      location: `${stay.area}, ${stay.district}`,
-      price: stay.priceFrom,
-      href: `/hotels/${stay.slug}`,
-    })),
-  ];
+export default async function ItinerariesPage() {
+  const itineraries = await getLiveItineraries();
 
   return (
-    <PageShell>
-      <SiteHeader />
+    <>
+      {/* ── HERO ── */}
       <PageHero
-        eyebrow="Tourism roadmap"
-        title="Trip Ideas & Itineraries"
-        description="Pre-planned journeys to help you make the most of your time in Surkhet. Pick a plan, customize it, and go."
+        badge={{ icon: <Map className="h-3 w-3" />, label: "Tourism Roadmap" }}
+        title="Trip Ideas &"
+        highlight="Itineraries"
+        subtitle="Pre-planned journeys to help you make the most of your time in Surkhet. Pick a plan, customize it, and go."
       >
-        <ButtonLink href="/trip-planner">Open Trip Planner</ButtonLink>
-        <ButtonLink href="/experiences" variant="secondary">View Experiences</ButtonLink>
+        <div className="flex items-center justify-center gap-4">
+          <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 font-semibold px-8 shadow-lg">
+            <Link href="/trip-planner"><DollarSign className="h-4 w-4 mr-2" />Open Trip Planner</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="border-white/70 bg-transparent text-white hover:bg-white hover:text-primary font-semibold px-8">
+            <Link href="/experiences">View Experiences</Link>
+          </Button>
+        </div>
       </PageHero>
 
-      <SectionShell>
-        <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr]">
-          <div className="space-y-5">
-            {ideas.map((idea) => (
-              <article key={idea.title} className="grid overflow-hidden rounded-[18px] border border-stone-200 bg-white shadow-sm sm:grid-cols-[220px_1fr]">
-                <div className="relative min-h-56 bg-stone-100">
-                  <Image src={idea.image} alt={idea.title} fill sizes="(max-width: 640px) 100vw, 220px" className="object-cover" />
-                </div>
-                <div className="p-6">
-                  <div className="flex flex-wrap gap-2">
-                    <span className="rounded-full border px-3 py-1 text-xs font-semibold">{idea.duration}</span>
-                    <span className="rounded-full border px-3 py-1 text-xs font-semibold">Easy</span>
-                  </div>
-                  <h2 className="mt-4 text-2xl font-black">{idea.title}</h2>
-                  <p className="mt-2 text-sm leading-6 text-stone-600">A Surkhet-first route with practical stays, local food, and flexible route context.</p>
-                  <div className="mt-5 flex flex-wrap gap-4 text-sm font-semibold text-emerald-900">
-                    <span>{idea.budget}</span>
-                    <span>{idea.steps.length} stops</span>
-                  </div>
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {idea.steps.map((step) => <span key={step} className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-900">{step}</span>)}
-                  </div>
-                  <div className="mt-6 flex flex-wrap gap-3">
-                    <ButtonLink href={`/itineraries/${idea.slug}`}>View Full Plan</ButtonLink>
-                    <ButtonLink href="/contact" variant="secondary">Request custom trip</ButtonLink>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-          <div className="rounded-[18px] border border-stone-200 bg-white p-5 shadow-sm">
-            <SectionHeader eyebrow="Map context" title="Start in Surkhet, then expand outward." description="Use route and destination context from the final Pahuna CRUD modules before confirming travel." />
-            <div className="mt-6">
-              <TourismMap
-                markers={itineraryMarkers}
-                heightClass="h-[360px]"
-                emptyTitle="Itinerary map coordinates not available"
-                emptyDescription="This itinerary can still be reviewed through the route cards. Map markers appear only for selected stops with valid backend coordinates."
-              />
-            </div>
-            <div className="mt-6 grid gap-3">
-              {routeCards.map((route) => (
-                <Link key={route.route} href="/routes" className="rounded-xl border border-emerald-100 p-4 text-sm transition hover:bg-emerald-50">
-                  <span className="font-black">{route.route}</span>
-                  <span className="mt-1 block text-stone-600">{route.mode} - {route.status}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </SectionShell>
+      {/* ── ITINERARIES EXPLORER ── */}
+      <section className="py-16">
+        <Container>
+          {itineraries.length > 0 ? (
+            <ItinerariesExplorerClient itineraries={itineraries} />
+          ) : (
+            <EmptyState
+              icon={<Compass className="h-14 w-14" />}
+              title="No itineraries available"
+              description="We're building curated trip ideas for Surkhet. Check back soon!"
+              action={{ label: "Explore Surkhet", href: "/explore" }}
+            />
+          )}
+        </Container>
+      </section>
 
-      <SectionShell className="pt-4">
-        <SectionHeader align="center" title="Suggested stays, food, and destinations" description="These public suggestions connect into the active stays, food provider, and destination flows." />
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {suggestionCards.map((item) => (
-            <Link key={item.title} href={item.href} className="rounded-[18px] border border-emerald-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">Suggested</p>
-              <h3 className="mt-3 text-xl font-black">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-stone-600">{item.description}</p>
-            </Link>
-          ))}
-        </div>
-      </SectionShell>
-      <SiteFooter />
-    </PageShell>
+      {/* ── AI CUSTOM ITINERARY ── */}
+      <section className="py-10">
+        <Container>
+          <div className="rounded-3xl border border-emerald-100/70 bg-linear-to-br from-emerald-50 via-amber-50/60 to-background p-6 shadow-sm sm:p-8">
+            <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80">
+                  Build a custom itinerary
+                </p>
+                <h2 className="mt-2 text-2xl font-bold">Build a custom itinerary</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Plan a day-wise Karnali route with AI using real Pahuna stays and destinations.
+                </p>
+              </div>
+              <Button asChild size="lg">
+                <Link href="/trip-planner">
+                  Open Trip Planner <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="py-16 bg-muted/40">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-2xl font-bold mb-3">Need a Custom Itinerary?</h2>
+            <p className="text-muted-foreground mb-6">
+              Want something tailored to your group, dates, and budget? Contact our team and we&apos;ll build a personalized trip plan for you.
+            </p>
+            <Button asChild size="lg">
+              <Link href="/contact">Request Custom Trip <ArrowRight className="h-4 w-4 ml-2" /></Link>
+            </Button>
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }
+
+

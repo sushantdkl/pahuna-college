@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getImageOrPlaceholder } from "@/lib/assets";
+import { AddToTripButton } from "@/components/trip-planner/add-to-trip-button";
 import type { PublicFoodProvider } from "@/lib/services/food";
 
 function getTrustBadge(status: PublicFoodProvider["verificationStatus"]) {
@@ -76,14 +77,17 @@ export function FoodCard({ provider }: { provider: PublicFoodProvider }) {
           ))}
         </div>
 
-        <div className="mt-5 flex items-center justify-between gap-3">
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs font-medium text-primary">
             <MessageCircle className="mr-1 inline h-3.5 w-3.5" />
             Contact via Pahuna Inquiry
           </p>
-          <Button asChild size="sm" variant="outline">
-            <Link href={`/food/${provider.slug}`}>View</Link>
-          </Button>
+          <div className="flex gap-2">
+            <AddToTripButton listKey="selectedFoodProviders" itemId={provider.slug} label={provider.name} />
+            <Button asChild size="sm" variant="outline">
+              <Link href={`/food/${provider.slug}`}>View guide</Link>
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

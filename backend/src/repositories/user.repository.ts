@@ -1,6 +1,6 @@
 import { UserModel, IUser } from "../models/user.model";
 
-// The repository is the only Sprint 2 auth layer that talks directly to MongoDB.
+// The repository is the only auth layer that talks directly to MongoDB.
 export interface IUserRepository {
   getUserByEmail(email: string): Promise<IUser | null>;
   getUserByEmailExceptId(email: string, id: string): Promise<IUser | null>;

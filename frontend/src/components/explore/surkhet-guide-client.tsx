@@ -480,7 +480,7 @@ export function SurkhetGuideClient({ stays }: SurkhetGuideClientProps) {
                             <p className="font-semibold">{stay.name}</p>
                             <p className="mt-1 text-sm text-muted-foreground">
                               {stay.typeLabel}
-                              {stay.area ? ` Â· ${stay.area}` : ""}
+                              {stay.area ? ` / ${stay.area}` : ""}
                             </p>
                           </div>
                           {stay.verificationStatus === "PUBLIC_LISTING" && (

@@ -33,6 +33,57 @@ function itineraryBody(body: Record<string, unknown>) {
 }
 
 export class ItineraryController {
+  async listPublicItineraries(req: AuthRequest, res: Response) {
+    try {
+      const parsedQuery = ItineraryListQueryDTO.safeParse(req.query);
+
+      if (!parsedQuery.success) {
+        return ApiResponseHelper.error(
+          res,
+          z.prettifyError(parsedQuery.error),
+          400,
+        );
+      }
+
+      const { itineraries, meta } = await itineraryService.listPublicItineraries(
+        parsedQuery.data.page,
+        parsedQuery.data.limit,
+      );
+
+      return ApiResponseHelper.success(
+        res,
+        itineraries,
+        "Public itineraries fetched successfully",
+        200,
+        meta,
+      );
+    } catch (error: Error | any | unknown) {
+      return ApiResponseHelper.error(
+        res,
+        error.message || "Internal Server Error",
+        error.status || 500,
+      );
+    }
+  }
+
+  async getPublicItinerary(req: AuthRequest, res: Response) {
+    try {
+      const itinerary = await itineraryService.getPublicItinerary(readIdParam(req));
+
+      return ApiResponseHelper.success(
+        res,
+        itinerary,
+        "Public itinerary fetched successfully",
+      );
+    } catch (error: Error | any | unknown) {
+      return ApiResponseHelper.error(
+        res,
+        error.message || "Internal Server Error",
+        error.status || 500,
+      );
+    }
+  }
+
   async getPlannerOptions(req: AuthRequest, res: Response) {
     try {
       const options = await itineraryService.getPlannerOptions();

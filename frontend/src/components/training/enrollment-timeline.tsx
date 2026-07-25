@@ -39,7 +39,7 @@ export function EnrollmentTimeline({ steps }: EnrollmentTimelineProps) {
           const Icon = iconMap[s.icon] || GraduationCap;
           return (
             <div
-              key={s.step}
+              key={`${s.step}-${s.title}-${i}`}
               className="relative flex items-start gap-5 md:gap-6"
             >
               {/* Step number circle */}

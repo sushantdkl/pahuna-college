@@ -39,13 +39,8 @@ export function PageHero({
         className
       )}
     >
-      {/* Decorative blurs â€” refined for premium feel */}
       {isGradient && (
-        <>
-          <div className="absolute -top-20 right-0 w-96 h-96 bg-white/[0.04] rounded-full blur-3xl" />
-          <div className="absolute bottom-0 -left-20 w-[28rem] h-[28rem] bg-indigo-500/10 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] bg-white/[0.02] rounded-full blur-3xl" />
-        </>
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_42%,rgba(16,185,129,0.12))]" />
       )}
 
       <Container className="relative z-10">

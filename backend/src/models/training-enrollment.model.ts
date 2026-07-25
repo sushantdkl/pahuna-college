@@ -6,9 +6,16 @@ export interface ITrainingEnrollment extends Document {
   courseId: mongoose.Types.ObjectId;
   userId?: mongoose.Types.ObjectId;
   name: string;
+  fullName?: string;
   email: string;
   phone: string;
+  age?: number;
+  education?: string;
+  educationLevel?: string;
+  experience?: string;
+  priorExperience?: string;
   message?: string;
+  motivation?: string;
   status: TrainingEnrollmentStatus;
   response?: string;
   enrolledAt: Date;
@@ -35,6 +42,11 @@ const TrainingEnrollmentMongoSchema: Schema<ITrainingEnrollment> = new Schema(
       trim: true,
       maxlength: 120,
     },
+    fullName: {
+      type: String,
+      trim: true,
+      maxlength: 120,
+    },
     email: {
       type: String,
       required: true,
@@ -49,7 +61,37 @@ const TrainingEnrollmentMongoSchema: Schema<ITrainingEnrollment> = new Schema(
       trim: true,
       maxlength: 40,
     },
+    age: {
+      type: Number,
+      min: 0,
+      max: 120,
+    },
+    education: {
+      type: String,
+      trim: true,
+      maxlength: 120,
+    },
+    educationLevel: {
+      type: String,
+      trim: true,
+      maxlength: 120,
+    },
+    experience: {
+      type: String,
+      trim: true,
+      maxlength: 120,
+    },
+    priorExperience: {
+      type: String,
+      trim: true,
+      maxlength: 120,
+    },
     message: {
+      type: String,
+      trim: true,
+      maxlength: 3000,
+    },
+    motivation: {
       type: String,
       trim: true,
       maxlength: 3000,
@@ -78,9 +120,15 @@ const TrainingEnrollmentMongoSchema: Schema<ITrainingEnrollment> = new Schema(
 TrainingEnrollmentMongoSchema.index({ createdAt: -1 });
 TrainingEnrollmentMongoSchema.index({
   name: "text",
+  fullName: "text",
   email: "text",
   phone: "text",
+  education: "text",
+  educationLevel: "text",
+  experience: "text",
+  priorExperience: "text",
   message: "text",
+  motivation: "text",
   status: "text",
 });
 

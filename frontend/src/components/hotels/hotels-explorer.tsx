@@ -136,7 +136,7 @@ export function HotelsExplorer({ hotels }: HotelsExplorerProps) {
             </p>
             {filterSummary.length > 0 && (
               <p className="mt-2 text-xs text-muted-foreground">
-                {filterSummary.join(" Â· ")}
+                {filterSummary.join(" / ")}
               </p>
             )}
           </div>

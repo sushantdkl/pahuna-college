@@ -1,19 +1,19 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Calculator, Compass, Lightbulb, MapPinned, Sparkles, WalletCards } from "lucide-react";
+import { ArrowRight, Calculator, Compass, Lightbulb, Sparkles } from "lucide-react";
 import { Container } from "@/components/layout/container";
 import { PageHero } from "@/components/shared/page-hero";
 import { SectionHeader } from "@/components/shared/section-header";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { BudgetEstimator } from "@/components/tourism/budget-estimator";
 import { TransportTable } from "@/components/tourism/transport-table";
 import { HotelCard } from "@/components/hotels/hotel-card";
 import { FoodCard } from "@/components/food/food-card";
 import { TripCostMapSectionClient } from "@/components/trip-cost/trip-cost-map-client";
-import { getFeaturedFoodProviders } from "@/lib/services/food";
-import { getFeaturedServiceProviders } from "@/lib/services/service-providers";
-import { demoDestinations, demoExperiences } from "@/lib/services";
+import { SimplePlannerSection } from "@/components/trip-planner/simple-planner-section";
+import { getFeaturedFoodProviders } from "@server/services/food";
+import { getFeaturedServiceProviders } from "@server/services/service-providers";
+import { getLiveDestinations, getLiveExperiences } from "@server/services/public-live";
 import type { MarkerCategory } from "@/components/maps/map-constants";
 
 export const metadata: Metadata = {
@@ -68,29 +68,6 @@ const TRIP_IDEAS = [
   },
 ];
 
-const PLANNER_STEPS = [
-  {
-    title: "Where do you want to go?",
-    icon: MapPinned,
-    options: ["Surkhet", "Rara", "Dailekh", "Jumla", "Dolpa / Phoksundo", "Humla", "Karnali Grand Circuit"],
-  },
-  {
-    title: "How many days?",
-    icon: Compass,
-    options: ["1 day", "2-3 days", "4-5 days", "7+ days"],
-  },
-  {
-    title: "Budget range",
-    icon: WalletCards,
-    options: ["Budget", "Standard", "Premium", "Custom"],
-  },
-  {
-    title: "Travel style",
-    icon: Sparkles,
-    options: ["Family", "Culture", "Nature", "Religious", "Food", "Adventure", "Photography"],
-  },
-];
-
 const ROUTE_PLANS = [
   {
     route: "Kathmandu / Nepalgunj to Surkhet",
@@ -134,9 +111,11 @@ const DISCLAIMER =
   "Prices, routes, flights, and availability can change due to weather, season, road condition, and operator schedule.";
 
 export default async function TripPlannerPage() {
-  const [stays, foods] = await Promise.all([
+  const [stays, foods, destinations, experiences] = await Promise.all([
     getFeaturedServiceProviders(3),
     getFeaturedFoodProviders(3),
+    getLiveDestinations(),
+    getLiveExperiences(),
   ]);
 
   const hotelPlaces = stays.map((h) => ({
@@ -151,7 +130,7 @@ export default async function TripPlannerPage() {
     href: `/hotels/${h.slug}`,
   }));
 
-  const destPlaces = demoDestinations.slice(0, 8).map((d) => ({
+  const destPlaces = destinations.slice(0, 8).map((d) => ({
     name: d.name,
     slug: d.slug,
     latitude: d.latitude,
@@ -163,7 +142,7 @@ export default async function TripPlannerPage() {
     href: `/destinations/${d.slug}`,
   }));
 
-  const expPlaces = demoExperiences.slice(0, 4).map((e) => ({
+  const expPlaces = experiences.slice(0, 4).map((e) => ({
     name: e.title,
     slug: e.slug,
     latitude: e.latitude,
@@ -196,65 +175,7 @@ export default async function TripPlannerPage() {
         </div>
       </PageHero>
 
-      <section id="planner" className="py-14">
-        <Container>
-          <div className="rounded-3xl border border-emerald-100 bg-amber-50/50 p-5 shadow-sm sm:p-6">
-            <div className="mb-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary/80">
-                Simple planner
-              </p>
-              <h2 className="mt-1 text-2xl font-bold">Choose your trip shape</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Pick the destination, days, budget, and travel style first. Then use the brief below to send your plan to Pahuna.
-              </p>
-            </div>
-            <div className="mb-6 grid gap-4 lg:grid-cols-4">
-              {PLANNER_STEPS.map(({ title, icon: Icon, options }) => (
-                <div key={title} className="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
-                  <div className="mb-3 flex items-center gap-2">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <Icon className="h-4 w-4" />
-                    </span>
-                    <h3 className="text-sm font-semibold">{title}</h3>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {options.map((option) => (
-                      <Badge key={option} variant="outline" className="bg-emerald-50/60 text-emerald-900">
-                        {option}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <form action="/contact" className="grid gap-3 md:grid-cols-4">
-              {[
-                ["startingCity", "Starting city", "Kathmandu, Nepalgunj, Surkhet"],
-                ["destination", "Destination", "Surkhet, Rara, Jumla, Dolpa"],
-                ["days", "Days", "3"],
-                ["budget", "Budget range", "NPR 15,000-30,000"],
-                ["travelerType", "Traveler type", "Solo, family, group"],
-                ["interests", "Interests", "Food, temples, lakes, trekking"],
-                ["transport", "Transport preference", "Flight, bus, jeep, mixed"],
-              ].map(([name, label, placeholder]) => (
-                <label key={name} className={name === "interests" ? "md:col-span-2" : ""}>
-                  <span className="text-xs font-medium text-muted-foreground">{label}</span>
-                  <input
-                    name={name}
-                    placeholder={placeholder}
-                    className="mt-1 h-11 w-full rounded-xl border border-emerald-100 bg-white px-3 text-sm outline-none transition focus:border-primary"
-                  />
-                </label>
-              ))}
-              <div className="flex items-end">
-                <Button type="submit" className="h-11 w-full">
-                  Send this plan
-                </Button>
-              </div>
-            </form>
-          </div>
-        </Container>
-      </section>
+      <SimplePlannerSection />
 
       <section className="py-14 bg-muted/30">
         <Container>
@@ -378,7 +299,7 @@ export default async function TripPlannerPage() {
         <Container>
           <SectionHeader title="Suggested destinations" subtitle="Use these as starting points, then open each destination guide for route and local context." />
           <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {demoDestinations.slice(0, 8).map((destination) => (
+            {destinations.slice(0, 8).map((destination) => (
               <Link
                 key={destination.slug}
                 href={`/destinations/${destination.slug}`}
@@ -426,7 +347,7 @@ export default async function TripPlannerPage() {
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
-                <Link href="/contact">
+                <Link href="#planner">
                   Send this plan to Pahuna <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -442,4 +363,3 @@ export default async function TripPlannerPage() {
     </>
   );
 }
-

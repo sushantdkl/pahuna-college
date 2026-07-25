@@ -1,58 +1,61 @@
-﻿// @ts-nocheck
 "use client";
 
-import { signOut } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import { ROLE_LABELS } from "@/lib/roles";
-import { Menu, LogOut } from "lucide-react";
-import type { UserRole } from "@/lib/user-role";
+import Image from "next/image";
+import Link from "next/link";
+import { User } from "lucide-react";
+import { resolveApiAssetUrl } from "@/lib/api/axios-instance";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface DashboardHeaderProps {
+type DashboardHeaderProps = {
   user: {
+    fullName?: string | null;
     name?: string | null;
     email?: string | null;
-    role: UserRole;
+    profileImage?: string | null;
   };
-  onMenuClick: () => void;
-}
+  onLogout: () => void;
+};
 
-export function DashboardHeader({ user, onMenuClick }: DashboardHeaderProps) {
+export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
+  const displayName = user.fullName || user.name || user.email || "Administrator";
+  const profileImage = resolveApiAssetUrl(user.profileImage || undefined);
+
   return (
-    <header className="flex h-14 items-center justify-between border-b bg-background px-4">
-      {/* Mobile menu button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="md:hidden"
-        onClick={onMenuClick}
-      >
-        <Menu className="h-5 w-5" />
-      </Button>
-
-      {/* Spacer on desktop */}
-      <div className="hidden md:block" />
-
-      {/* User info + sign out */}
+    <header className="flex h-14 shrink-0 items-center justify-between border-b border-stone-200 bg-white px-4">
+      <Link href="/admin" className="flex items-center gap-2 font-semibold md:hidden">
+        <Image src="/pahuna-icon.svg" alt="Pahuna" width={28} height={28} className="h-7 w-7" />
+        <span className="text-sm">Dashboard</span>
+      </Link>
+      <div className="hidden md:block">
+        <p className="text-sm font-semibold text-stone-950">Admin Workspace</p>
+        <p className="text-xs text-stone-500">Manage stays, users, content, and safety checks</p>
+      </div>
       <div className="flex items-center gap-4">
+        <Link href="/" className="hidden rounded-lg border border-stone-200 px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-emerald-700 sm:inline-flex">
+          Open site
+        </Link>
         <div className="text-right">
-          <p className="text-sm font-medium leading-none">
-            {user.name || user.email}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {ROLE_LABELS[user.role]}
-          </p>
+          <p className="text-sm font-medium leading-none">{displayName}</p>
+          <p className="mt-1 text-xs text-stone-500">Administrator</p>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => signOut({ callbackUrl: "/login" })}
+        <Avatar className="h-9 w-9 bg-emerald-50 text-emerald-800">
+          <AvatarImage src={profileImage ?? undefined} alt={`${displayName} profile picture`} className="object-cover" />
+          <AvatarFallback className="bg-emerald-50 font-bold text-emerald-800">
+            {initials(displayName) || <User className="h-4 w-4" />}
+          </AvatarFallback>
+        </Avatar>
+        <button
+          onClick={onLogout}
           title="Sign out"
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 hover:text-red-800"
         >
-          <LogOut className="h-4 w-4" />
-        </Button>
+          Logout
+        </button>
       </div>
     </header>
   );
 }
 
-
+function initials(name: string) {
+  return name.split(" ").map((part) => part[0]).filter(Boolean).slice(0, 2).join("").toUpperCase() || "A";
+}

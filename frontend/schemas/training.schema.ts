@@ -48,10 +48,20 @@ export const trainingCourseFormSchema = z.object({
 
 export const trainingEnrollmentFormSchema = z.object({
   courseId: z.string().trim().min(1, "Choose a course"),
-  name: z.string().trim().min(2, "Name is required").max(120),
+  name: z.string().trim().min(2, "Name is required").max(120).optional(),
+  fullName: z.string().trim().min(2, "Full name is required").max(120).optional(),
   email: z.string().trim().email("Enter a valid email").max(254),
   phone: z.string().trim().min(7, "Phone is required").max(40),
+  age: z.number().int().min(0).max(120).optional(),
+  education: z.string().trim().max(120).optional(),
+  educationLevel: z.string().trim().max(120).optional(),
+  experience: z.string().trim().max(120).optional(),
+  priorExperience: z.string().trim().max(120).optional(),
   message: z.string().trim().max(3000).optional(),
+  motivation: z.string().trim().max(3000).optional(),
+}).refine((data) => data.name || data.fullName, {
+  message: "Full name is required",
+  path: ["fullName"],
 });
 
 export type TrainingCourseStatus = z.infer<

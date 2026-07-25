@@ -93,13 +93,35 @@ export type AdminConsultingServiceListQueryDTO = z.infer<
 export const CreateConsultingLeadDTO = z
   .object({
     serviceId: optionalText(60),
-    name: z.string().trim().min(2).max(120),
+    name: optionalText(120),
+    contactName: optionalText(120),
     email: z.string().trim().email().max(254),
     phone: z.string().trim().min(7).max(40),
     businessName: optionalText(160),
-    message: z.string().trim().min(1, "Message is required").max(5000),
+    businessType: optionalText(120),
+    businessStage: optionalText(120),
+    stage: optionalText(120),
+    businessSize: optionalText(120),
+    location: optionalText(160),
+    serviceType: optionalText(160),
+    timeline: optionalText(120),
+    budget: optionalText(120),
+    budgetRange: optionalText(120),
+    message: optionalText(5000),
   })
-  .strict();
+  .strict()
+  .transform((payload) => ({
+    ...payload,
+    name: payload.name || payload.contactName || "",
+    contactName: payload.contactName || payload.name || "",
+    businessStage: payload.businessStage || payload.stage,
+    stage: payload.stage || payload.businessStage,
+    budget: payload.budget || payload.budgetRange,
+    budgetRange: payload.budgetRange || payload.budget,
+    message: payload.message || "",
+  }))
+  .refine((payload) => payload.name.length >= 2, "Contact person is required")
+  .refine((payload) => payload.message.length >= 1, "Message is required");
 
 export type CreateConsultingLeadDTO = z.infer<
   typeof CreateConsultingLeadDTO

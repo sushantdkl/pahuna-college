@@ -11,7 +11,7 @@ export function FloatingAIAssistant() {
         size="lg"
         className="gap-2 rounded-full px-5 shadow-lg shadow-emerald-900/10"
       >
-        <Link href="/ai-trip-planner?intent=inquiry" aria-label="Ask Pahuna AI">
+        <Link href="/ai-trip-planner" aria-label="Ask Pahuna AI">
           <Sparkles className="h-4 w-4" /> Ask Pahuna AI
         </Link>
       </Button>

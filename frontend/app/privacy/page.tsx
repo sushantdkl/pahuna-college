@@ -1,38 +1,77 @@
-import Link from "next/link";
-import { PageShell, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
+import type { Metadata } from "next";
+import { Container } from "@/components/layout";
+import { SITE_CONFIG } from "@server/lib/constants";
 
-const sections = [
-  ["Information we collect", "Pahuna collects account, inquiry, partner application, training enrollment, consulting lead, and public form details that you choose to submit."],
-  ["How we use information", "We use submitted information to respond to travel, stay, food, route, training, partner, and consulting requests and to operate the final active CRUD modules."],
-  ["No newsletter claim", "This site does not rely on an active newsletter subscriber CRUD in the public flow. Contact and inquiry CTAs are used instead."],
-  ["Maps and locations", "Interactive tourism maps use OpenStreetMap and React Leaflet. The Contact page uses the supplied Google Maps iframe only for the office location section."],
-  ["Authentication", "Login cookies and tokens are used to keep authenticated user and admin flows protected. Logout happens only from explicit logout actions."],
-  ["Contact", "For privacy questions, contact Pahuna through the public Contact page."],
-];
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: `Privacy policy for ${SITE_CONFIG.name}`,
+  alternates: { canonical: "/privacy" },
+  robots: { index: true, follow: true },
+};
 
 export default function PrivacyPage() {
   return (
-    <PageShell>
-      <SiteHeader />
-      <section className="bg-gradient-to-b from-white to-[#fffaf0]">
-        <SectionShell className="py-16 text-center">
-          <p className="mx-auto inline-flex rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">Privacy</p>
-          <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">Privacy Policy</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-stone-600">How Pahuna handles public inquiries, account data, partner applications, and training enrollment information.</p>
-        </SectionShell>
-      </section>
-      <SectionShell>
-        <div className="mx-auto max-w-3xl space-y-4">
-          {sections.map(([title, text]) => (
-            <section key={title} className="rounded-[8px] border border-stone-200 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-black">{title}</h2>
-              <p className="mt-3 text-sm leading-7 text-stone-600">{text}</p>
-            </section>
-          ))}
-          <Link href="/contact" className="inline-flex rounded-md bg-emerald-700 px-5 py-3 text-sm font-black text-white hover:bg-emerald-800">Contact Pahuna</Link>
+    <section className="py-20">
+      <Container>
+        <div className="mx-auto max-w-3xl prose prose-neutral">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            Privacy Policy
+          </h1>
+          <p className="text-muted-foreground">
+            Last updated: January 2026
+          </p>
+
+          <h2 className="text-xl font-semibold mt-8">1. Information We Collect</h2>
+          <p className="text-muted-foreground">
+            We collect information you provide directly — such as your name,
+            email, phone number, and messages when you submit inquiry forms,
+            contact forms, partner applications, or newsletter sign-ups.
+          </p>
+
+          <h2 className="text-xl font-semibold mt-8">2. How We Use Your Information</h2>
+          <p className="text-muted-foreground">
+            Your information is used to respond to inquiries, process partner
+            applications, deliver training enrollment confirmations, send
+            newsletters (if opted in), and improve our services.
+          </p>
+
+          <h2 className="text-xl font-semibold mt-8">3. Data Sharing</h2>
+          <p className="text-muted-foreground">
+            We do not sell your personal data. We may share information with
+            hotel partners to fulfill booking inquiries, or with service
+            providers who assist in operating our platform.
+          </p>
+
+          <h2 className="text-xl font-semibold mt-8">4. Cookies</h2>
+          <p className="text-muted-foreground">
+            We use essential cookies for site functionality and analytics
+            cookies to understand usage patterns. You can manage cookie
+            preferences in your browser settings.
+          </p>
+
+          <h2 className="text-xl font-semibold mt-8">5. Data Security</h2>
+          <p className="text-muted-foreground">
+            We implement industry-standard security measures to protect your
+            data, including encryption in transit (HTTPS) and secure database
+            access controls.
+          </p>
+
+          <h2 className="text-xl font-semibold mt-8">6. Your Rights</h2>
+          <p className="text-muted-foreground">
+            You can request access to, correction of, or deletion of your
+            personal data at any time by contacting us at{" "}
+            {SITE_CONFIG.email}.
+          </p>
+
+          <h2 className="text-xl font-semibold mt-8">7. Contact</h2>
+          <p className="text-muted-foreground">
+            For privacy-related questions, contact us at {SITE_CONFIG.email} or
+            write to: {SITE_CONFIG.address}.
+          </p>
         </div>
-      </SectionShell>
-      <SiteFooter />
-    </PageShell>
+      </Container>
+    </section>
   );
 }
+
+

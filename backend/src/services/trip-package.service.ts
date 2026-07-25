@@ -39,7 +39,7 @@ export class TripPackageService {
     const [packages, total] = await Promise.all([
       TripPackageModel.find(filter)
         .populate("destinationId", "name slug district")
-        .sort({ isFeatured: -1, createdAt: -1 })
+        .sort({ createdAt: -1, updatedAt: -1 })
         .skip(skip)
         .limit(params.limit),
       TripPackageModel.countDocuments(filter),

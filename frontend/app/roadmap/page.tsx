@@ -1,47 +1,225 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { PageShell, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
+import {
+  Map,
+  CheckCircle2,
+  Clock,
+  Rocket,
+  CalendarClock,
+  ArrowRight,
+  ChevronRight,
+} from "lucide-react";
+import { Container } from "@/components/layout";
+import { PageHero } from "@/components/shared/page-hero";
+import { SectionHeader } from "@/components/shared/section-header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { tourismRoadmap, type RoadmapPhase } from "@server/services";
+import { roadmapCopy } from "@server/data/site-copy";
 
-const roadmap = [
-  ["Live", "Public tourism UI", "Homepage, stays, food, destinations, routes, training, consulting, and partner flows."],
-  ["Live", "Final CRUD foundation", "The agreed core modules remain the active backend and dashboard scope."],
-  ["In progress", "Provider verification", "Improve consent-safe listing confidence and map coverage as verified coordinates are added."],
-  ["Next", "Route intelligence", "Add richer route context when transport route and segment data grows."],
-  ["Next", "Human-reviewed planning", "Strengthen inquiry triage for customized Karnali travel plans."],
-];
+export const metadata: Metadata = {
+  title: roadmapCopy.metadata.title,
+  description: roadmapCopy.metadata.description,
+  alternates: { canonical: "/roadmap" },
+  openGraph: {
+    title: roadmapCopy.metadata.ogTitle,
+    description: roadmapCopy.metadata.ogDescription,
+  },
+};
+
+const statusConfig: Record<
+  RoadmapPhase["status"],
+  { label: string; icon: React.ReactNode; color: string; badgeClass: string }
+> = {
+  completed: {
+    label: "Completed",
+    icon: <CheckCircle2 className="h-5 w-5" />,
+    color: "text-green-600",
+    badgeClass: "bg-green-100 text-green-800 border-green-200",
+  },
+  "in-progress": {
+    label: "In Progress",
+    icon: <Clock className="h-5 w-5" />,
+    color: "text-blue-600",
+    badgeClass: "bg-blue-100 text-blue-800 border-blue-200",
+  },
+  upcoming: {
+    label: "Upcoming",
+    icon: <Rocket className="h-5 w-5" />,
+    color: "text-amber-600",
+    badgeClass: "bg-amber-100 text-amber-800 border-amber-200",
+  },
+  planned: {
+    label: "Planned",
+    icon: <CalendarClock className="h-5 w-5" />,
+    color: "text-gray-500",
+    badgeClass: "bg-gray-100 text-gray-700 border-gray-200",
+  },
+};
+
+const lineColors: Record<RoadmapPhase["status"], string> = {
+  completed: "bg-green-500",
+  "in-progress": "bg-blue-500",
+  upcoming: "bg-amber-400",
+  planned: "bg-gray-300",
+};
+
+const dotColors: Record<RoadmapPhase["status"], string> = {
+  completed: "bg-green-500 ring-green-200",
+  "in-progress": "bg-blue-500 ring-blue-200 animate-pulse",
+  upcoming: "bg-amber-400 ring-amber-200",
+  planned: "bg-gray-300 ring-gray-200",
+};
 
 export default function RoadmapPage() {
   return (
-    <PageShell>
-      <SiteHeader />
-      <section className="bg-[#081124] text-white">
-        <SectionShell className="py-20 text-center">
-          <p className="mx-auto inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white/75">Product roadmap</p>
-          <h1 className="mt-5 text-4xl font-black tracking-tight sm:text-5xl">Pahuna Platform Roadmap</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/70">A public summary of what is live, what is being verified, and what comes next for Karnali tourism planning.</p>
-        </SectionShell>
+    <>
+      {/* ── HERO ── */}
+      <PageHero
+        badge={{
+          icon: <Map className="h-3 w-3" />,
+          label: roadmapCopy.hero.badge,
+        }}
+        title={roadmapCopy.hero.title}
+        highlight={roadmapCopy.hero.highlight}
+        subtitle={roadmapCopy.hero.subtitle}
+      />
+
+      {/* ── TIMELINE ── */}
+      <section className="py-20">
+        <Container>
+          <div className="relative max-w-3xl mx-auto">
+            {/* Vertical line */}
+            <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-border" />
+
+            <div className="space-y-12">
+              {tourismRoadmap.map((phase, idx) => {
+                const config = statusConfig[phase.status];
+                return (
+                  <div key={phase.phase} className="relative pl-16">
+                    {/* Dot on timeline */}
+                    <div
+                      className={`absolute left-4 top-1 h-5 w-5 rounded-full ring-4 ${dotColors[phase.status]} -translate-x-1/2`}
+                    />
+
+                    {/* Colored line segment */}
+                    {idx < tourismRoadmap.length - 1 && (
+                      <div
+                        className={`absolute left-[23px] top-6 w-0.5 ${lineColors[phase.status]}`}
+                        style={{ height: "calc(100% + 3rem)" }}
+                      />
+                    )}
+
+                    <Card className="overflow-hidden">
+                      <CardHeader>
+                        <div className="flex items-center justify-between flex-wrap gap-3">
+                          <div className="flex items-center gap-3">
+                            <span
+                              className={`flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-sm font-bold`}
+                            >
+                              {phase.phase}
+                            </span>
+                            <div>
+                              <CardTitle className="text-lg">
+                                {phase.title}
+                              </CardTitle>
+                              <p className="text-xs text-muted-foreground">
+                                {phase.timeline}
+                              </p>
+                            </div>
+                          </div>
+                          <Badge className={`${config.badgeClass} text-xs`}>
+                            <span className={`mr-1.5 ${config.color}`}>
+                              {config.icon}
+                            </span>
+                            {config.label}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p className="text-muted-foreground text-sm">
+                          {phase.description}
+                        </p>
+
+                        <Separator />
+
+                        <div>
+                          <h4 className="text-sm font-semibold mb-3">
+                            Key Deliverables
+                          </h4>
+                          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {phase.deliverables.map((d) => (
+                              <li
+                                key={d}
+                                className="flex items-start gap-2 text-sm text-muted-foreground"
+                              >
+                                <ChevronRight className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                                {d}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Container>
       </section>
-      <SectionShell>
-        <div className="grid gap-4 md:grid-cols-3">
-          <Stat value="15" label="core CRUD modules" />
-          <Stat value="OSM" label="interactive map standard" />
-          <Stat value="Inquiry" label="public conversion flow" />
-        </div>
-        <div className="mx-auto mt-10 max-w-3xl space-y-4">
-          {roadmap.map(([status, title, description]) => (
-            <article key={title} className="rounded-[8px] border border-stone-200 bg-white p-6 shadow-sm">
-              <span className={`rounded-full px-3 py-1 text-xs font-black ${status === "Live" ? "bg-emerald-100 text-emerald-800" : status === "In progress" ? "bg-blue-100 text-blue-800" : "bg-amber-100 text-amber-900"}`}>{status}</span>
-              <h2 className="mt-4 text-xl font-black">{title}</h2>
-              <p className="mt-2 text-sm leading-7 text-stone-600">{description}</p>
-            </article>
-          ))}
-          <Link href="/contact" className="inline-flex rounded-md bg-emerald-700 px-5 py-3 text-sm font-black text-white hover:bg-emerald-800">Suggest an improvement</Link>
-        </div>
-      </SectionShell>
-      <SiteFooter />
-    </PageShell>
+
+      {/* ── STATS ── */}
+      <section className="py-16 bg-muted/30">
+        <Container>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-3xl mx-auto text-center">
+            {roadmapCopy.stats.map(({ value, label }) => (
+              <div key={label}>
+                <p className="text-3xl font-bold text-primary">{value}</p>
+                <p className="text-sm text-muted-foreground mt-1">{label}</p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="py-16 bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 text-white relative overflow-hidden">
+        <div className="absolute top-10 right-10 w-56 h-56 bg-white/5 rounded-full blur-3xl" />
+        <Container className="relative z-10">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-bold mb-3">
+              {roadmapCopy.cta.heading}
+            </h2>
+            <p className="text-white/70 mb-6">
+              {roadmapCopy.cta.description}
+            </p>
+            <div className="flex items-center justify-center gap-4 flex-wrap">
+              <Button
+                asChild
+                size="lg"
+                className="bg-white text-primary hover:bg-white/90 font-semibold shadow-lg"
+              >
+                <Link href="/partner">
+                  Become a Partner <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-white/70 bg-transparent text-white hover:bg-white hover:text-primary font-semibold"
+              >
+                <Link href="/contact">Get In Touch</Link>
+              </Button>
+            </div>
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }
 
-function Stat({ value, label }: { value: string; label: string }) {
-  return <div className="rounded-[8px] border border-emerald-100 bg-white p-5 text-center shadow-sm"><p className="text-3xl font-black text-emerald-700">{value}</p><p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-stone-500">{label}</p></div>;
-}
+

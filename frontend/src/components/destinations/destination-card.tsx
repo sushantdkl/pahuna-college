@@ -5,6 +5,7 @@ import { Clock, MapPin, Mountain, Route } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getImageOrPlaceholder } from "@/lib/assets";
+import { AddToTripButton } from "@/components/trip-planner/add-to-trip-button";
 import type { PublicDestination } from "@/lib/services/destinations";
 
 interface DestinationCardProps {
@@ -67,6 +68,7 @@ export function DestinationCard({ destination, compact = false }: DestinationCar
         </div>
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
+          <AddToTripButton listKey="selectedDestinations" itemId={destination.slug} label={destination.name} />
           <Button asChild size="sm">
             <Link href={`/destinations/${destination.slug}`}>View guide</Link>
           </Button>

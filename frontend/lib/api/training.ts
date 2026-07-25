@@ -31,9 +31,16 @@ export type TrainingEnrollment = {
   courseId: string | Pick<TrainingCourse, "_id" | "title" | "slug" | "category" | "duration">;
   userId?: string | { _id: string; fullName: string; email?: string };
   name: string;
+  fullName?: string;
   email: string;
   phone: string;
+  age?: number;
+  education?: string;
+  educationLevel?: string;
+  experience?: string;
+  priorExperience?: string;
   message?: string;
+  motivation?: string;
   status: TrainingEnrollmentStatus;
   response?: string;
   enrolledAt: string;

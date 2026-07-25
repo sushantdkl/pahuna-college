@@ -5,12 +5,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { z } from "zod";
 import {
   ArrowRight,
   Compass,
+  Copy,
   Loader2,
   MapPin,
+  RotateCcw,
   Sparkles,
   Star,
 } from "lucide-react";
@@ -43,6 +46,7 @@ import {
 } from "@/lib/ai/travel-concierge";
 import { cn } from "@/lib/utils";
 import { unlockPassportBadge } from "@/lib/passport";
+import { updateTripDraft } from "@/lib/trip-draft";
 
 const formSchema = travelConciergeRequestSchema.omit({
   mode: true,
@@ -64,6 +68,10 @@ const BUDGET_OPTIONS = [
 
 export function AITripPlanner() {
   const [result, setResult] = useState<TravelConciergeResponse | null>(null);
+  const [question, setQuestion] = useState("");
+  const [messages, setMessages] = useState<Array<{ id: string; role: "user" | "assistant"; content: string }>>([]);
+  const [asking, setAsking] = useState(false);
+  const [lastQuestion, setLastQuestion] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [collectorOpen, setCollectorOpen] = useState(false);
@@ -137,6 +145,47 @@ export function AITripPlanner() {
     }
   };
 
+  const askPahuna = async (nextQuestion = question) => {
+    const cleanQuestion = nextQuestion.trim();
+    if (!cleanQuestion) {
+      setError("Ask Pahuna AI a question first.");
+      return;
+    }
+    setAsking(true);
+    setError(null);
+    setQuestion("");
+    setLastQuestion(cleanQuestion);
+    setMessages((current) => [
+      ...current,
+      { id: `${Date.now()}-user`, role: "user", content: cleanQuestion },
+    ]);
+
+    try {
+      const response = await fetch("/api/ai/travel-concierge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "ask", question: cleanQuestion }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data?.error ?? "Pahuna AI is unavailable right now.");
+        return;
+      }
+      setMessages((current) => [
+        ...current,
+        {
+          id: `${Date.now()}-assistant`,
+          role: "assistant",
+          content: data.answer || "Pahuna AI could not answer that clearly. Try a more specific question.",
+        },
+      ]);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setAsking(false);
+    }
+  };
+
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -146,9 +195,6 @@ export function AITripPlanner() {
   };
 
   useEffect(() => {
-    if (searchParams.get("intent") === "inquiry") {
-      setCollectorOpen(true);
-    }
     const budget = searchParams.get("budget");
     if (budget) {
       setValue("budgetRange", budget, { shouldValidate: true });
@@ -197,10 +243,83 @@ export function AITripPlanner() {
       setValue("destinationInterest", "Karnali Grand Circuit", { shouldValidate: true });
       setValue("numberOfDays", 7, { shouldValidate: true });
     }
+    updateTripDraft((draft) => ({
+      ...draft,
+      selectedVibe: vibe.id,
+      interests: Array.from(new Set([...draft.interests, vibe.id])),
+    }));
+    toast.success(`${vibe.label} vibe added to your trip`);
   };
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+    <div className="space-y-8">
+      <Card className="rounded-3xl border-emerald-100 bg-white">
+        <CardHeader>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className="bg-emerald-700 text-white">Ask Pahuna AI</Badge>
+            <Badge variant="secondary">Plan My Trip below</Badge>
+          </div>
+          <CardTitle className="text-2xl">Ask a normal travel question</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Ask about Surkhet, Karnali routes, stays, food, training, consulting, or trip planning. Availability and prices are still estimates until confirmed.
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            {["Best time to visit Rara?", "How do I travel from Kathmandu to Surkhet?", "Which training course is good for beginners?"].map((prompt) => (
+              <button key={prompt} type="button" onClick={() => void askPahuna(prompt)} className="rounded-full border border-emerald-200 px-3 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-50">
+                {prompt}
+              </button>
+            ))}
+          </div>
+          <label className="block text-sm font-medium">
+            Your question
+            <textarea
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+              onKeyDown={(event) => {
+                if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+                  event.preventDefault();
+                  void askPahuna();
+                }
+              }}
+              className="mt-2 min-h-24 w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-emerald-500"
+              placeholder="Ask Pahuna AI..."
+            />
+          </label>
+          <div className="flex flex-wrap gap-3">
+            <Button type="button" onClick={() => void askPahuna()} disabled={asking}>
+              {asking ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+              {asking ? "Thinking..." : "Ask Pahuna AI"}
+            </Button>
+            <Button type="button" variant="outline" onClick={() => { setQuestion(""); setMessages([]); setLastQuestion(""); }}>
+              Clear
+            </Button>
+            <Button type="button" variant="outline" disabled={asking || !lastQuestion} onClick={() => void askPahuna(lastQuestion)}>
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Regenerate
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setCollectorOpen(true)}>
+              Ask for human assistance
+            </Button>
+          </div>
+          {messages.length ? (
+            <div className="space-y-4" aria-live="polite">
+              {messages.map((message) =>
+                message.role === "user" ? (
+                  <div key={message.id} className="ml-auto max-w-2xl rounded-2xl bg-stone-900 px-4 py-3 text-sm leading-6 text-white">
+                    {message.content}
+                  </div>
+                ) : (
+                  <AIResponseCard key={message.id} content={message.content} onCopy={() => void navigator.clipboard?.writeText(message.content)} />
+                ),
+              )}
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
       <Card ref={formRef} className="rounded-3xl border-amber-100/70 bg-amber-50/40">
         <CardHeader className="gap-2">
           <div className="flex items-center gap-2">
@@ -517,10 +636,10 @@ export function AITripPlanner() {
                               <Badge variant="outline">{step.mode}</Badge>
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                              Duration: {step.durationRange} Â· Cost: {step.costRange}
+                              Duration: {step.durationRange} / Cost: {step.costRange}
                             </p>
                             <p className="mt-2 text-xs text-muted-foreground">
-                              {step.reliability} reliability Â· {step.notes}
+                              {step.reliability} reliability / {step.notes}
                             </p>
                           </div>
                         ))
@@ -588,10 +707,10 @@ export function AITripPlanner() {
                                 <Badge variant="outline">{stay.verificationLabel}</Badge>
                               </div>
                               <p className="mt-1 text-xs text-muted-foreground">
-                                {stay.type} Â· {stay.district}
+                                {stay.type} / {stay.district}
                               </p>
                               <p className="mt-1 text-xs text-muted-foreground">
-                                {stay.area} Â· {stay.currency} {stay.priceFrom ?? "â€”"}
+                                {stay.area} / {stay.currency} {stay.priceFrom ?? "-"}
                               </p>
                               <p className="mt-2 text-xs text-muted-foreground">
                                 {stay.reason}
@@ -622,7 +741,7 @@ export function AITripPlanner() {
                                 <Badge variant="outline">{service.verificationLabel}</Badge>
                               </div>
                               <p className="mt-1 text-xs text-muted-foreground">
-                                {service.type} Â· {service.district}
+                                {service.type} / {service.district}
                               </p>
                               <p className="mt-1 text-xs text-muted-foreground">
                                 {service.area}
@@ -657,7 +776,7 @@ export function AITripPlanner() {
                               <Badge variant="outline">{provider.verificationLabel}</Badge>
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                              {provider.type.replace(/_/g, " ")} Ã‚Â· {provider.area}
+                              {provider.type.replace(/_/g, " ")} / {provider.area}
                             </p>
                             <div className="mt-2 flex flex-wrap gap-1.5">
                               {provider.cuisines.slice(0, 3).map((cuisine) => (
@@ -760,9 +879,88 @@ export function AITripPlanner() {
           defaultTravelersCount={watch("travelersCount")}
           defaultInterests={watch("interests")}
         />
+        </div>
       </div>
     </div>
   );
+}
+
+function AIResponseCard({ content, onCopy }: { content: string; onCopy: () => void }) {
+  return (
+    <article className="max-w-3xl rounded-3xl border border-emerald-100 bg-white p-5 shadow-sm">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-3">
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-700 text-white">
+            <Sparkles className="h-4 w-4" />
+          </span>
+          <div>
+            <p className="text-sm font-black text-stone-950">Pahuna AI</p>
+            <p className="text-xs font-semibold text-emerald-700">Based on current Pahuna information</p>
+          </div>
+        </div>
+        <Button type="button" size="sm" variant="outline" onClick={onCopy}>
+          <Copy className="h-4 w-4" />
+          Copy
+        </Button>
+      </div>
+      <div className="space-y-3 text-[15px] leading-7 text-stone-700">
+        {renderStructuredAnswer(content)}
+      </div>
+      <div className="mt-5 flex flex-wrap gap-2 border-t border-emerald-100 pt-4 text-xs font-semibold text-stone-500">
+        <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-800">Prices and availability require confirmation</span>
+        <span className="rounded-full bg-stone-100 px-3 py-1">No fake live availability</span>
+      </div>
+    </article>
+  );
+}
+
+function renderStructuredAnswer(content: string) {
+  const lines = content.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const blocks: React.ReactNode[] = [];
+  let listItems: string[] = [];
+  let numberedItems: string[] = [];
+
+  const flushList = () => {
+    if (listItems.length) {
+      blocks.push(
+        <ul key={`ul-${blocks.length}`} className="ml-5 list-disc space-y-1.5">
+          {listItems.map((item) => <li key={item}>{item.replace(/^[-*]\s*/, "")}</li>)}
+        </ul>,
+      );
+      listItems = [];
+    }
+    if (numberedItems.length) {
+      blocks.push(
+        <ol key={`ol-${blocks.length}`} className="ml-5 list-decimal space-y-1.5">
+          {numberedItems.map((item) => <li key={item}>{item.replace(/^\d+[.)]\s*/, "")}</li>)}
+        </ol>,
+      );
+      numberedItems = [];
+    }
+  };
+
+  lines.forEach((line) => {
+    if (/^#{1,3}\s+/.test(line)) {
+      flushList();
+      blocks.push(<h3 key={`h-${blocks.length}`} className="pt-1 text-base font-black text-stone-950">{line.replace(/^#{1,3}\s+/, "")}</h3>);
+      return;
+    }
+    if (/^[-*]\s+/.test(line)) {
+      numberedItems = [];
+      listItems.push(line);
+      return;
+    }
+    if (/^\d+[.)]\s+/.test(line)) {
+      listItems = [];
+      numberedItems.push(line);
+      return;
+    }
+    flushList();
+    blocks.push(<p key={`p-${blocks.length}`}>{line}</p>);
+  });
+
+  flushList();
+  return blocks.length ? blocks : <p>{content}</p>;
 }
 
 

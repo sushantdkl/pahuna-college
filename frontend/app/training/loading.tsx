@@ -1,28 +1,39 @@
-import { SectionShell } from "@/components/pahuna-layout";
+import { Container } from "@/components/layout";
 
 export default function TrainingLoading() {
   return (
     <>
-      <div className="bg-[#081124] py-20">
-        <SectionShell className="py-0">
+      {/* Hero skeleton */}
+      <div className="bg-gray-900 py-28 lg:py-32">
+        <Container>
           <div className="max-w-3xl space-y-4">
-            <div className="h-4 w-44 animate-pulse rounded bg-white/20" />
-            <div className="h-12 w-3/4 animate-pulse rounded bg-white/20" />
+            <div className="h-6 w-48 animate-pulse rounded bg-white/10" />
+            <div className="h-12 w-3/4 animate-pulse rounded bg-white/10" />
             <div className="h-5 w-2/3 animate-pulse rounded bg-white/10" />
-          </div>
-        </SectionShell>
-      </div>
-      <SectionShell>
-        <div className="grid gap-5 md:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="rounded-[8px] border border-stone-200 bg-white p-6 shadow-sm">
-              <div className="h-5 w-1/2 animate-pulse rounded bg-stone-200" />
-              <div className="mt-4 h-4 w-full animate-pulse rounded bg-stone-100" />
-              <div className="mt-2 h-4 w-2/3 animate-pulse rounded bg-stone-100" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-20 animate-pulse rounded-lg bg-white/5"
+                />
+              ))}
             </div>
+          </div>
+        </Container>
+      </div>
+      {/* Course cards skeleton */}
+      <Container className="py-24">
+        <div className="space-y-6">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-48 animate-pulse rounded-xl border bg-muted/30"
+            />
           ))}
         </div>
-      </SectionShell>
+      </Container>
     </>
   );
 }
+
+

@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminReplicaFrame, AdminReplicaOverviewContent } from "@/components/admin-replica-dashboard";
+import { AdminReplicaFrame, AdminReplicaOverviewContent } from "@/components/dashboard/dashboard-shell";
 
 export default function DashboardPage() {
   return (
@@ -9,3 +9,4 @@ export default function DashboardPage() {
     </AdminReplicaFrame>
   );
 }
+

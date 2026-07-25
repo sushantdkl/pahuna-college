@@ -36,7 +36,7 @@ export function ProviderMapPopup({ provider }: { provider: ProviderMapPopupProvi
   const price = provider.priceFrom ?? provider.priceMin ?? null;
   const image = getImageOrPlaceholder(provider.images?.[0], "stay");
   const typeLabel = provider.typeLabel ?? provider.propertyType?.replace(/_/g, " ") ?? "Stay";
-  const location = [provider.area, provider.district].filter(Boolean).join(" Â· ");
+  const location = [provider.area, provider.district].filter(Boolean).join(" / ");
 
   return (
     <div className="w-[280px] space-y-3">

@@ -1,0 +1,2 @@
+⚠ Port 3000 is in use by process 26120, using available port 3001 instead.
+An empty string ("") was passed to the src attribute. This may cause the browser to download the whole page again over the network. To fix this, either do not render the element at all or pass null to src instead of an empty string.

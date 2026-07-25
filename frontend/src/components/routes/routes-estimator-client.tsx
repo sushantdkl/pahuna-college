@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import type React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import type { ConsentStatus, TravelMode, VerificationStatus } from "@/lib/prisma-types";
 import {
   AlertTriangle,
@@ -23,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import type { RouteOption, RouteStep } from "@/lib/services/routes";
 import { cn } from "@/lib/utils";
 import { assets, getImageOrPlaceholder } from "@/lib/assets";
+import { updateTripDraft } from "@/lib/trip-draft";
 
 type SuggestedProvider = {
   name: string;
@@ -80,8 +82,10 @@ export function RoutesEstimatorClient({
   featuredOptions,
   providerSuggestionsByDistrict,
 }: RoutesEstimatorClientProps) {
-  const [from, setFrom] = useState("Surkhet");
-  const [to, setTo] = useState("Rara");
+  const searchParams = useSearchParams();
+  const initialRoute = routeOptions.find((item) => item.id === searchParams.get("routeId"));
+  const [from, setFrom] = useState(initialRoute?.from || "Surkhet");
+  const [to, setTo] = useState(initialRoute?.to || "Rara");
   const [mode, setMode] = useState<"ANY" | TravelMode>("ANY");
   const [travelStyle, setTravelStyle] = useState("Standard");
   const [groupType, setGroupType] = useState("Family");
@@ -96,6 +100,7 @@ export function RoutesEstimatorClient({
     setFrom(option.from);
     setTo(option.to);
     setMode("ANY");
+    updateTripDraft((draft) => ({ ...draft, selectedRouteId: option.id }));
     document.getElementById("route-builder")?.scrollIntoView({ behavior: "smooth" });
   }
 

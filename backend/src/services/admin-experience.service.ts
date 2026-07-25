@@ -164,7 +164,7 @@ export class AdminExperienceService {
     const filter = { ...this.buildFilter(params), isActive: true };
 
     const [experiences, total] = await Promise.all([
-      ExperienceModel.find(filter).sort({ rating: -1, createdAt: -1 }).skip(skip).limit(limit),
+      ExperienceModel.find(filter).sort({ createdAt: -1, updatedAt: -1 }).skip(skip).limit(limit),
       ExperienceModel.countDocuments(filter),
     ]);
 

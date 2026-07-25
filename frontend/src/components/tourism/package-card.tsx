@@ -24,9 +24,9 @@ const tierColors: Record<string, string> = {
 };
 
 const tierEmoji: Record<string, string> = {
-  budget: "ðŸŽ’",
-  standard: "ðŸ§³",
-  premium: "âœ¨",
+  budget: "Budget",
+  standard: "Standard",
+  premium: "Premium",
 };
 
 interface PackageCardProps {
@@ -43,7 +43,7 @@ export function PackageCard({ pkg, showCostSplit = false }: PackageCardProps) {
       {/* Image */}
       <div className="relative aspect-[2.2/1] overflow-hidden bg-muted">
         <div className="h-full w-full bg-linear-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
-          <span className="text-5xl">{tierEmoji[pkg.tier]}</span>
+          <span className="text-xl font-black text-primary">{tierEmoji[pkg.tier]}</span>
         </div>
         <Badge
           className={`absolute top-3 left-3 ${tierColors[pkg.tier]} text-xs`}
@@ -146,13 +146,13 @@ export function PackageCard({ pkg, showCostSplit = false }: PackageCardProps) {
             <div className="text-lg font-bold text-primary">
               {formatPrice(pkg.pricePerPerson.min)}
               <span className="text-xs font-normal text-muted-foreground">
-                {" "}â€” {formatPrice(pkg.pricePerPerson.max)}
+                {" "}- {formatPrice(pkg.pricePerPerson.max)}
               </span>
             </div>
           </div>
           <Button asChild size="sm">
             <Link href={`/packages/${pkg.slug}`}>
-              Details <ArrowRight className="h-3.5 w-3.5 ml-1" />
+              View Details <ArrowRight className="h-3.5 w-3.5 ml-1" />
             </Link>
           </Button>
         </div>

@@ -7,9 +7,14 @@ export const adminUserCreateSchema = z.object({
   role: z.enum(["admin", "user"], { message: "Role is required" }),
   phoneNumber: z.string().trim().optional(),
   location: z.string().trim().optional(),
+  bio: z.string().trim().max(500, "Bio must be 500 characters or less").optional(),
+  profileImage: z.string().trim().optional(),
+  isActive: z.boolean().optional(),
+  emailVerified: z.boolean().optional(),
 });
 
 export const adminUserEditSchema = adminUserCreateSchema
+  .partial()
   .extend({
     password: z.string().optional(),
   })

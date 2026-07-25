@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { LiveLocationCard } from "@/components/live-location-card";
 import { MyItineraries } from "@/app/profile/my-itineraries";
+import { MyReservations } from "@/components/reservations/my-reservations";
 import { SiteFooter } from "@/components/pahuna-layout";
 import { resolveImageUrl } from "@/components/profile-forms";
 import { useAuth } from "@/context/AuthContext";
@@ -107,6 +108,8 @@ export default function ProfilePage() {
           </section>
 
           <LiveLocationCard />
+
+          <MyReservations />
 
           <MyItineraries />
 

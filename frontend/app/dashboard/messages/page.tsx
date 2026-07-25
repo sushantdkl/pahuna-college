@@ -98,11 +98,11 @@ export default function DashboardMessagesPage() {
 
     try {
       await deleteAdminContactMessageAction(deleting._id);
-      setNotice("Contact message removed successfully.");
+      setNotice("Contact message deleted successfully.");
       setDeleting(null);
       await loadMessages();
     } catch (deleteError) {
-      setError(deleteError instanceof Error ? deleteError.message : "Unable to remove message");
+      setError(deleteError instanceof Error ? deleteError.message : "Unable to delete message");
     } finally {
       setSavingId("");
     }
@@ -126,7 +126,7 @@ export default function DashboardMessagesPage() {
         {notice ? <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">{notice}</p> : null}
         {error ? <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><span>{error}</span><button onClick={() => void loadMessages()} className="font-bold underline">Retry</button></div> : null}
 
-        <ReplicaDataCard title="Contact messages" description="Search, review, respond, close, or archive" count={total}>
+        <ReplicaDataCard title="Contact messages" description="Search, review, respond, close, or delete" count={total}>
           <form className="mb-5 grid gap-3 lg:grid-cols-[1fr_190px_auto]" onSubmit={(event) => { event.preventDefault(); setPage(1); setSearch(query.trim()); }}>
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search name, email, phone, subject, message, or status" className="rounded-lg border border-stone-200 px-4 py-2.5 text-sm outline-none focus:border-emerald-500" />
             <select value={status} onChange={(event) => { setPage(1); setStatus(event.target.value as ContactMessageStatus | ""); }} className="rounded-lg border border-stone-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-500">
@@ -153,7 +153,7 @@ export default function DashboardMessagesPage() {
                       <button onClick={() => setResponding(message)} className="rounded-lg bg-emerald-700 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-800">Respond</button>
                       {message.status === "NEW" ? <button disabled={savingId === message._id} onClick={() => void updateStatus(message, "READ")} className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 disabled:opacity-50">Mark read</button> : null}
                       {message.status !== "CLOSED" ? <button disabled={savingId === message._id} onClick={() => void updateStatus(message, "CLOSED")} className="rounded-lg border border-stone-200 px-3 py-2 text-xs font-semibold disabled:opacity-50">Close</button> : null}
-                      <button onClick={() => setDeleting(message)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">Archive</button>
+                      <button onClick={() => setDeleting(message)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">Delete</button>
                     </div></td>
                   </tr>
                 ))}
@@ -183,7 +183,7 @@ function RespondDialog({ message, onClose, onSaved }: { message: AdminContactMes
   return <ModalShell title={`Respond to ${message.name}`} eyebrow={message.subject} onClose={onClose}><MessageBlock label="Public message" value={message.message} /><form className="mt-5" onSubmit={async (event) => { event.preventDefault(); if (!response.trim()) { setError("Response is required"); return; } setSaving(true); setError(""); try { await updateAdminContactMessageAction(message._id, { response: response.trim(), status: "RESPONDED" }); await onSaved(); } catch (saveError) { setError(saveError instanceof Error ? saveError.message : "Unable to save response"); } finally { setSaving(false); } }}><label className="text-sm font-semibold text-stone-700">Response<textarea value={response} onChange={(event) => setResponse(event.target.value)} className="mt-2 min-h-36 w-full rounded-xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500" placeholder="Write a helpful response" /></label>{error ? <p className="mt-3 text-sm font-semibold text-red-600">{error}</p> : null}<div className="mt-5 flex justify-end gap-3"><button type="button" onClick={onClose} disabled={saving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button type="submit" disabled={saving} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Saving..." : "Send response"}</button></div></form></ModalShell>;
 }
 
-function ConfirmDeleteDialog({ message, saving, onCancel, onConfirm }: { message: AdminContactMessage; saving: boolean; onCancel: () => void; onConfirm: () => void }) { return <ModalShell title="Remove contact message?" eyebrow="Workspace action" onClose={onCancel}><p className="text-sm leading-6 text-stone-600">Remove <strong>{message.subject}</strong> from {message.name}? This item will be removed from the workspace.</p><div className="mt-6 flex justify-end gap-3"><button onClick={onCancel} disabled={saving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button onClick={onConfirm} disabled={saving} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Removing..." : "Remove message"}</button></div></ModalShell>; }
+function ConfirmDeleteDialog({ message, saving, onCancel, onConfirm }: { message: AdminContactMessage; saving: boolean; onCancel: () => void; onConfirm: () => void }) { return <ModalShell title="Delete contact message?" eyebrow="Permanent action" onClose={onCancel}><p className="text-sm leading-6 text-stone-600">Delete <strong>{message.subject}</strong> from {message.name}? This cannot be undone.</p><div className="mt-6 flex justify-end gap-3"><button onClick={onCancel} disabled={saving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button onClick={onConfirm} disabled={saving} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Deleting..." : "Delete message"}</button></div></ModalShell>; }
 
 function ModalShell({ title, eyebrow, onClose, children }: { title: string; eyebrow: string; onClose: () => void; children: React.ReactNode }) { return <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-stone-950/55 px-4 py-8"><section className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">{eyebrow}</p><h2 className="mt-2 text-2xl font-bold">{title}</h2></div><button onClick={onClose} className="rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold">Close</button></div><div className="mt-6">{children}</div></section></div>; }
 function Detail({ label, value }: { label: string; value: string }) { return <div className="rounded-xl border border-stone-200 bg-stone-50 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-stone-400">{label}</p><p className="mt-1 text-sm font-semibold text-stone-800">{value}</p></div>; }
@@ -191,3 +191,4 @@ function MessageBlock({ label, value }: { label: string; value: string }) { retu
 function StatusBadge({ status }: { status: ContactMessageStatus }) { const tone = status === "NEW" ? "bg-amber-100 text-amber-800" : status === "CLOSED" ? "bg-stone-100 text-stone-600" : "bg-emerald-50 text-emerald-700"; return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${tone}`}>{formatLabel(status)}</span>; }
 function formatLabel(value: string) { return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase()); }
 function formatDate(value: string) { return new Date(value).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); }
+

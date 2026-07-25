@@ -1,77 +1,256 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { PartnerApplicationForm } from "@/app/partner/partner-application-form";
-import { SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
+import {
+  Hotel,
+  CheckCircle,
+  TrendingUp,
+  BarChart3,
+  Users,
+  Globe,
+  Shield,
+  Star,
+  PhoneCall,
+} from "lucide-react";
+import { Container } from "@/components/layout";
+import { SectionHeader } from "@/components/shared/section-header";
+import { PageHero } from "@/components/shared/page-hero";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { HotelLeadForm } from "@/components/forms/hotel-lead-form";
+
+export const metadata: Metadata = {
+  title: "List Your Hotel — Partner With Pahuna",
+  description:
+    "Get your hotel listed on Pahuna. Receive qualified booking inquiries, boost visibility, and grow your business with our tourism platform.",
+  alternates: { canonical: "/partner/hotels" },
+  openGraph: {
+    title: "List Your Hotel — Partner With Pahuna",
+    description: "Get your hotel listed on Surkhet’s #1 hospitality platform.",
+  },
+};
 
 const benefits = [
-  "More qualified stay and availability inquiries",
-  "Public listing visibility across Pahuna stay pages",
-  "Verification pathway for traveler trust",
-  "Route, food, and itinerary context around your property",
-  "Admin review through the existing PartnerApplication flow",
-  "No separate onboarding backend or duplicate application system",
+  {
+    icon: TrendingUp,
+    title: "More Bookings",
+    description:
+      "Receive direct booking inquiries from qualified travelers exploring Surkhet.",
+  },
+  {
+    icon: Globe,
+    title: "Online Presence",
+    description:
+      "Get a dedicated listing page with professional photography support.",
+  },
+  {
+    icon: BarChart3,
+    title: "Business Insights",
+    description:
+      "Track inquiries, views, and conversion data through your partner dashboard.",
+  },
+  {
+    icon: Users,
+    title: "Guest Network",
+    description:
+      "Access a growing community of domestic and international travelers.",
+  },
+  {
+    icon: Shield,
+    title: "Verified Badge",
+    description:
+      "Build trust with guests through our verification and review system.",
+  },
+  {
+    icon: Star,
+    title: "Featured Placement",
+    description:
+      "Eligible for homepage and category page featured placements.",
+  },
 ];
 
 const steps = [
-  ["1", "Submit your details", "Share property, owner, contact, and current business details."],
-  ["2", "Pahuna reviews", "The team checks the application and may request verification details."],
-  ["3", "Go live", "Approved partners can be prepared for listing and inquiry routing."],
+  {
+    step: "1",
+    title: "Submit Your Details",
+    description:
+      "Fill out the form below with your property information and contact details.",
+  },
+  {
+    step: "2",
+    title: "Our Team Reviews",
+    description:
+      "We review your application, verify details, and may visit your property.",
+  },
+  {
+    step: "3",
+    title: "Go Live",
+    description:
+      "Your listing goes live on our platform. Start receiving booking inquiries!",
+  },
 ];
 
 export default function HotelPartnerPage() {
   return (
-    <main className="min-h-screen bg-[#fffaf0] text-stone-950">
-      <SiteHeader />
-      <section className="bg-[#081124] text-white">
-        <SectionShell className="py-20 text-center sm:py-24">
-          <p className="mx-auto inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white/75">Hotel partner onboarding</p>
-          <h1 className="mx-auto mt-5 max-w-3xl text-4xl font-black tracking-tight sm:text-6xl">List Your Hotel on Pahuna</h1>
-          <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/75">Join the Karnali tourism platform, receive qualified inquiries, and grow your hospitality business through the existing Pahuna partner workflow.</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <a href="#apply" className="rounded-lg bg-emerald-700 px-5 py-3 text-sm font-black text-white hover:bg-emerald-800">Apply Now</a>
-            <Link href="/partner" className="rounded-lg border border-white/30 px-5 py-3 text-sm font-black text-white hover:bg-white/10">Partner overview</Link>
+    <>
+      <PageHero
+        title="List Your Hotel on Pahuna"
+        subtitle="Join Surkhet's premier tourism platform. Get qualified booking inquiries, increase your visibility, and grow your hospitality business with zero upfront cost."
+        variant="gradient"
+      />
+
+      {/* ── WHY LIST ── */}
+      <section className="py-16">
+        <Container>
+          <SectionHeader
+            title="Why List With Us?"
+            subtitle="Join the growing network of hospitality partners building Surkhet's tourism future"
+          />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {benefits.map(({ icon: Icon, title, description }) => (
+              <Card key={title} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mb-4">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="font-semibold mb-2">{title}</h3>
+                  <p className="text-sm text-muted-foreground">{description}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </SectionShell>
+        </Container>
       </section>
 
-      <SectionShell>
-        <SectionHeader align="center" title="Why List With Us?" description="Join the growing network of hospitality partners building Karnali tourism." />
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {benefits.map((benefit) => (
-            <div key={benefit} className="rounded-[8px] border border-emerald-100 bg-white p-5 shadow-sm">
-              <span className="text-emerald-700" aria-hidden="true">{"\u{2705}"}</span>
-              <p className="mt-3 text-sm font-bold leading-6 text-stone-700">{benefit}</p>
-            </div>
-          ))}
-        </div>
-      </SectionShell>
-
-      <section className="bg-white">
-        <SectionShell>
-          <SectionHeader align="center" title="How It Works" description="Three simple steps using the canonical partner application backend." />
-          <div className="mt-10 grid gap-6 sm:grid-cols-3">
-            {steps.map(([step, title, description]) => (
+      {/* ── HOW IT WORKS ── */}
+      <section className="py-16 bg-muted/30">
+        <Container>
+          <SectionHeader
+            title="How It Works"
+            subtitle="Three simple steps to get your hotel online"
+          />
+          <div className="grid sm:grid-cols-3 gap-8">
+            {steps.map(({ step, title, description }) => (
               <div key={step} className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-700 text-lg font-black text-white">{step}</div>
-                <h3 className="mt-4 font-black">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-stone-600">{description}</p>
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-bold mx-auto mb-4">
+                  {step}
+                </div>
+                <h3 className="font-semibold mb-2">{title}</h3>
+                <p className="text-sm text-muted-foreground">{description}</p>
               </div>
             ))}
           </div>
-        </SectionShell>
+        </Container>
       </section>
 
-      <SectionShell id="apply">
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-          <div>
-            <SectionHeader title="Ready to Grow Your Business?" description="Fill out the form and the partnerships team will review it through the current PartnerApplication dashboard flow." />
-            <div className="mt-6 rounded-[8px] border border-emerald-100 bg-emerald-50 p-5 text-sm leading-6 text-emerald-900">
-              Use business type Hotel, Resort, or Other local service as appropriate. No duplicate hotel onboarding backend is created.
+      {/* ── LEAD CAPTURE FORM ── */}
+      <section className="py-16">
+        <Container>
+          <div className="grid lg:grid-cols-5 gap-10">
+            <div className="lg:col-span-2 space-y-6">
+              <h2 className="text-2xl font-bold">
+                Ready to Grow Your Business?
+              </h2>
+              <p className="text-muted-foreground">
+                Fill out the form and our partnerships team will get in touch
+                within 24 hours. No obligations, no upfront costs.
+              </p>
+
+              <div className="space-y-4 pt-4">
+                {[
+                  "Zero listing fees in Phase 1",
+                  "Dedicated account manager",
+                  "Professional listing creation support",
+                  "Ongoing marketing and visibility assistance",
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Card className="bg-primary/5 border-primary/20 mt-6">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-3 mb-2">
+                    <PhoneCall className="h-5 w-5 text-primary" />
+                    <span className="font-medium text-sm">
+                      Prefer to talk?
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Call us at{" "}
+                    <a
+                      href="tel:+977-083-123456"
+                      className="text-primary hover:underline font-medium"
+                    >
+                      083-123456
+                    </a>{" "}
+                    or email{" "}
+                    <a
+                      href="mailto:partners@pahuna.com"
+                      className="text-primary hover:underline font-medium"
+                    >
+                      partners@pahuna.com
+                    </a>
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="lg:col-span-3">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Hotel className="h-5 w-5 text-primary" />
+                    Hotel Listing Application
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <HotelLeadForm />
+                </CardContent>
+              </Card>
             </div>
           </div>
-          <PartnerApplicationForm />
-        </div>
-      </SectionShell>
-      <SiteFooter />
-    </main>
+        </Container>
+      </section>
+
+      {/* ── FAQ-ISH ── */}
+      <section className="py-16 bg-muted/30">
+        <Container>
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl font-bold text-center mb-8">
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-6">
+              {[
+                {
+                  q: "Is there a cost to list my hotel?",
+                  a: "No. During our launch phase, all hotel listings are completely free. We may introduce optional premium features later, but your base listing will always be free.",
+                },
+                {
+                  q: "How do bookings work?",
+                  a: "We operate an inquiry-first model. Guests submit booking inquiries through our platform, and we connect them with you. You handle the final confirmation and payment — we assist with the process.",
+                },
+                {
+                  q: "What if my hotel is small or budget-category?",
+                  a: "We welcome all property types — from budget guesthouses to premium resorts. Surkhet needs diverse accommodation options for different traveler segments.",
+                },
+                {
+                  q: "Can I update my listing information?",
+                  a: "Yes. Once onboarded, you'll have access to update your listing details, photos, pricing, and availability through our partner tools.",
+                },
+              ].map(({ q, a }) => (
+                <div key={q} className="rounded-xl border bg-background p-5">
+                  <h3 className="font-medium mb-2">{q}</h3>
+                  <p className="text-sm text-muted-foreground">{a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }
+
+

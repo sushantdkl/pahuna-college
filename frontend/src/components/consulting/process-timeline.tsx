@@ -21,15 +21,18 @@ export function ProcessTimeline() {
           <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-border hidden sm:block" />
 
           <div className="space-y-8">
-            {consultingProcess.map((item) => (
+            {consultingProcess.map((item, index) => {
+              const step = index + 1;
+
+              return (
               <div
-                key={item.step}
+                key={`${item.title}-${step}`}
                 className="relative sm:pl-16"
               >
                 {/* Dot */}
                 <div className="hidden sm:flex absolute left-4 top-1 h-5 w-5 rounded-full bg-primary ring-4 ring-primary/20 -translate-x-1/2 items-center justify-center">
                   <span className="text-[10px] font-bold text-primary-foreground">
-                    {item.step}
+                    {step}
                   </span>
                 </div>
 
@@ -37,7 +40,7 @@ export function ProcessTimeline() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <span className="sm:hidden flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">
-                        {item.step}
+                        {step}
                       </span>
                       <h3 className="font-semibold">{item.title}</h3>
                     </div>
@@ -50,7 +53,8 @@ export function ProcessTimeline() {
                   </p>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </Container>

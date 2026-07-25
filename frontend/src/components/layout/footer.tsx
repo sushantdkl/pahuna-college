@@ -70,7 +70,7 @@ export function Footer() {
                     href={item.href}
                     className="text-sm text-background/65 hover:text-background transition-colors"
                   >
-                    {item.title}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -89,7 +89,7 @@ export function Footer() {
                     href={item.href}
                     className="text-sm text-background/65 hover:text-background transition-colors"
                   >
-                    {item.title}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -108,7 +108,7 @@ export function Footer() {
                     href={item.href}
                     className="text-sm text-background/65 hover:text-background transition-colors"
                   >
-                    {item.title}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -152,7 +152,7 @@ export function Footer() {
       <Container>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 text-xs text-background/40">
           <p>&copy; {currentYear} {SITE_CONFIG.name}. All rights reserved.</p>
-          <p>Built with care in Surkhet, Nepal</p>
+          <p>Built with heart in Surkhet, Nepal</p>
         </div>
       </Container>
     </footer>

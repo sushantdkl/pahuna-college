@@ -73,24 +73,25 @@ export class ConsultingService {
   }
 
   async createLead(payload: CreateConsultingLeadDTO) {
-    if (payload.serviceId && !mongoose.Types.ObjectId.isValid(payload.serviceId)) {
-      throw new HttpException(400, "Invalid consulting service id");
-    }
-
+    let serviceId = payload.serviceId;
     if (payload.serviceId) {
+      const serviceLookup = mongoose.Types.ObjectId.isValid(payload.serviceId)
+        ? { _id: payload.serviceId }
+        : { slug: payload.serviceId };
       const service = await ConsultingServiceModel.findOne({
-        _id: payload.serviceId,
+        ...serviceLookup,
         isActive: true,
       });
 
       if (!service) {
         throw new HttpException(404, "Selected consulting service is not available");
       }
+      serviceId = service._id.toString();
     }
 
     return ConsultingLeadModel.create({
       ...payload,
-      serviceId: payload.serviceId || undefined,
+      serviceId: serviceId || undefined,
       status: "NEW",
     });
   }

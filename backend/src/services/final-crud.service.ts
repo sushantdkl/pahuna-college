@@ -89,7 +89,7 @@ export class FoodProviderService {
     const skip = (params.page - 1) * params.limit;
     const [providers, total, all, active, featured, pending] = await Promise.all([
       FoodProviderModel.find(filter)
-        .sort({ featured: -1, createdAt: -1 })
+        .sort({ createdAt: -1, updatedAt: -1 })
         .skip(skip)
         .limit(params.limit),
       FoodProviderModel.countDocuments(filter),
@@ -191,7 +191,7 @@ export class RouteCrudService {
     const skip = (params.page - 1) * params.limit;
     const [routes, total, all, active] = await Promise.all([
       TransportRouteModel.find(filter)
-        .sort({ sortOrder: 1, createdAt: -1 })
+        .sort({ createdAt: -1, updatedAt: -1 })
         .skip(skip)
         .limit(params.limit),
       TransportRouteModel.countDocuments(filter),
@@ -206,7 +206,7 @@ export class RouteCrudService {
     const skip = (params.page - 1) * params.limit;
     const [segments, total, all, active, featured] = await Promise.all([
       RouteSegmentModel.find(filter)
-        .sort({ featured: -1, createdAt: -1 })
+        .sort({ createdAt: -1, updatedAt: -1 })
         .skip(skip)
         .limit(params.limit),
       RouteSegmentModel.countDocuments(filter),

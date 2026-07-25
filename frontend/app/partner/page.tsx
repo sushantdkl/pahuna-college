@@ -1,71 +1,144 @@
+import type { Metadata } from "next";
+import Link from "next/link";
 import {
-  SectionHeader,
-  SectionShell,
-  SiteFooter,
-  SiteHeader,
-} from "@/components/pahuna-layout";
-import { PartnerApplicationForm } from "@/app/partner/partner-application-form";
+  Handshake,
+  ArrowRight,
+  CheckCircle,
+  Hotel,
+  Store,
+  UtensilsCrossed,
+  Plane,
+  Bus,
+  HelpCircle,
+} from "lucide-react";
+import { Container } from "@/components/layout";
+import { SectionHeader } from "@/components/shared/section-header";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { PartnerForm } from "@/components/forms/partner-form";
+import { partnerCopy } from "@server/data/site-copy";
+
+export const metadata: Metadata = {
+  title: partnerCopy.metadata.title,
+  description: partnerCopy.metadata.description,
+  alternates: { canonical: "/partner" },
+  openGraph: {
+    title: partnerCopy.metadata.ogTitle,
+    description: partnerCopy.metadata.ogDescription,
+  },
+};
 
 const partnerTypes = [
-  ["HT", "Hotels & Resorts", "Get listed, boost bookings, and connect with guests."],
-  ["RS", "Restaurants & Cafes", "Partner your dining experience with tourism visibility."],
-  ["TO", "Travel Agencies", "Collaborate on curated tour packages and itineraries."],
-  ["TP", "Transport Providers", "Offer reliable transportation to our platform guests."],
+  {
+    title: partnerCopy.partnerTypes.types[0].title,
+    description: partnerCopy.partnerTypes.types[0].description,
+    icon: Hotel,
+  },
+  {
+    title: partnerCopy.partnerTypes.types[1].title,
+    description: partnerCopy.partnerTypes.types[1].description,
+    icon: UtensilsCrossed,
+  },
+  {
+    title: partnerCopy.partnerTypes.types[2].title,
+    description: partnerCopy.partnerTypes.types[2].description,
+    icon: Plane,
+  },
+  {
+    title: partnerCopy.partnerTypes.types[3].title,
+    description: partnerCopy.partnerTypes.types[3].description,
+    icon: Bus,
+  },
 ];
 
-const benefits = [
-  "Free listing on our platform with detailed business profile",
-  "Access to qualified leads and booking inquiries",
-  "Co-marketing opportunities and social media features",
-  "Consulting support for branding and operations",
-  "Training discounts for your staff through our academy",
-  "Priority placement for verified and trusted partners",
-];
+const benefits = partnerCopy.benefits.items;
 
 export default function PartnerPage() {
   return (
-    <main className="min-h-screen bg-[#fffaf0] text-stone-950">
-      <SiteHeader />
-      <section className="border-b border-emerald-900/10 bg-gradient-to-br from-white via-emerald-50/60 to-[#fffaf0]">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">Partner with Pahuna</p>
-          <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-tight sm:text-5xl">Grow Together With Us</h1>
-          <p className="mt-4 max-w-2xl text-sm leading-6 text-stone-600">Join Pahuna&apos;s partner network and connect with travelers exploring Nepal&apos;s Karnali region. Whether you run a hotel, restaurant, or travel agency, there is a place for you.</p>
-          <a href="#apply" className="mt-7 inline-flex rounded-md bg-emerald-700 px-5 py-3 text-sm font-black text-white transition hover:bg-emerald-800">Apply now</a>
-        </div>
+    <>
+      {/* Hero */}
+      <section className="relative bg-linear-to-br from-primary/10 via-primary/5 to-background py-20">
+        <Container>
+          <div className="max-w-3xl">
+            <Badge variant="secondary" className="mb-4">
+              <Handshake className="mr-1 h-3 w-3" /> Partner Network
+            </Badge>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+              {partnerCopy.hero.heading}
+            </h1>
+            <p className="mt-4 text-lg text-muted-foreground">
+              {partnerCopy.hero.description}
+            </p>
+            <Button asChild size="lg" className="mt-8">
+              <a href="#apply">
+                Apply Now <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+          </div>
+        </Container>
       </section>
 
-      <SectionShell>
-        <SectionHeader align="center" title="Who Can Partner?" description="We welcome all hospitality and tourism businesses in the region." />
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {partnerTypes.map(([icon, title, description]) => (
-            <article key={title} className="rounded-[8px] border border-stone-200 bg-white p-6 text-center shadow-sm">
-              <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-800">{icon}</span>
-              <h2 className="mt-5 text-lg font-black">{title}</h2>
-              <p className="mt-3 text-sm leading-6 text-stone-600">{description}</p>
-            </article>
-          ))}
-        </div>
-      </SectionShell>
-
-      <section className="border-y border-emerald-900/10 bg-white/70">
-        <SectionShell>
-          <SectionHeader align="center" title="Partner Benefits" description="Here is what you get when you join our network." />
-          <div className="mx-auto mt-8 grid max-w-4xl gap-4 md:grid-cols-2">
-            {benefits.map((benefit) => <div key={benefit} className="flex gap-3 rounded-[8px] bg-emerald-50 p-4 text-sm font-semibold leading-6 text-stone-700"><span className="mt-0.5 text-emerald-700" aria-hidden="true">✅</span><span>{benefit}</span></div>)}
+      {/* Partner Types */}
+      <section className="py-16">
+        <Container>
+          <SectionHeader
+            title={partnerCopy.partnerTypes.title}
+            subtitle={partnerCopy.partnerTypes.subtitle}
+          />
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {partnerTypes.map((type) => (
+              <Card key={type.title} className="text-center hover:shadow-md transition-shadow">
+                <CardContent className="pt-8 pb-6">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                    <type.icon className="h-7 w-7 text-primary" />
+                  </div>
+                  <h3 className="mt-4 font-semibold">{type.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {type.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </SectionShell>
+        </Container>
       </section>
 
-      <SectionShell id="apply">
-        <div className="mx-auto max-w-2xl">
-          <SectionHeader align="center" title="Apply to Become a Partner" description="Fill out the form below and our team will review your application within 48 hours." />
-          <div className="mt-8">
-            <PartnerApplicationForm />
+      {/* Benefits */}
+      <section className="py-16 bg-muted/50">
+        <Container>
+          <SectionHeader
+            title={partnerCopy.benefits.title}
+            subtitle={partnerCopy.benefits.subtitle}
+          />
+          <div className="mx-auto max-w-3xl grid grid-cols-1 gap-4 md:grid-cols-2">
+            {benefits.map((benefit) => (
+              <div
+                key={benefit}
+                className="flex items-start gap-3 rounded-lg bg-background p-4"
+              >
+                <CheckCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <p className="text-sm text-muted-foreground">{benefit}</p>
+              </div>
+            ))}
           </div>
-        </div>
-      </SectionShell>
-      <SiteFooter />
-    </main>
+        </Container>
+      </section>
+
+      {/* Application Form */}
+      <section id="apply" className="py-16">
+        <Container>
+          <div className="mx-auto max-w-2xl">
+            <SectionHeader
+              title={partnerCopy.form.title}
+              subtitle={partnerCopy.form.subtitle}
+            />
+            <PartnerForm />
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }
+
+

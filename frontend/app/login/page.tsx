@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { flushSync } from "react-dom";
 import Image from "next/image";
@@ -14,7 +14,7 @@ import { loginSchema } from "@/schemas/auth.schema";
 
 function safeRedirectFor(role: string | undefined) {
   const search = new URLSearchParams(window.location.search);
-  const requested = search.get("redirect");
+  const requested = search.get("redirect") || search.get("callbackUrl");
   const isAdmin = role?.toLowerCase() === "admin";
 
   if (requested?.startsWith("/") && !requested.startsWith("//")) {
@@ -37,6 +37,12 @@ export default function LoginPage() {
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const registeredMessage = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    return new URLSearchParams(window.location.search).get("registered") === "1"
+      ? "Registration successful. Sign in to continue."
+      : "";
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -107,6 +113,11 @@ export default function LoginPage() {
             </div>
 
             <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+              {registeredMessage && status === "idle" ? (
+                <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
+                  {registeredMessage}
+                </p>
+              ) : null}
               <Field label="Email address" htmlFor="email">
                 <input
                   id="email"

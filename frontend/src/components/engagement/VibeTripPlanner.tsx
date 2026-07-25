@@ -90,8 +90,14 @@ export function VibeTripPlanner({
               Use this vibe
             </Button>
             <Button asChild variant="outline">
-              <Link href={selected.href}>
+              <Link href={`/trip-planner?mode=itinerary&vibe=${encodeURIComponent(selected.id)}#planner`}>
                 Build itinerary
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href={`/routes?vibe=${encodeURIComponent(selected.id)}#route-builder`}>
+                Build route
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>

@@ -77,7 +77,7 @@ export function ConsultingCta({
           </div>
 
           <p className="text-xs mt-6 opacity-60">
-            Free consultation Â· No obligation Â· Response within 24 hours
+            Free consultation / No obligation / Response within 24 hours
           </p>
         </div>
       </Container>

@@ -125,14 +125,14 @@ export default function DashboardLeadsPage() {
 
     try {
       await deleteAdminInquiryAction(deleting._id);
-      setNotice("Inquiry removed successfully.");
+      setNotice("Inquiry deleted successfully.");
       setDeleting(null);
       await loadInquiries();
     } catch (deleteError) {
       setError(
         deleteError instanceof Error
           ? deleteError.message
-          : "Unable to remove inquiry",
+          : "Unable to delete inquiry",
       );
     } finally {
       setSavingId("");
@@ -150,7 +150,7 @@ export default function DashboardLeadsPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <ReplicaStatCard title="Total Inquiries" value={summary.total} subtitle="All traveler requests" icon="LD" />
+          <ReplicaStatCard title="Total Inquiries" value={summary.total} subtitle="All records" icon="LD" />
           <ReplicaStatCard title="New Inquiries" value={summary.new} subtitle="Awaiting review" icon="NW" />
           <ReplicaStatCard title="Responded" value={summary.responded} subtitle="Response sent" icon="RP" />
           <ReplicaStatCard title="Closed" value={summary.closed} subtitle="Completed" icon="CL" />
@@ -164,7 +164,7 @@ export default function DashboardLeadsPage() {
           </div>
         ) : null}
 
-        <ReplicaDataCard title="Traveler inquiries" description="Search, filter, respond, update status, or archive requests" count={total}>
+        <ReplicaDataCard title="Inquiry records" description="Search, filter, respond, update, or delete" count={total}>
           <form
             className="mb-5 grid gap-3 lg:grid-cols-[1fr_190px_190px_auto]"
             onSubmit={(event) => {
@@ -187,13 +187,13 @@ export default function DashboardLeadsPage() {
             <div className="py-14 text-center text-sm font-medium text-stone-500">Loading inquiries...</div>
           ) : inquiries.length ? (
             <table className="min-w-[980px] w-full text-sm">
-              <thead><tr className="border-b text-left text-stone-500"><th className="pb-3 pr-4 font-medium">Title</th><th className="pb-3 pr-4 font-medium">User</th><th className="pb-3 pr-4 font-medium">Related listing</th><th className="pb-3 pr-4 font-medium">Type</th><th className="pb-3 pr-4 font-medium">Status</th><th className="pb-3 pr-4 font-medium">Created</th><th className="pb-3 font-medium">Actions</th></tr></thead>
+              <thead><tr className="border-b text-left text-stone-500"><th className="pb-3 pr-4 font-medium">Title</th><th className="pb-3 pr-4 font-medium">User</th><th className="pb-3 pr-4 font-medium">Hotel</th><th className="pb-3 pr-4 font-medium">Type</th><th className="pb-3 pr-4 font-medium">Status</th><th className="pb-3 pr-4 font-medium">Created</th><th className="pb-3 font-medium">Actions</th></tr></thead>
               <tbody>
                 {inquiries.map((inquiry) => (
                   <tr key={inquiry._id} className="border-b border-stone-100 align-top last:border-0">
                     <td className="py-4 pr-4"><p className="font-semibold text-stone-900">{inquiry.title}</p><p className="mt-1 max-w-52 truncate text-xs text-stone-500">{inquiry.message}</p></td>
                     <td className="py-4 pr-4"><p className="font-medium">{customerName(inquiry)}</p><p className="text-xs text-stone-500">{inquiry.userId?.email || "Account unavailable"}</p></td>
-                    <td className="py-4 pr-4 text-stone-600">{relationLabel(inquiry)}</td>
+                    <td className="py-4 pr-4 text-stone-600">{hotelLabel(inquiry)}</td>
                     <td className="py-4 pr-4 text-stone-600">{formatLabel(inquiry.inquiryType)}</td>
                     <td className="py-4 pr-4"><StatusBadge status={inquiry.status} /></td>
                     <td className="py-4 pr-4 text-stone-500">{formatDate(inquiry.createdAt)}</td>
@@ -204,7 +204,7 @@ export default function DashboardLeadsPage() {
                         <select aria-label={`Update ${inquiry.title} status`} value={inquiry.status} disabled={savingId === inquiry._id} onChange={(event) => void updateStatus(inquiry, event.target.value as InquiryStatus)} className="rounded-lg border border-stone-200 px-2 py-2 text-xs disabled:opacity-60">
                           {statuses.filter(Boolean).map((value) => <option key={value} value={value}>{formatLabel(value)}</option>)}
                         </select>
-                        <button onClick={() => setDeleting(inquiry)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">Archive</button>
+                        <button onClick={() => setDeleting(inquiry)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -230,7 +230,7 @@ export default function DashboardLeadsPage() {
 }
 
 function InquiryDetailDialog({ inquiry, onClose }: { inquiry: AdminInquiry; onClose: () => void }) {
-  return <ModalShell title={inquiry.title} eyebrow={formatLabel(inquiry.inquiryType)} onClose={onClose}><div className="grid gap-3 sm:grid-cols-2"><Detail label="Customer" value={`${customerName(inquiry)} (${inquiry.userId?.email || "Account unavailable"})`} /><Detail label="Related listing" value={relationLabel(inquiry)} /><Detail label="Status" value={formatLabel(inquiry.status)} /><Detail label="Created" value={formatDate(inquiry.createdAt)} /></div><MessageBlock label="Customer message" value={inquiry.message} />{inquiry.response ? <MessageBlock label="Admin response" value={inquiry.response} /> : null}</ModalShell>;
+  return <ModalShell title={inquiry.title} eyebrow={formatLabel(inquiry.inquiryType)} onClose={onClose}><div className="grid gap-3 sm:grid-cols-2"><Detail label="Customer" value={`${customerName(inquiry)} (${inquiry.userId?.email || "Account unavailable"})`} /><Detail label="Hotel" value={hotelLabel(inquiry)} /><Detail label="Status" value={formatLabel(inquiry.status)} /><Detail label="Created" value={formatDate(inquiry.createdAt)} /></div><MessageBlock label="Customer message" value={inquiry.message} />{inquiry.response ? <MessageBlock label="Admin response" value={inquiry.response} /> : null}</ModalShell>;
 }
 
 function RespondDialog({ inquiry, onClose, onSaved }: { inquiry: AdminInquiry; onClose: () => void; onSaved: () => Promise<void> }) {
@@ -241,7 +241,7 @@ function RespondDialog({ inquiry, onClose, onSaved }: { inquiry: AdminInquiry; o
 }
 
 function ConfirmDeleteDialog({ inquiry, saving, onCancel, onConfirm }: { inquiry: AdminInquiry; saving: boolean; onCancel: () => void; onConfirm: () => void }) {
-  return <ModalShell title="Remove inquiry?" eyebrow="Workspace action" onClose={onCancel}><p className="text-sm leading-6 text-stone-600">Remove <strong>{inquiry.title}</strong> from {customerName(inquiry)}? This item will be removed from the workspace.</p><div className="mt-6 flex justify-end gap-3"><button onClick={onCancel} disabled={saving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button onClick={onConfirm} disabled={saving} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Removing..." : "Remove inquiry"}</button></div></ModalShell>;
+  return <ModalShell title="Delete inquiry?" eyebrow="Permanent action" onClose={onCancel}><p className="text-sm leading-6 text-stone-600">Delete <strong>{inquiry.title}</strong> from {customerName(inquiry)}? This cannot be undone.</p><div className="mt-6 flex justify-end gap-3"><button onClick={onCancel} disabled={saving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button onClick={onConfirm} disabled={saving} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Deleting..." : "Delete inquiry"}</button></div></ModalShell>;
 }
 
 function ModalShell({ title, eyebrow, onClose, children }: { title: string; eyebrow: string; onClose: () => void; children: React.ReactNode }) {
@@ -251,9 +251,8 @@ function ModalShell({ title, eyebrow, onClose, children }: { title: string; eyeb
 function Detail({ label, value }: { label: string; value: string }) { return <div className="rounded-xl border border-stone-200 bg-stone-50 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-stone-400">{label}</p><p className="mt-1 text-sm font-semibold text-stone-800">{value}</p></div>; }
 function MessageBlock({ label, value }: { label: string; value: string }) { return <div className="mt-4 rounded-xl border border-stone-200 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-stone-400">{label}</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-stone-700">{value}</p></div>; }
 function StatusBadge({ status }: { status: InquiryStatus }) { const tone = status === "NEW" ? "bg-amber-100 text-amber-800" : status === "CLOSED" ? "bg-stone-100 text-stone-600" : "bg-emerald-50 text-emerald-700"; return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${tone}`}>{formatLabel(status)}</span>; }
-function customerName(inquiry: AdminInquiry) { return inquiry.userId?.fullName || "Unavailable user"; }
-function relationLabel(inquiry: AdminInquiry) {
-  if (inquiry.tripPackageId?.title) return inquiry.tripPackageId.title;
+function customerName(inquiry: AdminInquiry) { return inquiry.userId?.fullName || "Deleted user"; }
+function hotelLabel(inquiry: AdminInquiry) {
   if (inquiry.hotelId?.name) return inquiry.hotelId.name;
   if (!["HOTEL", "AVAILABILITY", "BOOKING", "RESERVATION"].includes(inquiry.inquiryType)) return "General";
   const titleMatch = inquiry.title.match(/(?:availability|booking|reservation) for (.+)$/i);
@@ -261,3 +260,4 @@ function relationLabel(inquiry: AdminInquiry) {
 }
 function formatLabel(value: string) { return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase()); }
 function formatDate(value: string) { return new Date(value).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); }
+

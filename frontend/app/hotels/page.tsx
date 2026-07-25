@@ -1,301 +1,118 @@
-"use client";
-
-import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
+import { Metadata } from "next";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/components/pahuna-layout";
-import { useAuth } from "@/context/AuthContext";
-import { getHotels, publicHotelToStay } from "@/lib/api/public-catalog";
-import { images, safeImage, type StayCard } from "@/lib/pahuna-content";
+import { Hotel, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Container } from "@/components/layout/container";
+import { PageHero } from "@/components/shared/page-hero";
+import { NewsletterForm } from "@/components/forms/newsletter-form";
+import { StayRecommenderSection } from "@/components/hotels/stay-recommender-section";
+import { HotelsExplorerClient } from "@/components/hotels/hotels-explorer-client";
+import { getServiceProviders } from "@server/services/service-providers";
+import { hotelsCopy } from "@server/data/site-copy";
 
-const fallbackMap = "https://www.openstreetmap.org/search?query=Surkhet%20Hotels";
-const ALL = "All";
-const HotelMap = dynamic(
-  () => import("@/components/hotel-map").then((mod) => mod.HotelMap),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex h-[320px] items-center justify-center rounded-[28px] border border-emerald-900/10 bg-white text-sm font-bold text-stone-500">
-        Loading map preview...
-      </div>
-    ),
+export const metadata: Metadata = {
+  title: hotelsCopy.metadata.title,
+  description: hotelsCopy.metadata.description,
+  alternates: { canonical: "/hotels" },
+  openGraph: {
+    title: hotelsCopy.metadata.ogTitle,
+    description: hotelsCopy.metadata.ogDescription,
   },
-);
+};
 
-export default function HotelsPage() {
-  const { isAuthenticated } = useAuth();
-  const [stays, setStays] = useState<StayCard[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [query, setQuery] = useState("");
-  const [activeType, setActiveType] = useState(ALL);
-  const [activeArea, setActiveArea] = useState(ALL);
-  const [activeFeature, setActiveFeature] = useState(ALL);
-  const [sort, setSort] = useState("recommended");
+export const dynamic = "force-dynamic";
 
-  useEffect(() => {
-    getHotels({ limit: 50 })
-      .then((response) => setStays((response.data || []).map(publicHotelToStay)))
-      .catch((failure: Error) => setError(failure.message))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const options = useMemo(() => {
-    const unique = (values: string[]) => [ALL, ...Array.from(new Set(values.filter(Boolean))).sort()];
-
-    return {
-      types: unique(stays.map((stay) => stay.type)),
-      areas: unique(stays.map((stay) => stay.area)),
-      features: unique(stays.flatMap((stay) => [...stay.amenities, ...(stay.services || [])])),
-    };
-  }, [stays]);
-
-  const visibleStays = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    const filtered = stays.filter((stay) => {
-      const matchesType = activeType === ALL || stay.type === activeType;
-      const matchesArea = activeArea === ALL || stay.area === activeArea;
-      const features = [...stay.amenities, ...(stay.services || [])];
-      const matchesFeature = activeFeature === ALL || features.includes(activeFeature);
-      const haystack = [
-        stay.name,
-        stay.type,
-        stay.typeLabel,
-        stay.area,
-        stay.district,
-        stay.address,
-        stay.shortDescription,
-        ...features,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-      return matchesType && matchesArea && matchesFeature && (!needle || haystack.includes(needle));
-    });
-
-    return [...filtered].sort((a, b) => {
-      if (sort === "verified") {
-        return Number(Boolean(b.verified)) - Number(Boolean(a.verified));
-      }
-
-      if (sort === "price") {
-        const priceOf = (value?: number) => value && value > 0 ? value : Number.MAX_SAFE_INTEGER;
-        return priceOf(a.priceValue) - priceOf(b.priceValue);
-      }
-
-      if (sort === "rating") {
-        return (b.rating || 0) - (a.rating || 0);
-      }
-
-      return Number(Boolean(b.featured)) - Number(Boolean(a.featured));
-    });
-  }, [activeArea, activeFeature, activeType, query, sort, stays]);
-
-  const featured = stays.filter((stay) => stay.featured).slice(0, 3);
-  const mappedCount = stays.filter((stay) => typeof stay.latitude === "number" && typeof stay.longitude === "number").length;
+export default async function HotelsPage() {
+  const providers = await getServiceProviders();
+  const explorerProviders = providers.map((provider) => ({
+    id: provider.id,
+    name: provider.name,
+    slug: provider.slug,
+    shortDesc: provider.shortDescription,
+    propertyType: provider.type,
+    typeLabel: provider.typeLabel,
+    district: provider.district,
+    area: provider.area,
+    address: provider.address,
+    priceFrom: provider.priceFrom,
+    currency: provider.currency,
+    starRating: provider.rating,
+    rating: provider.rating,
+    isVerified:
+      provider.verificationStatus === "VERIFIED" ||
+      provider.verificationStatus === "PARTNER",
+    isFeatured: provider.featured,
+    verificationStatus: provider.verificationStatus,
+    consentStatus: provider.consentStatus,
+    amenities: provider.amenities,
+    services: provider.services,
+    images: provider.images,
+    googleMapLink: provider.googleMapLink,
+    latitude: provider.latitude ?? null,
+    longitude: provider.longitude ?? null,
+  }));
 
   return (
-    <PageShell>
-      <SiteHeader />
-      <section className="bg-gradient-to-br from-[#071121] via-[#111630] to-[#08121f] text-white">
-        <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8">
-          <p className="mx-auto inline-flex rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-white/75">Stay Map & Services</p>
-          <h1 className="mt-5 text-4xl font-black tracking-tight sm:text-6xl">Stays & Services<br /><span className="text-amber-300">across Karnali</span></h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/70">Find verified stays and local travel services across Surkhet and Karnali. Browse public listings, compare providers, and send an inquiry before you travel.</p>
-        </div>
+    <>
+      {/* ── HERO ── */}
+      <PageHero
+        badge={{ icon: <Hotel className="h-3 w-3" />, label: hotelsCopy.hero.badge }}
+        title={hotelsCopy.hero.title}
+        highlight={hotelsCopy.hero.highlight}
+        subtitle={hotelsCopy.hero.subtitle}
+      />
+
+      <StayRecommenderSection />
+
+      {/* ── LISTING + MAP EXPLORER ── */}
+      <section className="py-14">
+        <Container>
+          <HotelsExplorerClient hotels={explorerProviders} />
+        </Container>
       </section>
-      <div className="h-36 bg-emerald-50/40" />
-      <SectionShell className="pb-8 pt-8">
-        <div className="grid gap-8 lg:grid-cols-[1fr_390px] lg:items-end">
-          <div>
-            <SectionHeader
-              as="h1"
-              eyebrow="Explore stays"
-              title="Explore stays on map."
-              description="View nearby stays, resorts, and lodges around Surkhet with a quick planning map and public listing context."
-            />
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              <StatTile value={`${stays.length}`} label="stays & services" />
-              <StatTile value={`${mappedCount}`} label="map-ready listings" />
-              <StatTile value={`${featured.length}`} label="featured stays" />
-            </div>
-          </div>
-          <div className="overflow-hidden rounded-[30px] border border-emerald-900/10 bg-white shadow-xl shadow-emerald-900/5">
-            <HotelMap stays={visibleStays} />
-            <div className="p-5">
-              <p className="text-sm font-black text-stone-900">OpenStreetMap preview</p>
-              <p className="mt-2 text-sm leading-6 text-stone-600">Only listings with verified coordinates show exact markers. Others keep OpenStreetMap links and the safe Surkhet preview.</p>
-              <a href={fallbackMap} target="_blank" rel="noreferrer" className="mt-4 inline-flex rounded-full border border-emerald-200 px-4 py-2 text-xs font-black text-emerald-800 hover:bg-emerald-50">
-                Open OpenStreetMap
-              </a>
-            </div>
-          </div>
-        </div>
 
-        {featured.length ? (
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            {featured.map((stay) => (
-              <Link key={stay.slug} href={`/hotels/${stay.slug}`} className="group overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
-                <div className="relative h-56 bg-emerald-50">
-                  <Image unoptimized src={safeImage(stay.image, images.hotelFallback)} alt={`${stay.name} featured stay`} fill sizes="(max-width: 1024px) 100vw, 33vw" className="object-cover transition duration-700 group-hover:scale-105" />
-                  <div className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-950">Featured</div>
-                </div>
-                <div className="p-5">
-                  <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">{stay.typeLabel || stay.type}</p>
-                  <h2 className="mt-2 text-xl font-black">{stay.name}</h2>
-                  <p className="mt-2 text-sm leading-6 text-stone-600">{stay.shortDescription}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : null}
-
-        <div className="mt-8 rounded-[30px] border border-emerald-900/10 bg-white p-4 shadow-lg shadow-emerald-900/5">
-          <div className="grid gap-3 xl:grid-cols-[1fr_auto_auto_auto]">
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              className="rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
-              placeholder="Search by hotel, area, route, service, or amenity"
-            />
-            <FilterSelect label="Type" value={activeType} onChange={setActiveType} options={options.types} />
-            <FilterSelect label="Area" value={activeArea} onChange={setActiveArea} options={options.areas} />
-            <FilterSelect label="Feature" value={activeFeature} onChange={setActiveFeature} options={options.features} />
-          </div>
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm font-semibold text-stone-600">
-              Showing {visibleStays.length} of {stays.length} stay listings.
+      {/* ── ASSISTED BOOKING CTA ── */}
+      <section className="py-20 bg-muted/30">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-2xl font-bold mb-3 tracking-tight">
+              {hotelsCopy.assistance.heading}
+            </h2>
+            <p className="text-muted-foreground mb-8 leading-relaxed">
+              {hotelsCopy.assistance.description}
             </p>
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value)}
-              className="w-full rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 sm:w-auto"
-              aria-label="Sort stays"
-            >
-              <option value="recommended">Sort: Recommended</option>
-              <option value="rating">Rating first</option>
-              <option value="price">Price: Low to high</option>
-              <option value="verified">Verified first</option>
-            </select>
-          </div>
-        </div>
-      </SectionShell>
-
-      <SectionShell className="pt-4">
-        {loading ? (
-          <CatalogState title="Loading stays" description="Fetching the latest active hotel listings." />
-        ) : error ? (
-          <CatalogState title="Stays are temporarily unavailable" description={error} />
-        ) : visibleStays.length ? (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {visibleStays.map((stay) => (
-              <StayListingCard key={stay.slug} stay={stay} isAuthenticated={isAuthenticated} />
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-[28px] border border-emerald-900/10 bg-white p-8 text-center shadow-lg shadow-emerald-900/5">
-            <h2 className="text-2xl font-black">No stays match that search.</h2>
-            <p className="mt-3 text-sm text-stone-600">Try another area, feature, or stay type.</p>
-            <div className="mt-6">
-              <ButtonLink href="/contact" variant="secondary">Ask Pahuna for help</ButtonLink>
+            <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+              <Button asChild size="lg">
+                <Link href="/contact">Request Assistance</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href="/trip-planner">
+                  Estimate Trip Cost{" "}
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </Button>
             </div>
           </div>
-        )}
-      </SectionShell>
-      <SiteFooter />
-    </PageShell>
+        </Container>
+      </section>
+
+      {/* ── NEWSLETTER ── */}
+      <section className="py-20 bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 text-white relative overflow-hidden">
+        <div className="absolute -top-10 right-0 h-72 w-72 rounded-full bg-white/4 blur-3xl" />
+        <Container className="relative z-10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div>
+              <h2 className="text-2xl font-bold mb-2 tracking-tight">{hotelsCopy.newsletter.heading}</h2>
+              <p className="text-white/60 text-sm">
+                {hotelsCopy.newsletter.description}
+              </p>
+            </div>
+            <NewsletterForm />
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }
 
-function StayListingCard({ stay, isAuthenticated }: { stay: StayCard; isAuthenticated: boolean }) {
-  const detailPath = `/hotels/${stay.slug}`;
-  const inquiryPath = `/contact?topic=${encodeURIComponent(`Availability for ${stay.name}`)}&hotel=${encodeURIComponent(stay.name)}&type=AVAILABILITY`;
-  const actionHref = isAuthenticated
-    ? inquiryPath
-    : `/login?redirect=${encodeURIComponent(inquiryPath)}`;
-  const saveHref = isAuthenticated
-    ? "/profile"
-    : `/login?redirect=${encodeURIComponent(detailPath)}`;
 
-  return (
-              <article key={stay.slug} className="flex h-full flex-col overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
-                <div className="relative h-56 bg-emerald-50">
-                  <Image unoptimized src={safeImage(stay.image, images.hotelFallback)} alt={`${stay.name} in ${stay.area}`} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
-                  <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-                    {stay.verificationStatus === "VERIFIED" || stay.verificationStatus === "PARTNER" ? <Badge tone="verified" label="Verified" /> : null}
-                    {stay.publicListing ? <Badge tone="public" label="Public listing" /> : null}
-                    {stay.featured ? <Badge tone="featured" label="Featured" /> : null}
-                  </div>
-                  {stay.rating ? (
-                    <div className="absolute bottom-4 right-4 rounded-2xl bg-white/95 px-3 py-2 text-sm font-black text-stone-900 shadow">
-                      {stay.rating.toFixed(1)} / 5
-                    </div>
-                  ) : null}
-                </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">{stay.typeLabel || stay.type}</p>
-                      <h2 className="mt-2 text-xl font-black">{stay.name}</h2>
-                      <p className="mt-1 text-sm text-stone-500">{stay.area}, {stay.district}</p>
-                    </div>
-                    <p className="rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-800">{stay.priceFrom}</p>
-                  </div>
-                  <p className="mt-4 text-sm leading-6 text-stone-600">{stay.shortDescription}</p>
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {Array.from(new Set([...stay.amenities, ...(stay.services || [])])).slice(0, 5).map((amenity) => (
-                      <span key={amenity} className="rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold text-stone-600">{amenity}</span>
-                    ))}
-                  </div>
-                  {stay.consentStatus === "PENDING" ? (
-                    <p className="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-xs font-bold text-emerald-800">Contact via Pahuna Inquiry while direct details are verified.</p>
-                  ) : null}
-                  <div className="mt-auto grid gap-2 pt-6 sm:grid-cols-2">
-                    <Link href={`/hotels/${stay.slug}`} className="rounded-xl border border-emerald-200 px-3 py-2 text-center text-xs font-bold text-emerald-800 hover:bg-emerald-50">View Details</Link>
-                    <a href={stay.googleMapLink || fallbackMap} target="_blank" rel="noreferrer" className="rounded-xl border border-stone-200 px-3 py-2 text-center text-xs font-bold text-stone-700 hover:bg-stone-50">OpenStreetMap</a>
-                    <Link href={saveHref} className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-center text-xs font-bold text-amber-900 hover:bg-amber-100">Save</Link>
-                    <Link href={actionHref} className="rounded-xl bg-emerald-700 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-800">Ask Availability</Link>
-                  </div>
-                </div>
-              </article>
-  );
-}
-
-function CatalogState({ title, description }: { title: string; description: string }) {
-  return (
-    <div className="rounded-[28px] border border-dashed border-emerald-900/20 bg-white/70 p-12 text-center">
-      <h2 className="text-2xl font-black">{title}</h2>
-      <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600">{description}</p>
-    </div>
-  );
-}
-
-function FilterSelect({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: string[] }) {
-  return (
-    <label className="grid gap-1">
-      <span className="sr-only">{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)} className="rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500">
-        {options.map((option) => (
-          <option key={option} value={option}>{option === ALL ? label : option}</option>
-        ))}
-      </select>
-    </label>
-  );
-}
-
-function StatTile({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="rounded-[22px] border border-emerald-900/10 bg-white p-4 shadow-sm">
-      <p className="text-2xl font-black text-emerald-800">{value}</p>
-      <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-stone-500">{label}</p>
-    </div>
-  );
-}
-
-function Badge({ label, tone }: { label: string; tone: "verified" | "public" | "featured" }) {
-  const classes = tone === "verified" ? "bg-emerald-600 text-white" : tone === "featured" ? "bg-amber-400 text-amber-950" : "bg-white/95 text-emerald-800";
-
-  return <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] shadow-sm ${classes}`}>{label}</span>;
-}

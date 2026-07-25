@@ -1,17 +1,50 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { Home, Search } from "lucide-react";
+import { Container } from "@/components/layout";
+import { Button } from "@/components/ui/button";
+import { GoBackButton } from "@/components/shared/go-back-button";
+
+export const metadata: Metadata = {
+  title: "Page Not Found",
+  description: "The page you're looking for doesn't exist or has been moved.",
+  robots: { index: false, follow: true },
+};
 
 export default function NotFound() {
   return (
-    <main className="grid min-h-screen place-items-center bg-[#fffaf0] px-4 text-stone-950">
-      <div className="w-full max-w-lg rounded-[8px] border border-emerald-100 bg-white p-8 text-center shadow-sm">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">404</p>
-        <h1 className="mt-3 text-3xl font-black">Page not found</h1>
-        <p className="mt-3 text-sm leading-6 text-stone-600">This Pahuna page may have moved, or the listing is not public yet.</p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link href="/" className="rounded-md bg-emerald-700 px-5 py-3 text-sm font-black text-white hover:bg-emerald-800">Go home</Link>
-          <Link href="/hotels" className="rounded-md border border-emerald-200 px-5 py-3 text-sm font-black text-emerald-800 hover:bg-emerald-50">Browse stays</Link>
+    <section className="py-32">
+      <Container>
+        <div className="mx-auto max-w-md text-center">
+          <p className="text-8xl font-bold text-primary/20 leading-none">
+            404
+          </p>
+          <h1 className="mt-6 text-2xl font-bold tracking-tight">
+            Page Not Found
+          </h1>
+          <p className="mt-3 text-muted-foreground leading-relaxed">
+            The page you&apos;re looking for doesn&apos;t exist or has been
+            moved. Try going back or visiting our homepage.
+          </p>
+          <div className="mt-8 flex items-center justify-center gap-3">
+            <Button asChild>
+              <Link href="/">
+                <Home className="mr-2 h-4 w-4" />
+                Back to Home
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/hotels">
+                <Search className="mr-2 h-4 w-4" />
+                Browse Hotels
+              </Link>
+            </Button>
+          </div>
+          <GoBackButton />
         </div>
-      </div>
-    </main>
+      </Container>
+    </section>
   );
 }
+
+

@@ -153,7 +153,7 @@ export function ServiceCard({ service, compact = false }: ServiceCardProps) {
               <span className="text-muted-foreground">From </span>
               <span className="font-semibold">{service.startingPrice}</span>
               <span className="text-muted-foreground ml-2">
-                Â· {service.duration}
+                / {service.duration}
               </span>
             </div>
             <Button asChild size="sm">

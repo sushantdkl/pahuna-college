@@ -180,7 +180,7 @@ export class AdminHotelService {
     const filter = { ...this.buildFilter(params), isActive: true };
 
     const [hotels, total] = await Promise.all([
-      HotelModel.find(filter).sort({ isFeatured: -1, createdAt: -1 }).skip(skip).limit(limit),
+      HotelModel.find(filter).sort({ createdAt: -1, updatedAt: -1 }).skip(skip).limit(limit),
       HotelModel.countDocuments(filter),
     ]);
 

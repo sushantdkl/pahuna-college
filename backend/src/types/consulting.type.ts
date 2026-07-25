@@ -5,9 +5,9 @@ export const ConsultingLeadStatusSchema = z.enum([
   "CONTACTED",
   "QUALIFIED",
   "PROPOSAL_SENT",
+  "NEGOTIATION",
   "WON",
   "LOST",
-  "CLOSED",
 ]);
 
 export type ConsultingLeadStatus = z.infer<

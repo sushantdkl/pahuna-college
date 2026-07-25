@@ -6,6 +6,8 @@ const itineraryRouter = Router();
 const itineraryController = new ItineraryController();
 
 itineraryRouter.get("/options", itineraryController.getPlannerOptions);
+itineraryRouter.get("/public", itineraryController.listPublicItineraries);
+itineraryRouter.get("/public/:id", itineraryController.getPublicItinerary);
 itineraryRouter.use(authorized);
 itineraryRouter.post("/", itineraryController.createItinerary);
 itineraryRouter.get("/my", itineraryController.listOwnItineraries);
