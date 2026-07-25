@@ -5,6 +5,11 @@ export const InquiryTypeSchema = z.enum([
   "AVAILABILITY",
   "BOOKING",
   "RESERVATION",
+  // Added for the Pahuna mobile app so an inquiry raised from a destination,
+  // experience or saved trip keeps its context. Existing values are unchanged.
+  "DESTINATION",
+  "EXPERIENCE",
+  "ITINERARY",
   "TRAVEL_SUPPORT",
   "GENERAL",
 ]);
@@ -20,6 +25,9 @@ export const InquirySchema = z.object({
   userId: z.string().trim().min(1),
   hotelId: z.string().trim().optional(),
   tripPackageId: z.string().trim().optional(),
+  destinationId: z.string().trim().optional(),
+  experienceId: z.string().trim().optional(),
+  itineraryId: z.string().trim().optional(),
   title: z.string().trim().min(1).max(160),
   message: z.string().trim().min(1).max(5000),
   inquiryType: InquiryTypeSchema,

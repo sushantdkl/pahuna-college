@@ -1,9 +1,16 @@
 import mongoose from "mongoose";
 import { hotelSeedData } from "../data/hotel-seed.data";
-import { CreateInquiryDTO } from "../dtos/inquiry.dto";
+import {
+  CreateInquiryDTO,
+  OwnInquiryListQueryDTO,
+  UpdateOwnInquiryDTO,
+} from "../dtos/inquiry.dto";
 import { HttpException } from "../exceptions/http-exception";
 import { HotelModel } from "../models/hotel.model";
+import { DestinationModel } from "../models/destination.model";
+import { ExperienceModel } from "../models/experience.model";
 import { InquiryModel } from "../models/inquiry.model";
+import { ItineraryModel } from "../models/itinerary.model";
 import { TripPackageModel } from "../models/trip-package.model";
 
 const hotelInquiryTypes = new Set([
@@ -80,9 +87,53 @@ export class InquiryService {
     return tripPackage._id;
   }
 
+  /// Confirms a related catalogue record exists before it is stored, so an
+  /// inquiry can never point at something the customer cannot see.
+  private async resolveRelatedId(
+    id: string | undefined,
+    model: { findOne: (filter: Record<string, unknown>) => any },
+    label: string,
+    extraFilter: Record<string, unknown> = {},
+  ) {
+    if (!id) return undefined;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(400, `Invalid ${label} id`);
+    }
+
+    const record = await model
+      .findOne({ _id: id, ...extraFilter })
+      .select("_id");
+
+    if (!record) {
+      throw new HttpException(404, `${label} not found`);
+    }
+
+    return record._id;
+  }
+
   async createInquiry(userId: string, payload: CreateInquiryDTO) {
     const hotelId = await this.resolveHotelId(payload);
     const tripPackageId = await this.resolveTripPackageId(payload);
+    const destinationId = await this.resolveRelatedId(
+      payload.destinationId,
+      DestinationModel,
+      "Destination",
+      { isActive: true },
+    );
+    const experienceId = await this.resolveRelatedId(
+      payload.experienceId,
+      ExperienceModel,
+      "Experience",
+      { isActive: true },
+    );
+    // An itinerary must belong to the caller before it can be referenced.
+    const itineraryId = await this.resolveRelatedId(
+      payload.itineraryId,
+      ItineraryModel,
+      "Itinerary",
+      { userId },
+    );
 
     if (
       hotelInquiryTypes.has(payload.inquiryType) &&
@@ -99,6 +150,9 @@ export class InquiryService {
       userId,
       hotelId,
       tripPackageId,
+      destinationId,
+      experienceId,
+      itineraryId,
       title: payload.title,
       message: payload.message,
       inquiryType: payload.inquiryType,
@@ -110,6 +164,9 @@ export class InquiryService {
       userId: inquiry.userId.toString(),
       hotelId: inquiry.hotelId?.toString(),
       tripPackageId: inquiry.tripPackageId?.toString(),
+      destinationId: inquiry.destinationId?.toString(),
+      experienceId: inquiry.experienceId?.toString(),
+      itineraryId: inquiry.itineraryId?.toString(),
       title: inquiry.title,
       message: inquiry.message,
       inquiryType: inquiry.inquiryType,
@@ -119,5 +176,138 @@ export class InquiryService {
       createdAt: inquiry.createdAt,
       updatedAt: inquiry.updatedAt,
     };
+  }
+
+  // ============== Mobile: own-record reads and writes ==============
+  //
+  // Ownership is always enforced inside the database query using the id taken
+  // from the verified token. A user id is never accepted from the client.
+
+  private assertValidId(id: string, label = "inquiry") {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(400, `Invalid ${label} id`);
+    }
+  }
+
+  /// Mobile-safe projection: internal notes and admin assignment stay out.
+  private toMobileInquiry(inquiry: any) {
+    const hotel = inquiry.hotelId;
+    const hotelIsPopulated = hotel && typeof hotel === "object" && hotel.name;
+
+    return {
+      _id: inquiry._id.toString(),
+      hotelId: hotelIsPopulated
+        ? hotel._id.toString()
+        : inquiry.hotelId?.toString(),
+      hotelName: hotelIsPopulated ? hotel.name : undefined,
+      tripPackageId: inquiry.tripPackageId?.toString(),
+      destinationId: inquiry.destinationId?.toString(),
+      experienceId: inquiry.experienceId?.toString(),
+      itineraryId: inquiry.itineraryId?.toString(),
+      title: inquiry.title,
+      message: inquiry.message,
+      inquiryType: inquiry.inquiryType,
+      status: inquiry.status,
+      response: inquiry.response,
+      createdAt: inquiry.createdAt,
+      updatedAt: inquiry.updatedAt,
+    };
+  }
+
+  async listOwnInquiries(userId: string, params: OwnInquiryListQueryDTO) {
+    const filter: Record<string, unknown> = { userId };
+
+    if (params.status) {
+      filter.status = params.status;
+    }
+
+    if (params.inquiryType) {
+      filter.inquiryType = params.inquiryType;
+    }
+
+    const skip = (params.page - 1) * params.limit;
+
+    const [inquiries, total] = await Promise.all([
+      InquiryModel.find(filter)
+        .populate("hotelId", "name")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(params.limit),
+      InquiryModel.countDocuments(filter),
+    ]);
+
+    return {
+      inquiries: inquiries.map((inquiry) => this.toMobileInquiry(inquiry)),
+      meta: {
+        page: params.page,
+        limit: params.limit,
+        total,
+        totalPages: Math.max(Math.ceil(total / params.limit), 1),
+      },
+    };
+  }
+
+  async getOwnInquiry(userId: string, id: string) {
+    this.assertValidId(id);
+
+    const inquiry = await InquiryModel.findOne({ _id: id, userId }).populate(
+      "hotelId",
+      "name",
+    );
+
+    if (!inquiry) {
+      throw new HttpException(404, "Inquiry not found");
+    }
+
+    return this.toMobileInquiry(inquiry);
+  }
+
+  async updateOwnInquiry(
+    userId: string,
+    id: string,
+    payload: UpdateOwnInquiryDTO,
+  ) {
+    this.assertValidId(id);
+
+    // Editing is only allowed while nobody has picked the inquiry up.
+    const inquiry = await InquiryModel.findOneAndUpdate(
+      { _id: id, userId, status: "NEW" },
+      payload,
+      { returnDocument: "after", runValidators: true },
+    ).populate("hotelId", "name");
+
+    if (!inquiry) {
+      const exists = await InquiryModel.exists({ _id: id, userId });
+      throw new HttpException(
+        exists ? 409 : 404,
+        exists
+          ? "This inquiry can no longer be edited because it is already being handled"
+          : "Inquiry not found",
+      );
+    }
+
+    return this.toMobileInquiry(inquiry);
+  }
+
+  async cancelOwnInquiry(userId: string, id: string) {
+    this.assertValidId(id);
+
+    const inquiry = await InquiryModel.findOneAndUpdate(
+      { _id: id, userId, status: { $in: ["NEW", "IN_PROGRESS"] } },
+      { status: "CLOSED" },
+      { returnDocument: "after", runValidators: true },
+    ).populate("hotelId", "name");
+
+    if (!inquiry) {
+      const exists = await InquiryModel.exists({ _id: id, userId });
+      throw new HttpException(
+        exists ? 409 : 404,
+        exists
+          ? "This inquiry has already been closed"
+          : "Inquiry not found",
+      );
+    }
+
+    return this.toMobileInquiry(inquiry);
   }
 }

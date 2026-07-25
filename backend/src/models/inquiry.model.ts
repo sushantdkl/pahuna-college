@@ -2,12 +2,25 @@ import mongoose, { Document, Schema } from "mongoose";
 import { InquiryType } from "../types/inquiry.type";
 
 export interface IInquiry
-  extends Omit<InquiryType, "userId" | "hotelId" | "tripPackageId" | "assignedTo">,
+  extends Omit<
+      InquiryType,
+      | "userId"
+      | "hotelId"
+      | "tripPackageId"
+      | "destinationId"
+      | "experienceId"
+      | "itineraryId"
+      | "assignedTo"
+    >,
     Document {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   hotelId?: mongoose.Types.ObjectId;
   tripPackageId?: mongoose.Types.ObjectId;
+  // Related catalogue record the inquiry was raised from in the mobile app.
+  destinationId?: mongoose.Types.ObjectId;
+  experienceId?: mongoose.Types.ObjectId;
+  itineraryId?: mongoose.Types.ObjectId;
   assignedTo?: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -31,6 +44,21 @@ const InquiryMongoSchema: Schema<IInquiry> = new Schema(
       ref: "TripPackage",
       index: true,
     },
+    destinationId: {
+      type: Schema.Types.ObjectId,
+      ref: "Destination",
+      index: true,
+    },
+    experienceId: {
+      type: Schema.Types.ObjectId,
+      ref: "Experience",
+      index: true,
+    },
+    itineraryId: {
+      type: Schema.Types.ObjectId,
+      ref: "Itinerary",
+      index: true,
+    },
     title: {
       type: String,
       required: true,
@@ -50,6 +78,9 @@ const InquiryMongoSchema: Schema<IInquiry> = new Schema(
         "AVAILABILITY",
         "BOOKING",
         "RESERVATION",
+        "DESTINATION",
+        "EXPERIENCE",
+        "ITINERARY",
         "TRAVEL_SUPPORT",
         "GENERAL",
       ],

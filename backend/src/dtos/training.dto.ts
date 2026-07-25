@@ -188,3 +188,40 @@ export const AdminTrainingEnrollmentListQueryDTO = z.object({
 export type AdminTrainingEnrollmentListQueryDTO = z.infer<
   typeof AdminTrainingEnrollmentListQueryDTO
 >;
+
+// ===================== Mobile (own-record) DTOs =====================
+
+export const OwnTrainingEnrollmentListQueryDTO = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+  status: TrainingEnrollmentStatusSchema.optional(),
+});
+
+export type OwnTrainingEnrollmentListQueryDTO = z.infer<
+  typeof OwnTrainingEnrollmentListQueryDTO
+>;
+
+// Only the applicant details a learner may correct while still PENDING.
+// Course and status are deliberately absent.
+export const UpdateOwnTrainingEnrollmentDTO = z
+  .object({
+    fullName: optionalText(120),
+    email: z.string().trim().email().max(254).optional(),
+    phone: z.string().trim().min(7).max(40).optional(),
+    age: z.preprocess(
+      (value) => (value === "" || value === null ? undefined : value),
+      z.coerce.number().int().min(0).max(120).optional(),
+    ),
+    education: optionalText(120),
+    experience: optionalText(120),
+    motivation: optionalText(3000),
+  })
+  .strict()
+  .refine(
+    (payload) => Object.values(payload).some((value) => value !== undefined),
+    "At least one enrollment field must be provided",
+  );
+
+export type UpdateOwnTrainingEnrollmentDTO = z.infer<
+  typeof UpdateOwnTrainingEnrollmentDTO
+>;

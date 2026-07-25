@@ -9,6 +9,9 @@ const mongoId = z
 export const CreateInquiryDTO = z.object({
   hotelId: mongoId.optional(),
   tripPackageId: mongoId.optional(),
+  destinationId: mongoId.optional(),
+  experienceId: mongoId.optional(),
+  itineraryId: mongoId.optional(),
   hotelName: z.string().trim().min(1).max(160).optional(),
   title: z.string().trim().min(1, "Title is required").max(160),
   message: z.string().trim().min(1, "Message is required").max(5000),
@@ -44,3 +47,28 @@ export const AdminInquiryListQueryDTO = z.object({
 export type AdminInquiryListQueryDTO = z.infer<
   typeof AdminInquiryListQueryDTO
 >;
+
+// ===================== Mobile (own-record) DTOs =====================
+
+export const OwnInquiryListQueryDTO = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+  status: InquiryStatusSchema.optional(),
+  inquiryType: InquiryTypeSchema.optional(),
+});
+
+export type OwnInquiryListQueryDTO = z.infer<typeof OwnInquiryListQueryDTO>;
+
+/// Only the fields a customer may correct while the inquiry is still NEW.
+export const UpdateOwnInquiryDTO = z
+  .object({
+    title: z.string().trim().min(1).max(160).optional(),
+    message: z.string().trim().min(1).max(5000).optional(),
+  })
+  .strict()
+  .refine(
+    (payload) => Object.values(payload).some((value) => value !== undefined),
+    "At least one inquiry field must be provided",
+  );
+
+export type UpdateOwnInquiryDTO = z.infer<typeof UpdateOwnInquiryDTO>;

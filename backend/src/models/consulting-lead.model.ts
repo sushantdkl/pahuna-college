@@ -4,6 +4,9 @@ import { ConsultingLeadStatus } from "../types/consulting.type";
 export interface IConsultingLead extends Document {
   _id: mongoose.Types.ObjectId;
   serviceId?: mongoose.Types.ObjectId;
+  // Set when a signed-in Pahuna mobile user submits the request, so it can be
+  // listed back to them. Website guests keep leaving it empty.
+  userId?: mongoose.Types.ObjectId;
   name: string;
   email: string;
   phone: string;
@@ -31,6 +34,11 @@ const ConsultingLeadMongoSchema: Schema<IConsultingLead> = new Schema(
     serviceId: {
       type: Schema.Types.ObjectId,
       ref: "ConsultingService",
+      index: true,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
       index: true,
     },
     name: {

@@ -154,3 +154,41 @@ export const AdminConsultingLeadListQueryDTO = z.object({
 export type AdminConsultingLeadListQueryDTO = z.infer<
   typeof AdminConsultingLeadListQueryDTO
 >;
+
+// ===================== Mobile (own-record) DTOs =====================
+
+export const OwnConsultingLeadListQueryDTO = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+  status: ConsultingLeadStatusSchema.optional(),
+});
+
+export type OwnConsultingLeadListQueryDTO = z.infer<
+  typeof OwnConsultingLeadListQueryDTO
+>;
+
+// Only the business details a requester may correct while still NEW. Status,
+// assignment and the selected service are deliberately absent.
+export const UpdateOwnConsultingLeadDTO = z
+  .object({
+    contactName: optionalText(120),
+    email: z.string().trim().email().max(254).optional(),
+    phone: z.string().trim().min(7).max(40).optional(),
+    businessName: optionalText(160),
+    businessType: optionalText(120),
+    businessStage: optionalText(120),
+    businessSize: optionalText(120),
+    location: optionalText(160),
+    timeline: optionalText(120),
+    budget: optionalText(120),
+    message: optionalText(5000),
+  })
+  .strict()
+  .refine(
+    (payload) => Object.values(payload).some((value) => value !== undefined),
+    "At least one consulting request field must be provided",
+  );
+
+export type UpdateOwnConsultingLeadDTO = z.infer<
+  typeof UpdateOwnConsultingLeadDTO
+>;
