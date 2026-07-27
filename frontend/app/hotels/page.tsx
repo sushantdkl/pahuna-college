@@ -9,6 +9,7 @@ import { StayRecommenderSection } from "@/components/hotels/stay-recommender-sec
 import { HotelsExplorerClient } from "@/components/hotels/hotels-explorer-client";
 import { getServiceProviders } from "@server/services/service-providers";
 import { hotelsCopy } from "@server/data/site-copy";
+import { getAdminPreviewState } from "@/lib/admin-preview";
 
 export const metadata: Metadata = {
   title: hotelsCopy.metadata.title,
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function HotelsPage() {
+  const adminPreview = await getAdminPreviewState();
   const providers = await getServiceProviders();
   const explorerProviders = providers.map((provider) => ({
     id: provider.id,
@@ -67,7 +69,7 @@ export default async function HotelsPage() {
       {/* ── LISTING + MAP EXPLORER ── */}
       <section className="py-14">
         <Container>
-          <HotelsExplorerClient hotels={explorerProviders} />
+          <HotelsExplorerClient hotels={explorerProviders} adminPreview={adminPreview.enabled} />
         </Container>
       </section>
 

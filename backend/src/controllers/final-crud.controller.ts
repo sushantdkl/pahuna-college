@@ -75,6 +75,30 @@ function foodBody(body: Record<string, unknown>) {
   );
 }
 
+function readUploadedFoodImages(req: AuthRequest) {
+  const files = req.files;
+
+  if (!Array.isArray(files)) {
+    return [];
+  }
+
+  return files.map((file) => `/uploads/food/${file.filename}`);
+}
+
+function foodPayload(req: AuthRequest) {
+  const uploadedImages = readUploadedFoodImages(req);
+  const payload = foodBody(req.body);
+
+  if (!uploadedImages.length) {
+    return payload;
+  }
+
+  return {
+    ...payload,
+    images: uploadedImages,
+  };
+}
+
 function transportBody(body: Record<string, unknown>) {
   return Object.fromEntries(
     Object.entries({
@@ -160,7 +184,7 @@ export class FoodProviderController {
 
   async adminCreate(req: AuthRequest, res: Response) {
     try {
-      const parsed = CreateFoodProviderDTO.safeParse(foodBody(req.body));
+      const parsed = CreateFoodProviderDTO.safeParse(foodPayload(req));
       if (!parsed.success) return handleParseError(res, parsed.error);
       const provider = await foodService.create(parsed.data);
       return ApiResponseHelper.success(res, provider, "Food provider created successfully", 201);
@@ -171,7 +195,7 @@ export class FoodProviderController {
 
   async adminUpdate(req: AuthRequest, res: Response) {
     try {
-      const parsed = UpdateFoodProviderDTO.safeParse(foodBody(req.body));
+      const parsed = UpdateFoodProviderDTO.safeParse(foodPayload(req));
       if (!parsed.success) return handleParseError(res, parsed.error);
       const provider = await foodService.update(idParam(req), parsed.data);
       return ApiResponseHelper.success(res, provider, "Food provider updated successfully");

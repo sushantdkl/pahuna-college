@@ -40,6 +40,30 @@ function packageBody(body: Record<string, unknown>) {
   );
 }
 
+function readUploadedPackageImages(req: AuthRequest) {
+  const files = req.files;
+
+  if (!Array.isArray(files)) {
+    return [];
+  }
+
+  return files.map((file) => `/uploads/packages/${file.filename}`);
+}
+
+function packagePayload(req: AuthRequest) {
+  const uploadedImages = readUploadedPackageImages(req);
+  const payload = packageBody(req.body);
+
+  if (!uploadedImages.length) {
+    return payload;
+  }
+
+  return {
+    ...payload,
+    images: uploadedImages,
+  };
+}
+
 export class AdminTripPackageController {
   async listPackages(req: AuthRequest, res: Response) {
     try {
@@ -73,7 +97,7 @@ export class AdminTripPackageController {
 
   async createPackage(req: AuthRequest, res: Response) {
     try {
-      const parsedData = CreateTripPackageDTO.safeParse(packageBody(req.body));
+      const parsedData = CreateTripPackageDTO.safeParse(packagePayload(req));
       if (!parsedData.success) {
         return ApiResponseHelper.error(res, z.prettifyError(parsedData.error), 400);
       }
@@ -86,7 +110,7 @@ export class AdminTripPackageController {
 
   async updatePackage(req: AuthRequest, res: Response) {
     try {
-      const parsedData = UpdateTripPackageDTO.safeParse(packageBody(req.body));
+      const parsedData = UpdateTripPackageDTO.safeParse(packagePayload(req));
       if (!parsedData.success) {
         return ApiResponseHelper.error(res, z.prettifyError(parsedData.error), 400);
       }

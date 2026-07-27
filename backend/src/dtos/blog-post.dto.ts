@@ -18,6 +18,15 @@ const optionalBoolean = z.preprocess(
   z.boolean().optional(),
 );
 
+const booleanField = (defaultValue: boolean) =>
+  z.preprocess(
+    (value) => {
+      if (value === "" || value === undefined || value === null) return defaultValue;
+      return value === true || value === "true";
+    },
+    z.boolean(),
+  );
+
 const slugField = z.string().trim().toLowerCase().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must use lowercase words and hyphens").max(220).optional();
 
 const blogPostFields = z.object({
@@ -32,7 +41,7 @@ const blogPostFields = z.object({
   seoTitle: optionalText(220),
   seoDescription: optionalText(300),
   status: z.enum(["DRAFT", "PUBLISHED"]).default("DRAFT"),
-  isFeatured: z.boolean().default(false),
+  isFeatured: booleanField(false),
   publishedAt: z.coerce.date().optional(),
 });
 

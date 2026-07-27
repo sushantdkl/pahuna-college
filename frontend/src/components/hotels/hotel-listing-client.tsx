@@ -27,9 +27,10 @@ interface HotelListingClientProps {
     amenities: string[];
     images: string[];
   }>;
+  adminPreview?: boolean;
 }
 
-export function HotelListingClient({ hotels }: HotelListingClientProps) {
+export function HotelListingClient({ hotels, adminPreview = false }: HotelListingClientProps) {
   const [filters, setFilters] = useState<HotelFilters>({
     search: "",
     propertyType: null,
@@ -76,6 +77,7 @@ export function HotelListingClient({ hotels }: HotelListingClientProps) {
                 isFeatured={hotel.isFeatured}
                 amenities={hotel.amenities}
                 coverImage={hotel.images?.[0]}
+                adminPreview={adminPreview}
               />
             ))}
           </div>

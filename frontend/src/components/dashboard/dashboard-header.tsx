@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { User } from "lucide-react";
+import { ExternalLink, User } from "lucide-react";
+import { useState } from "react";
 import { resolveApiAssetUrl } from "@/lib/api/axios-instance";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -19,10 +20,28 @@ type DashboardHeaderProps = {
 export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
   const displayName = user.fullName || user.name || user.email || "Administrator";
   const profileImage = resolveApiAssetUrl(user.profileImage || undefined);
+  const [isOpeningSite, setIsOpeningSite] = useState(false);
+
+  async function openSitePreview() {
+    setIsOpeningSite(true);
+
+    try {
+      const response = await fetch("/api/admin/preview/enable", { method: "POST" });
+      const payload = await response.json();
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.message || "Unable to enable preview");
+      }
+
+      window.location.assign(payload.redirectTo || "/");
+    } finally {
+      setIsOpeningSite(false);
+    }
+  }
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-stone-200 bg-white px-4">
-      <Link href="/admin" className="flex items-center gap-2 font-semibold md:hidden">
+      <Link href="/dashboard" className="flex items-center gap-2 font-semibold md:hidden">
         <Image src="/pahuna-icon.svg" alt="Pahuna" width={28} height={28} className="h-7 w-7" />
         <span className="text-sm">Dashboard</span>
       </Link>
@@ -31,9 +50,15 @@ export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
         <p className="text-xs text-stone-500">Manage stays, users, content, and safety checks</p>
       </div>
       <div className="flex items-center gap-4">
-        <Link href="/" className="hidden rounded-lg border border-stone-200 px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-emerald-700 sm:inline-flex">
-          Open site
-        </Link>
+        <button
+          type="button"
+          onClick={openSitePreview}
+          disabled={isOpeningSite}
+          className="hidden items-center gap-2 rounded-lg border border-stone-200 px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-60 sm:inline-flex"
+        >
+          <ExternalLink className="h-4 w-4" />
+          {isOpeningSite ? "Opening..." : "Open site"}
+        </button>
         <div className="text-right">
           <p className="text-sm font-medium leading-none">{displayName}</p>
           <p className="mt-1 text-xs text-stone-500">Administrator</p>

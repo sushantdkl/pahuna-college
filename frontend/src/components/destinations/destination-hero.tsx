@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout/container";
 import type { PublicDestination } from "@/lib/services/destinations";
-import { getImageOrPlaceholder } from "@/lib/assets";
+import { getImageOrPlaceholder, isBackendUploadImage } from "@/lib/assets";
 
 interface DestinationHeroProps {
   destination: PublicDestination;
@@ -59,6 +59,7 @@ export function DestinationHero({ destination }: DestinationHeroProps) {
               alt={destination.name}
               fill
               sizes="(min-width: 1024px) 45vw, 100vw"
+              unoptimized={isBackendUploadImage(image)}
               className="object-cover"
               priority
             />

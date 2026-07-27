@@ -7,7 +7,14 @@ export type ConsultingTestimonial = any;
 export type TripPackage = any;
 export type RoadmapPhase = any;
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_ORIGIN = (process.env.NEXT_PUBLIC_API_URL || API_BASE).replace(/\/api\/v1$/, "");
+const heroFallbackImage = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80";
+
+function assetUrl(value?: string) {
+  if (!value) return value;
+  return value.startsWith("/uploads/") ? `${API_ORIGIN}${value}` : value;
+}
 
 async function getApi<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE}/api/v1${path}`, {
@@ -23,8 +30,8 @@ async function getApi<T>(path: string): Promise<T> {
 }
 
 export const demoBlogPosts: any[] = [
-  { slug: "why-surkhet-should-be-your-next-destination", title: "Why Surkhet Should Be Your Next Destination", excerpt: "Plan a practical Surkhet visit.", category: "Travel Guide", tags: ["Surkhet"], image: "/images/placeholders/hero-placeholder.svg", publishedAt: "2026-01-01", readTime: "5 min read", author: "Pahuna Team", content: "Surkhet is the practical gateway to Karnali." },
-  { slug: "things-to-do-in-birendranagar", title: "10 Things to Do in Birendranagar", excerpt: "Local places and experiences.", category: "Things to Do", tags: ["Birendranagar"], image: "/images/placeholders/hero-placeholder.svg", publishedAt: "2026-01-02", readTime: "4 min read", author: "Pahuna Team", content: "Explore lakes, temples, cafes, and viewpoints." },
+  { slug: "why-surkhet-should-be-your-next-destination", title: "Why Surkhet Should Be Your Next Destination", excerpt: "Plan a practical Surkhet visit.", category: "Travel Guide", tags: ["Surkhet"], image: heroFallbackImage, publishedAt: "2026-01-01", readTime: "5 min read", author: "Pahuna Team", content: "Surkhet is the practical gateway to Karnali." },
+  { slug: "things-to-do-in-birendranagar", title: "10 Things to Do in Birendranagar", excerpt: "Local places and experiences.", category: "Things to Do", tags: ["Birendranagar"], image: heroFallbackImage, publishedAt: "2026-01-02", readTime: "4 min read", author: "Pahuna Team", content: "Explore lakes, temples, cafes, and viewpoints." },
 ];
 export const getBlogPostSlugs = () => demoBlogPosts.map((post) => post.slug);
 
@@ -159,7 +166,7 @@ function toTripPackage(pkg: any): TripPackage {
       activities: 10,
       misc: 5,
     },
-    image: pkg.image ?? pkg.coverImage ?? pkg.images?.[0] ?? "/images/placeholders/hero-placeholder.svg",
+    image: assetUrl(pkg.image ?? pkg.coverImage ?? pkg.images?.[0]) ?? heroFallbackImage,
     highlights: Array.isArray(pkg.highlights) && pkg.highlights.length
       ? pkg.highlights
       : ["Custom route support", "Local coordination", "Flexible planning"],
@@ -500,7 +507,17 @@ export async function getRelatedCourses(slug: string, limit = 3) {
 export const getTestimonialsForCourse = (_slug: string) => studentTestimonials;
 export const trainingStats: any[] = [{ label: "Students", value: "500+" }, { label: "Placement", value: "92%" }];
 export const enrollmentProcess: any[] = [{ title: "Apply", description: "Submit course interest." }, { title: "Start Training", description: "Join practical sessions." }];
-export const studentTestimonials: any[] = [{ name: "Anu", quote: "Training helped my career.", rating: 5 }];
+export const studentTestimonials: any[] = [
+  {
+    id: "anu-hospitality-operations",
+    name: "Anu",
+    course: "Hospitality Operations",
+    currentRole: "Front Office Associate",
+    company: "Surkhet Boutique Stay",
+    quote: "Training helped my career.",
+    rating: 5,
+  },
+];
 export const generalFAQs: any[] = [{ question: "Do I need experience?", answer: "No, beginner courses are available." }];
 
 export type BudgetTier = any;

@@ -1,5 +1,6 @@
 import bcryptjs from "bcryptjs";
 import mongoose from "mongoose";
+import { isDefaultAdminEmail } from "../configs/default-admin.config";
 import { AdminCreateUserDTO, AdminUpdateUserDTO } from "../dtos/admin-user.dto";
 import { HttpException } from "../exceptions/http-exception";
 import { IUser, UserModel } from "../models/user.model";
@@ -121,6 +122,27 @@ export class AdminUserService {
   async updateUser(id: string, payload: AdminUpdateUserDTO) {
     this.assertValidId(id);
 
+    const currentUser = await userRepository.getUserById(id);
+    if (!currentUser) {
+      throw new HttpException(404, "User not found");
+    }
+
+    if (isDefaultAdminEmail(currentUser.email)) {
+      const changesProtectedDefault =
+        (payload.email && !isDefaultAdminEmail(payload.email))
+        || payload.password !== undefined
+        || payload.role !== undefined && payload.role !== "admin"
+        || payload.isActive === false
+        || payload.emailVerified === false;
+
+      if (changesProtectedDefault) {
+        throw new HttpException(
+          400,
+          "The default administrator credentials are protected",
+        );
+      }
+    }
+
     if (payload.email) {
       const existingEmail = await userRepository.getUserByEmailExceptId(
         payload.email,
@@ -173,6 +195,10 @@ export class AdminUserService {
     const user = await userRepository.getUserById(id);
     if (!user) {
       throw new HttpException(404, "User not found");
+    }
+
+    if (isDefaultAdminEmail(user.email)) {
+      throw new HttpException(400, "The default administrator cannot be deleted");
     }
 
     if (user.role === "admin") {

@@ -7,9 +7,11 @@ export type ConsultingTestimonial = any;
 export type TripPackage = any;
 export type RoadmapPhase = any;
 
+const heroFallbackImage = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80";
+
 export const demoBlogPosts: any[] = [
-  { slug: "why-surkhet-should-be-your-next-destination", title: "Why Surkhet Should Be Your Next Destination", excerpt: "Plan a practical Surkhet visit.", category: "Travel Guide", tags: ["Surkhet"], image: "/images/placeholders/hero-placeholder.svg", publishedAt: "2026-01-01", readTime: "5 min read", author: "Pahuna Team", content: "Surkhet is the practical gateway to Karnali." },
-  { slug: "things-to-do-in-birendranagar", title: "10 Things to Do in Birendranagar", excerpt: "Local places and experiences.", category: "Things to Do", tags: ["Birendranagar"], image: "/images/placeholders/hero-placeholder.svg", publishedAt: "2026-01-02", readTime: "4 min read", author: "Pahuna Team", content: "Explore lakes, temples, cafes, and viewpoints." },
+  { slug: "why-surkhet-should-be-your-next-destination", title: "Why Surkhet Should Be Your Next Destination", excerpt: "Plan a practical Surkhet visit.", category: "Travel Guide", tags: ["Surkhet"], image: heroFallbackImage, publishedAt: "2026-01-01", readTime: "5 min read", author: "Pahuna Team", content: "Surkhet is the practical gateway to Karnali." },
+  { slug: "things-to-do-in-birendranagar", title: "10 Things to Do in Birendranagar", excerpt: "Local places and experiences.", category: "Things to Do", tags: ["Birendranagar"], image: heroFallbackImage, publishedAt: "2026-01-02", readTime: "4 min read", author: "Pahuna Team", content: "Explore lakes, temples, cafes, and viewpoints." },
 ];
 export const getBlogPostSlugs = () => demoBlogPosts.map((post) => post.slug);
 
@@ -264,7 +266,17 @@ export const getRelatedCourses = (slug: string, limit = 3) => trainingCourses.fi
 export const getTestimonialsForCourse = (_slug: string) => studentTestimonials;
 export const trainingStats: any[] = [{ label: "Students", value: "500+" }, { label: "Placement", value: "92%" }];
 export const enrollmentProcess: any[] = [{ title: "Apply", description: "Submit course interest." }, { title: "Start Training", description: "Join practical sessions." }];
-export const studentTestimonials: any[] = [{ name: "Anu", quote: "Training helped my career.", rating: 5 }];
+export const studentTestimonials: any[] = [
+  {
+    id: "anu-hospitality-operations",
+    name: "Anu",
+    course: "Hospitality Operations",
+    currentRole: "Front Office Associate",
+    company: "Surkhet Boutique Stay",
+    quote: "Training helped my career.",
+    rating: 5,
+  },
+];
 export const generalFAQs: any[] = [{ question: "Do I need experience?", answer: "No, beginner courses are available." }];
 
 export type BudgetTier = any;

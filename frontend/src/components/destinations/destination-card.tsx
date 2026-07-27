@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Clock, MapPin, Mountain, Route } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getImageOrPlaceholder } from "@/lib/assets";
+import { getImageOrPlaceholder, isBackendUploadImage } from "@/lib/assets";
 import { AddToTripButton } from "@/components/trip-planner/add-to-trip-button";
 import type { PublicDestination } from "@/lib/services/destinations";
 
@@ -24,7 +24,8 @@ export function DestinationCard({ destination, compact = false }: DestinationCar
           alt={destination.name}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-contain p-10 transition-transform duration-500 group-hover:scale-105"
+          unoptimized={isBackendUploadImage(image)}
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute left-4 top-4 flex flex-wrap gap-2">
           <Badge className="bg-white/90 text-foreground shadow-sm backdrop-blur">

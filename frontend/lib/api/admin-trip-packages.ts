@@ -27,12 +27,51 @@ export function getAdminTripPackages(params: AdminTripPackageListParams = {}) {
   );
 }
 
-export function createAdminTripPackage(payload: AdminTripPackagePayload) {
-  return apiPost<AdminTripPackage>("/admin/trip-packages", payload, true);
+function toPackageFormData(
+  payload: Partial<AdminTripPackagePayload>,
+  files?: FileList | File[] | null,
+) {
+  const formData = new FormData();
+
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value === undefined || value === "") return;
+
+    if (Array.isArray(value)) {
+      formData.set(key, JSON.stringify(value));
+      return;
+    }
+
+    formData.set(key, String(value));
+  });
+
+  Array.from(files || []).forEach((file) => {
+    formData.append("images", file);
+  });
+
+  return formData;
 }
 
-export function updateAdminTripPackage(id: string, payload: Partial<AdminTripPackagePayload>) {
-  return apiPatch<AdminTripPackage>(`/admin/trip-packages/${id}`, payload, true);
+export function createAdminTripPackage(
+  payload: AdminTripPackagePayload,
+  files?: FileList | File[] | null,
+) {
+  return apiPost<AdminTripPackage>(
+    "/admin/trip-packages",
+    files?.length ? toPackageFormData(payload, files) : payload,
+    true,
+  );
+}
+
+export function updateAdminTripPackage(
+  id: string,
+  payload: Partial<AdminTripPackagePayload>,
+  files?: FileList | File[] | null,
+) {
+  return apiPatch<AdminTripPackage>(
+    `/admin/trip-packages/${id}`,
+    files?.length ? toPackageFormData(payload, files) : payload,
+    true,
+  );
 }
 
 export function deleteAdminTripPackage(id: string) {

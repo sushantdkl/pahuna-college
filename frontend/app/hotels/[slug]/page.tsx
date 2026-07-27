@@ -35,7 +35,7 @@ import {
 } from "@server/services";
 import { getLiveDestinations, getLiveExperiences } from "@server/services/public-live";
 import { formatPrice } from "@server/lib/utils";
-import { getImageOrPlaceholder } from "@server/lib/assets";
+import { getImageOrPlaceholder, isBackendUploadImage } from "@server/lib/assets";
 import { findNearbyPlaces } from "@server/lib/geo-utils";
 import type { MarkerCategory } from "@/components/maps/map-constants";
 import { HotelDetailMapClient } from "@/components/maps/hotel-detail-map-client";
@@ -150,6 +150,7 @@ export default async function HotelDetailPage({
                     alt={provider.name}
                     fill
                     sizes="(max-width: 640px) 100vw, 75vw"
+                    unoptimized={isBackendUploadImage(gallery[0])}
                     className="object-cover"
                     priority
                   />
@@ -165,6 +166,7 @@ export default async function HotelDetailPage({
                         alt={`${provider.name} gallery ${i + 2}`}
                         fill
                         sizes="25vw"
+                        unoptimized={isBackendUploadImage(img)}
                         className="object-cover"
                       />
                     </div>

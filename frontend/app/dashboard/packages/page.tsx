@@ -64,6 +64,7 @@ export default function DashboardPackagesPage() {
   const [deletePackage, setDeletePackage] = useState<AdminTripPackage | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [form, setForm] = useState<FormState>(emptyForm);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [formError, setFormError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
@@ -103,6 +104,7 @@ export default function DashboardPackagesPage() {
   function openCreate() {
     setEditPackage(null);
     setForm(emptyForm);
+    setImageFiles([]);
     setFormError("");
     setIsFormOpen(true);
   }
@@ -110,6 +112,7 @@ export default function DashboardPackagesPage() {
   function openEdit(item: AdminTripPackage) {
     setEditPackage(item);
     setIsFormOpen(true);
+    setImageFiles([]);
     setForm({
       title: item.title,
       slug: item.slug,
@@ -146,15 +149,16 @@ export default function DashboardPackagesPage() {
 
     try {
       if (editPackage) {
-        await updateAdminTripPackageAction(editPackage._id, parsed.data);
+        await updateAdminTripPackageAction(editPackage._id, parsed.data, imageFiles);
         setNotice("Package updated successfully");
       } else {
-        await createAdminTripPackageAction(parsed.data);
+        await createAdminTripPackageAction(parsed.data, imageFiles);
         setNotice("Package added successfully");
       }
       setEditPackage(null);
       setIsFormOpen(false);
       setForm(emptyForm);
+      setImageFiles([]);
       await loadPackages();
     } catch (saveError) {
       setFormError(saveError instanceof Error ? saveError.message : "Unable to save package");
@@ -277,7 +281,7 @@ export default function DashboardPackagesPage() {
         </section>
       </div>
 
-      {isFormOpen ? <PackageFormDialog form={form} error={formError} isSaving={isSaving} isEdit={!!editPackage} onChange={setForm} onClose={() => { setEditPackage(null); setIsFormOpen(false); setForm(emptyForm); }} onSubmit={savePackage} /> : null}
+      {isFormOpen ? <PackageFormDialog form={form} imageFiles={imageFiles} error={formError} isSaving={isSaving} isEdit={!!editPackage} onChange={setForm} onImageFilesChange={setImageFiles} onClose={() => { setEditPackage(null); setIsFormOpen(false); setForm(emptyForm); setImageFiles([]); }} onSubmit={savePackage} /> : null}
       {viewPackage ? <DetailDialog item={viewPackage} onClose={() => setViewPackage(null)} /> : null}
       {deletePackage ? <ConfirmDialog item={deletePackage} onCancel={() => setDeletePackage(null)} onConfirm={confirmDelete} /> : null}
     </AdminReplicaFrame>
@@ -304,7 +308,7 @@ function toPayload(form: FormState): TripPackageFormData {
   };
 }
 
-function PackageFormDialog({ form, error, isSaving, isEdit, onChange, onClose, onSubmit }: { form: FormState; error: string; isSaving: boolean; isEdit: boolean; onChange: (form: FormState) => void; onClose: () => void; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) {
+function PackageFormDialog({ form, imageFiles, error, isSaving, isEdit, onChange, onImageFilesChange, onClose, onSubmit }: { form: FormState; imageFiles: File[]; error: string; isSaving: boolean; isEdit: boolean; onChange: (form: FormState) => void; onImageFilesChange: (files: File[]) => void; onClose: () => void; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/55 px-4 py-6">
       <form onSubmit={onSubmit} className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
@@ -320,7 +324,7 @@ function PackageFormDialog({ form, error, isSaving, isEdit, onChange, onClose, o
           <Field label="Price min"><input type="number" min={0} value={form.priceMin} onChange={(event) => onChange({ ...form, priceMin: event.target.value })} className={inputClassName} /></Field>
           <Field label="Price max"><input type="number" min={0} value={form.priceMax} onChange={(event) => onChange({ ...form, priceMax: event.target.value })} className={inputClassName} /></Field>
           <Field label="Difficulty"><input value={form.difficulty} onChange={(event) => onChange({ ...form, difficulty: event.target.value })} className={inputClassName} /></Field>
-          <Field label="Images, one URL per line"><textarea value={form.images} onChange={(event) => onChange({ ...form, images: event.target.value })} className={`${inputClassName} min-h-24`} /></Field>
+          <Field label="Package images"><input type="file" accept="image/png,image/jpeg,image/webp" multiple onChange={(event) => onImageFilesChange(Array.from(event.target.files || []))} className={inputClassName} />{imageFiles.length ? <span className="text-xs font-medium text-emerald-700">{imageFiles.length} image file(s) selected</span> : form.images ? <span className="text-xs font-medium text-stone-500">Current images will be kept unless you choose new files.</span> : null}</Field>
           <Field label="Description *"><textarea required value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} className={`${inputClassName} min-h-28`} /></Field>
           <Field label="Highlights, one per line"><textarea value={form.highlights} onChange={(event) => onChange({ ...form, highlights: event.target.value })} className={`${inputClassName} min-h-28`} /></Field>
           <Field label="Itinerary, one day per line"><textarea value={form.itinerary} onChange={(event) => onChange({ ...form, itinerary: event.target.value })} className={`${inputClassName} min-h-28`} /></Field>

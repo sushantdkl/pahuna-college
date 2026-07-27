@@ -10,8 +10,14 @@ const stringList = z.preprocess((value) => {
   if (value === undefined || value === null || value === "") return [];
   if (Array.isArray(value)) return value;
   if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // Fall through to plain text splitting.
+    }
     return value
-      .split(",")
+      .split(/[\n,]/)
       .map((item) => item.trim())
       .filter(Boolean);
   }
@@ -22,8 +28,14 @@ const imageList = z.preprocess((value) => {
   if (value === undefined || value === null || value === "") return [];
   if (Array.isArray(value)) return value;
   if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // Fall through to plain text splitting.
+    }
     return value
-      .split(",")
+      .split(/[\n,]/)
       .map((item) => item.trim())
       .filter(Boolean);
   }
@@ -37,6 +49,15 @@ const optionalNumber = z.preprocess(
   (value) => (value === "" || value === null ? undefined : value),
   z.coerce.number().min(0).optional(),
 );
+
+const booleanField = (defaultValue: boolean) =>
+  z.preprocess(
+    (value) => {
+      if (value === "" || value === undefined || value === null) return defaultValue;
+      return value === true || value === "true";
+    },
+    z.boolean(),
+  );
 
 const packageFields = z.object({
     title: z.string().trim().min(1, "Title is required").max(180),
@@ -63,8 +84,8 @@ const packageFields = z.object({
     difficulty: optionalText(80),
     groupSize: optionalText(80),
     images: imageList.default([]),
-  isActive: z.boolean().default(true),
-  isFeatured: z.boolean().default(false),
+  isActive: booleanField(true),
+  isFeatured: booleanField(false),
 });
 
 export const CreateTripPackageDTO = packageFields

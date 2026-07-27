@@ -133,7 +133,18 @@ export default function LoginPage() {
                 />
               </Field>
 
-              <Field label="Password" htmlFor="password">
+              <Field
+                label="Password"
+                htmlFor="password"
+                action={
+                  <Link
+                    href="/forgot-password"
+                    className="rounded-full border border-emerald-900/10 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-800 transition hover:bg-emerald-100 hover:text-emerald-900"
+                  >
+                    Forgot password?
+                  </Link>
+                }
+              >
                 <div className="relative">
                   <input
                     id="password"
@@ -190,12 +201,25 @@ export default function LoginPage() {
   );
 }
 
-function Field({ label, htmlFor, children }: { label: string; htmlFor: string; children: ReactNode }) {
+function Field({
+  label,
+  htmlFor,
+  children,
+  action,
+}: {
+  label: string;
+  htmlFor: string;
+  children: ReactNode;
+  action?: ReactNode;
+}) {
   return (
     <div className="space-y-2">
-      <label htmlFor={htmlFor} className="text-xs font-black uppercase tracking-[0.16em] text-stone-500">
-        {label}
-      </label>
+      <div className="flex items-center justify-between gap-3">
+        <label htmlFor={htmlFor} className="text-xs font-black uppercase tracking-[0.16em] text-stone-500">
+          {label}
+        </label>
+        {action}
+      </div>
       {children}
     </div>
   );

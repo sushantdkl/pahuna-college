@@ -175,7 +175,7 @@ export function ImageTile({
 }>) {
   const content = (
     <div className={`relative overflow-hidden rounded-xl bg-muted ${tall ? "min-h-80" : "min-h-40"} ${className}`}>
-      <Image src={src || image || "/images/placeholders/destination.svg"} alt={alt || title || "Pahuna image"} fill className="object-cover" />
+      <Image src={src || image || "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80"} alt={alt || title || "Pahuna image"} fill className="object-cover" />
       {title ? (
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
           <p className="font-semibold">{title}</p>

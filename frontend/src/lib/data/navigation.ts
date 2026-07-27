@@ -5,7 +5,8 @@ export const mainNavigation = [
   { label: "Food", href: "/food" },
   { label: "Destinations", href: "/destinations" },
   { label: "Trip Planner", href: "/trip-planner" },
-  { label: "Contact", href: "/contact" },
+  { label: "Packages", href: "/packages" },
+  { label: "Blog", href: "/blog" },
   {
     label: "Services",
     href: "/services",
@@ -14,10 +15,10 @@ export const mainNavigation = [
       { label: "Training Academy", href: "/training", description: "Hospitality career programs" },
       { label: "Partner With Us", href: "/partner", description: "Join the Pahuna network" },
       { label: "Trip Routes", href: "/routes", description: "Karnali route planning" },
-      { label: "Trip Cost", href: "/trip-cost", description: "Estimate travel budget" },
       { label: "Things To Do", href: "/experiences", description: "Experiences and activities" },
     ],
   },
+  { label: "Contact", href: "/contact" },
 ];
 
 export const footerNavigation = {
@@ -28,11 +29,14 @@ export const footerNavigation = {
     { label: "Things to Do", href: "/experiences" },
     { label: "Trip Ideas", href: "/itineraries" },
     { label: "Trip Planner", href: "/trip-planner" },
+    { label: "Packages", href: "/packages" },
+    { label: "Trip Routes", href: "/routes" },
   ],
   services: [
     { label: "B2B Consulting", href: "/consulting" },
     { label: "Training Academy", href: "/training" },
     { label: "Partner With Us", href: "/partner" },
+    { label: "Trip Routes", href: "/routes" },
     { label: "Blog & Guides", href: "/blog" },
   ],
   company: [

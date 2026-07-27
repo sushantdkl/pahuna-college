@@ -1,6 +1,7 @@
 ﻿// @ts-nocheck
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   Clock,
@@ -14,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { getImageOrPlaceholder, isBackendUploadImage } from "@/lib/assets";
 import type { TripPackage } from "@/lib/services";
 import { formatPrice } from "@/lib/utils";
 
@@ -37,14 +39,20 @@ interface PackageCardProps {
 
 export function PackageCard({ pkg, showCostSplit = false }: PackageCardProps) {
   const tierLabel = pkg.tier.charAt(0).toUpperCase() + pkg.tier.slice(1);
+  const image = getImageOrPlaceholder(pkg.image || pkg.images?.[0], "route");
 
   return (
     <Card className="overflow-hidden border hover:shadow-lg transition-all group h-full flex flex-col">
       {/* Image */}
       <div className="relative aspect-[2.2/1] overflow-hidden bg-muted">
-        <div className="h-full w-full bg-linear-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
-          <span className="text-xl font-black text-primary">{tierEmoji[pkg.tier]}</span>
-        </div>
+        <Image
+          src={image}
+          alt={`${pkg.title} package image`}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          unoptimized={isBackendUploadImage(image)}
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+        />
         <Badge
           className={`absolute top-3 left-3 ${tierColors[pkg.tier]} text-xs`}
         >

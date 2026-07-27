@@ -59,6 +59,7 @@ export default function DashboardBlogPage() {
   const [viewPost, setViewPost] = useState<BlogPost | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<BlogPost | null>(null);
   const [form, setForm] = useState<BlogForm>(emptyForm);
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [formError, setFormError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -93,12 +94,14 @@ export default function DashboardBlogPage() {
   function openCreate() {
     setSelected(null);
     setForm(emptyForm);
+    setCoverImageFile(null);
     setFormError("");
     setMode("create");
   }
 
   function openEdit(post: BlogPost) {
     setSelected(post);
+    setCoverImageFile(null);
     setForm({
       title: post.title,
       slug: post.slug,
@@ -129,12 +132,13 @@ export default function DashboardBlogPage() {
     setIsSaving(true);
     try {
       if (mode === "create") {
-        await createAdminBlogPost(payload);
+        await createAdminBlogPost(payload, coverImageFile);
         setNotice("Blog post created");
       } else if (selected) {
-        await updateAdminBlogPost(selected._id, payload);
+        await updateAdminBlogPost(selected._id, payload, coverImageFile);
         setNotice("Blog post updated");
       }
+      setCoverImageFile(null);
       setMode(null);
       await loadPosts();
     } catch (saveError) {
@@ -188,15 +192,15 @@ export default function DashboardBlogPage() {
           <div className="flex flex-col gap-3 border-t border-stone-200 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"><p className="text-sm text-stone-500">Page {meta.page} of {meta.totalPages} - {meta.total} posts</p><div className="flex gap-2"><button onClick={() => setPage((value) => Math.max(value - 1, 1))} disabled={isFetching || meta.page <= 1} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold text-stone-700 hover:bg-stone-50 disabled:opacity-50">Previous</button><button onClick={() => setPage((value) => Math.min(value + 1, meta.totalPages))} disabled={isFetching || meta.page >= meta.totalPages} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-50">Next</button></div></div>
         </section>
       </div>
-      {mode ? <BlogFormDialog mode={mode} form={form} error={formError} isSaving={isSaving} onChange={setForm} onClose={() => setMode(null)} onSubmit={handleSave} /> : null}
+      {mode ? <BlogFormDialog mode={mode} form={form} coverImageFile={coverImageFile} error={formError} isSaving={isSaving} onChange={setForm} onCoverImageChange={setCoverImageFile} onClose={() => { setCoverImageFile(null); setMode(null); }} onSubmit={handleSave} /> : null}
       {viewPost ? <ViewDialog post={viewPost} onClose={() => setViewPost(null)} /> : null}
       {deleteTarget ? <DeleteDialog post={deleteTarget} isDeleting={isDeleting} onCancel={() => setDeleteTarget(null)} onConfirm={handleDelete} /> : null}
     </AdminReplicaFrame>
   );
 }
 
-function BlogFormDialog({ mode, form, error, isSaving, onChange, onClose, onSubmit }: { mode: FormMode; form: BlogForm; error: string; isSaving: boolean; onChange: (form: BlogForm) => void; onClose: () => void; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) {
-  return <Modal title={mode === "create" ? "Create post" : "Edit post"} eyebrow="Publishing" onClose={onClose}><form onSubmit={onSubmit} className="space-y-4"><div className="grid gap-4 sm:grid-cols-2"><Field label="Title"><input value={form.title} onChange={(event) => onChange({ ...form, title: event.target.value })} className={inputClassName} /></Field><Field label="Slug"><input value={form.slug} onChange={(event) => onChange({ ...form, slug: event.target.value })} className={inputClassName} placeholder="auto-generated if blank" /></Field><Field label="Author"><input value={form.authorName} onChange={(event) => onChange({ ...form, authorName: event.target.value })} className={inputClassName} /></Field><Field label="Category"><input value={form.category} onChange={(event) => onChange({ ...form, category: event.target.value })} className={inputClassName} /></Field><Field label="Cover image URL"><input value={form.coverImage} onChange={(event) => onChange({ ...form, coverImage: event.target.value })} className={inputClassName} /></Field><Field label="Tags"><input value={form.tags} onChange={(event) => onChange({ ...form, tags: event.target.value })} className={inputClassName} /></Field><Field label="Status"><select value={form.status} onChange={(event) => onChange({ ...form, status: event.target.value as BlogPostStatus })} className={inputClassName}><option value="DRAFT">Draft</option><option value="PUBLISHED">Published</option></select></Field><label className="flex items-center gap-3 rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold"><input type="checkbox" checked={form.isFeatured} onChange={(event) => onChange({ ...form, isFeatured: event.target.checked })} />Featured</label><label className="space-y-2 text-sm font-semibold text-stone-700 sm:col-span-2"><span>Excerpt</span><textarea value={form.excerpt} onChange={(event) => onChange({ ...form, excerpt: event.target.value })} className={`${inputClassName} min-h-20`} /></label><label className="space-y-2 text-sm font-semibold text-stone-700 sm:col-span-2"><span>Content</span><textarea value={form.content} onChange={(event) => onChange({ ...form, content: event.target.value })} className={`${inputClassName} min-h-48 font-mono`} /></label><Field label="SEO title"><input value={form.seoTitle} onChange={(event) => onChange({ ...form, seoTitle: event.target.value })} className={inputClassName} /></Field><Field label="SEO description"><input value={form.seoDescription} onChange={(event) => onChange({ ...form, seoDescription: event.target.value })} className={inputClassName} /></Field></div>{error ? <p className="rounded-lg bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{error}</p> : null}<div className="flex justify-end gap-3"><button type="button" onClick={onClose} disabled={isSaving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button type="submit" disabled={isSaving} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{isSaving ? "Saving..." : "Save post"}</button></div></form></Modal>;
+function BlogFormDialog({ mode, form, coverImageFile, error, isSaving, onChange, onCoverImageChange, onClose, onSubmit }: { mode: FormMode; form: BlogForm; coverImageFile: File | null; error: string; isSaving: boolean; onChange: (form: BlogForm) => void; onCoverImageChange: (file: File | null) => void; onClose: () => void; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) {
+  return <Modal title={mode === "create" ? "Create post" : "Edit post"} eyebrow="Publishing" onClose={onClose}><form onSubmit={onSubmit} className="space-y-4"><div className="grid gap-4 sm:grid-cols-2"><Field label="Title"><input value={form.title} onChange={(event) => onChange({ ...form, title: event.target.value })} className={inputClassName} /></Field><Field label="Slug"><input value={form.slug} onChange={(event) => onChange({ ...form, slug: event.target.value })} className={inputClassName} placeholder="auto-generated if blank" /></Field><Field label="Author"><input value={form.authorName} onChange={(event) => onChange({ ...form, authorName: event.target.value })} className={inputClassName} /></Field><Field label="Category"><input value={form.category} onChange={(event) => onChange({ ...form, category: event.target.value })} className={inputClassName} /></Field><Field label="Cover image"><input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => onCoverImageChange(event.target.files?.[0] || null)} className={inputClassName} />{coverImageFile ? <span className="text-xs font-medium text-emerald-700">Selected: {coverImageFile.name}</span> : form.coverImage ? <span className="text-xs font-medium text-stone-500">Current image will be kept unless you choose a new file.</span> : null}</Field><Field label="Tags"><input value={form.tags} onChange={(event) => onChange({ ...form, tags: event.target.value })} className={inputClassName} /></Field><Field label="Status"><select value={form.status} onChange={(event) => onChange({ ...form, status: event.target.value as BlogPostStatus })} className={inputClassName}><option value="DRAFT">Draft</option><option value="PUBLISHED">Published</option></select></Field><label className="flex items-center gap-3 rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold"><input type="checkbox" checked={form.isFeatured} onChange={(event) => onChange({ ...form, isFeatured: event.target.checked })} />Featured</label><label className="space-y-2 text-sm font-semibold text-stone-700 sm:col-span-2"><span>Excerpt</span><textarea value={form.excerpt} onChange={(event) => onChange({ ...form, excerpt: event.target.value })} className={`${inputClassName} min-h-20`} /></label><label className="space-y-2 text-sm font-semibold text-stone-700 sm:col-span-2"><span>Content</span><textarea value={form.content} onChange={(event) => onChange({ ...form, content: event.target.value })} className={`${inputClassName} min-h-48 font-mono`} /></label><Field label="SEO title"><input value={form.seoTitle} onChange={(event) => onChange({ ...form, seoTitle: event.target.value })} className={inputClassName} /></Field><Field label="SEO description"><input value={form.seoDescription} onChange={(event) => onChange({ ...form, seoDescription: event.target.value })} className={inputClassName} /></Field></div>{error ? <p className="rounded-lg bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{error}</p> : null}<div className="flex justify-end gap-3"><button type="button" onClick={onClose} disabled={isSaving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button type="submit" disabled={isSaving} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{isSaving ? "Saving..." : "Save post"}</button></div></form></Modal>;
 }
 
 function toPayload(form: BlogForm): BlogPostPayload {

@@ -23,8 +23,14 @@ const textList = z.preprocess((value) => {
   if (value === undefined || value === null || value === "") return [];
   if (Array.isArray(value)) return value;
   if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // Fall through to plain text splitting.
+    }
     return value
-      .split(",")
+      .split(/[\n,]/)
       .map((item) => item.trim())
       .filter(Boolean);
   }
@@ -35,8 +41,14 @@ const localImageList = z.preprocess((value) => {
   if (value === undefined || value === null || value === "") return [];
   if (Array.isArray(value)) return value;
   if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // Fall through to plain text splitting.
+    }
     return value
-      .split(",")
+      .split(/[\n,]/)
       .map((item) => item.trim())
       .filter(Boolean);
   }
@@ -101,8 +113,14 @@ const foodProviderFields = z.object({
     .enum(["PENDING", "VERIFIED", "PARTNER", "REJECTED"])
     .default("PENDING"),
   consentStatus: optionalText(80),
-  featured: z.boolean().default(false),
-  active: z.boolean().default(true),
+  featured: z.preprocess(
+    (value) => value === true || value === "true",
+    z.boolean().default(false),
+  ),
+  active: z.preprocess(
+    (value) => value === undefined || value === "" || value === true || value === "true",
+    z.boolean().default(true),
+  ),
 });
 
 export const CreateFoodProviderDTO = foodProviderFields;

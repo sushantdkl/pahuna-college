@@ -46,9 +46,10 @@ interface ExplorerHotel {
 
 interface HotelsExplorerProps {
   hotels: ExplorerHotel[];
+  adminPreview?: boolean;
 }
 
-export function HotelsExplorer({ hotels }: HotelsExplorerProps) {
+export function HotelsExplorer({ hotels, adminPreview = false }: HotelsExplorerProps) {
   const [filters, setFilters] = useState<HotelFilters>({
     search: "",
     propertyType: null,
@@ -182,6 +183,8 @@ export function HotelsExplorer({ hotels }: HotelsExplorerProps) {
                   isActive={selectedSlug === hotel.slug}
                   hasMapLocation={hasVerifiedCoordinates(hotel)}
                   onViewMap={() => openMapForHotel(hotel.slug)}
+                  adminPreview={adminPreview}
+                  dashboardId={hotel.id}
                 />
               </div>
             ))}

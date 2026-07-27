@@ -63,12 +63,48 @@ export async function getAdminBlogPosts(params: BlogPostListParams = {}) {
   return { ...response, data: response.data?.map(normalizeBlogPost) || [] };
 }
 
-export function createAdminBlogPost(payload: BlogPostPayload) {
-  return apiPost<BlogPost>("/admin/blog-posts", payload, true);
+function toBlogPostFormData(payload: BlogPostPayload, coverImageFile?: File | null) {
+  const formData = new FormData();
+
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value === undefined || value === "") return;
+
+    if (Array.isArray(value)) {
+      formData.set(key, value.join(", "));
+      return;
+    }
+
+    formData.set(key, String(value));
+  });
+
+  if (coverImageFile) {
+    formData.set("coverImageFile", coverImageFile);
+  }
+
+  return formData;
 }
 
-export function updateAdminBlogPost(id: string, payload: BlogPostPayload) {
-  return apiPatch<BlogPost>(`/admin/blog-posts/${id}`, payload, true);
+export function createAdminBlogPost(
+  payload: BlogPostPayload,
+  coverImageFile?: File | null,
+) {
+  return apiPost<BlogPost>(
+    "/admin/blog-posts",
+    coverImageFile ? toBlogPostFormData(payload, coverImageFile) : payload,
+    true,
+  );
+}
+
+export function updateAdminBlogPost(
+  id: string,
+  payload: BlogPostPayload,
+  coverImageFile?: File | null,
+) {
+  return apiPatch<BlogPost>(
+    `/admin/blog-posts/${id}`,
+    coverImageFile ? toBlogPostFormData(payload, coverImageFile) : payload,
+    true,
+  );
 }
 
 export function deleteAdminBlogPost(id: string) {

@@ -170,6 +170,12 @@ export default async function TripPlannerPage() {
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="border-white/70 bg-transparent px-8 font-semibold text-white hover:bg-white hover:text-primary">
+            <Link href="/packages">Browse Packages</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="border-white/70 bg-transparent px-8 font-semibold text-white hover:bg-white hover:text-primary">
+            <Link href="/routes">Compare Routes</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="border-white/70 bg-transparent px-8 font-semibold text-white hover:bg-white hover:text-primary">
             <Link href="/contact">Send Inquiry</Link>
           </Button>
         </div>

@@ -3,6 +3,8 @@ import { z } from "zod";
 import {
   CreateUserDTO,
   LoginUserDTO,
+  RequestPasswordResetDTO,
+  ResetPasswordDTO,
   UpdatePasswordDTO,
   UpdateUserDTO,
 } from "../dtos/user.dto";
@@ -148,6 +150,55 @@ export class UserController {
       return ApiResponseHelper.error(
         res,
         error.message || "Internal Server Error",
+        error.status || 500,
+      );
+    }
+  }
+
+  async requestPasswordReset(req: Request, res: Response) {
+    try {
+      const parsedData = RequestPasswordResetDTO.safeParse(req.body);
+
+      if (!parsedData.success) {
+        return ApiResponseHelper.error(
+          res,
+          z.prettifyError(parsedData.error),
+          400,
+        );
+      }
+
+      const result = await userService.requestPasswordReset(parsedData.data);
+
+      return ApiResponseHelper.success(res, result, result.message);
+    } catch {
+      return ApiResponseHelper.error(
+        res,
+        "Password reset request could not be completed. Please try again.",
+        500,
+      );
+    }
+  }
+
+  async resetPassword(req: Request, res: Response) {
+    try {
+      const token = String(req.params.token || "");
+      const parsedData = ResetPasswordDTO.safeParse(req.body);
+
+      if (!parsedData.success) {
+        return ApiResponseHelper.error(
+          res,
+          z.prettifyError(parsedData.error),
+          400,
+        );
+      }
+
+      const result = await userService.resetPassword(token, parsedData.data);
+
+      return ApiResponseHelper.success(res, result, result.message);
+    } catch (error: Error | any | unknown) {
+      return ApiResponseHelper.error(
+        res,
+        error.message || "Password reset failed",
         error.status || 500,
       );
     }

@@ -122,7 +122,7 @@ export function publicHotelToStay(hotel: PublicHotel): StayCard {
     longDescription: hotel.description,
     amenities: hotel.amenities,
     services: [],
-    image: resolveApiAssetUrl(hotel.images[0]) || "/images/placeholders/stay-placeholder.svg",
+    image: resolveApiAssetUrl(hotel.images[0]) || "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80",
     gallery: hotel.images.map((image) => resolveApiAssetUrl(image) || image),
     googleMapLink: `https://www.openstreetmap.org/search?query=${encodeURIComponent(mapsQuery)}`,
     latitude: hotel.latitude,

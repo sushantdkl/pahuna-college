@@ -1,1 +1,6 @@
 .codex-runtime/
+node_modules/
+coverage/
+test-results/
+playwright-report/
+.next/

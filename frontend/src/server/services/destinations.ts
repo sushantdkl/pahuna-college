@@ -2,7 +2,9 @@ import { demoDestinations } from "@server/services";
 
 export type PublicDestination = any;
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_ORIGIN = (process.env.NEXT_PUBLIC_API_URL || API_BASE).replace(/\/api\/v1$/, "");
+const destinationFallbackImage = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80";
 
 type ApiResponse<T> = {
   success: boolean;
@@ -27,12 +29,12 @@ function titleCase(value?: string) {
 }
 
 function destinationImage(destination: Record<string, any>) {
-  return destination.images?.[0] || destination.image || destination.coverImage || "/images/placeholders/destination-placeholder.svg";
+  return destination.images?.[0] || destination.image || destination.coverImage || destinationFallbackImage;
 }
 
 function assetUrl(value?: string) {
   if (!value || !value.startsWith("/uploads/")) return value;
-  return `${API_BASE.replace(/\/api\/v1$/, "")}${value}`;
+  return `${API_ORIGIN}${value}`;
 }
 
 async function getApi<T>(path: string) {
@@ -83,7 +85,7 @@ function normalizeDestination(destination: Record<string, any>): PublicDestinati
     coverImage: image,
     image,
     gallery: (destination.gallery?.length ? destination.gallery : destination.images?.length ? destination.images : [image])
-      .map((item: string) => assetUrl(item) || "/images/placeholders/destination-placeholder.svg"),
+      .map((item: string) => assetUrl(item) || destinationFallbackImage),
     attractions: destination.attractions || [],
     featured: Boolean(destination.featured || destination.isFeatured),
     isFeatured: Boolean(destination.featured || destination.isFeatured),

@@ -55,3 +55,14 @@ export async function updatePasswordApi(data: PasswordUpdateFormData) {
 
   return apiPatch<{ message: string }>("/auth/update-password", payload, true);
 }
+
+export async function requestPasswordResetApi(data: { email: string }) {
+  return apiPost<{ message: string }>("/auth/request-password-reset", data);
+}
+
+export async function resetPasswordApi(token: string, data: { newPassword: string }) {
+  return apiPost<{ message: string }>(
+    `/auth/reset-password/${encodeURIComponent(token)}`,
+    data,
+  );
+}

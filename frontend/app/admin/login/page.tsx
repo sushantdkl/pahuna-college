@@ -13,7 +13,7 @@ import { loginSchema } from "@/schemas/auth.schema";
 
 function adminRedirect() {
   const requested = new URLSearchParams(window.location.search).get("redirect");
-  return requested?.startsWith("/admin") && !requested.startsWith("//") ? requested : "/admin";
+  return requested?.startsWith("/dashboard") && !requested.startsWith("//") ? requested : "/dashboard";
 }
 
 export default function AdminLoginPage() {

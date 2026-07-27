@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { getBlogPost, getBlogPosts, type BlogPost } from "@/lib/api/blog-posts";
+import { getImageOrPlaceholder, isBackendUploadImage } from "@/lib/assets";
 import { demoBlogPosts, getBlogPostSlugs } from "@server/services";
+import Image from "next/image";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -50,6 +52,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const post = await loadPost(slug);
 
   if (!post) notFound();
+  const image = getImageOrPlaceholder(post.coverImage, "destination");
 
   return (
     <>
@@ -98,6 +101,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <section className="py-16">
         <Container>
           <article className="mx-auto max-w-3xl prose prose-neutral">
+            <div className="relative mb-8 aspect-[16/9] overflow-hidden rounded-2xl bg-muted">
+              <Image
+                src={image}
+                alt={post.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 768px"
+                unoptimized={isBackendUploadImage(image)}
+                className="object-cover"
+              />
+            </div>
             <p className="text-lg font-medium text-muted-foreground leading-relaxed">
               {post.excerpt}
             </p>

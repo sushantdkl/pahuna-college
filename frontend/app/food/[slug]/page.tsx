@@ -24,7 +24,7 @@ import { FoodCard } from "@/components/food/food-card";
 import { HotelCard } from "@/components/hotels/hotel-card";
 import { InquiryCollectorButton } from "@/components/inquiries/InquiryCollectorButton";
 import { AddToTripButton } from "@/components/trip-planner/add-to-trip-button";
-import { getImageOrPlaceholder } from "@server/lib/assets";
+import { getImageOrPlaceholder, isBackendUploadImage } from "@server/lib/assets";
 import {
   canShowFoodDirectContact,
   getFeaturedFoodProviders,
@@ -96,6 +96,7 @@ export default async function FoodDetailPage({ params }: FoodDetailPageProps) {
                   alt={provider.name}
                   fill
                   sizes="(max-width: 1024px) 100vw, 70vw"
+                  unoptimized={isBackendUploadImage(image)}
                   className="object-cover"
                   priority
                 />

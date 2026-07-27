@@ -1,13 +1,19 @@
 ﻿// @ts-nocheck
 import Link from "next/link";
 import Image from "next/image";
-import { CheckCircle, ExternalLink, Map, MapPin, Star } from "lucide-react";
+import { CheckCircle, ExternalLink, Map, MapPin, MoreVertical, Pencil, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { InquiryCollectorButton } from "@/components/inquiries/InquiryCollectorButton";
 import { AddToTripButton } from "@/components/trip-planner/add-to-trip-button";
-import { getImageOrPlaceholder } from "@/lib/assets";
+import { getImageOrPlaceholder, isBackendUploadImage } from "@/lib/assets";
 import { cn, formatPrice } from "@/lib/utils";
 
 interface HotelCardProps {
@@ -36,6 +42,8 @@ interface HotelCardProps {
   onViewMap?: () => void;
   hasMapLocation?: boolean;
   googleMapLink?: string | null;
+  adminPreview?: boolean;
+  dashboardId?: string;
 }
 
 const STAY_TYPES = new Set(["HOTEL", "RESORT", "GUEST_HOUSE", "GUESTHOUSE", "HOMESTAY", "LODGE"]);
@@ -70,6 +78,8 @@ export function HotelCard({
   onViewMap,
   hasMapLocation,
   googleMapLink,
+  adminPreview,
+  dashboardId,
 }: HotelCardProps) {
   const trustBadge = verificationBadge(verificationStatus);
   const displayRating = rating ?? starRating ?? null;
@@ -94,8 +104,40 @@ export function HotelCard({
           alt={`${name} listing image`}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          unoptimized={isBackendUploadImage(image)}
           className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
+
+        {adminPreview && (
+          <div className="absolute right-3 top-3 z-30">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="secondary"
+                  aria-label={`Manage ${name}`}
+                  className="h-9 w-9 rounded-full bg-white/95 text-emerald-800 shadow-md backdrop-blur hover:bg-emerald-50"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href={`/dashboard/hotels?edit=${encodeURIComponent(dashboardId || slug)}`}>
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Edit stay
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={`/dashboard/hotels?search=${encodeURIComponent(name)}`}>
+                    Open in dashboard
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
 
         <div className="absolute left-3 top-3 z-20 flex flex-wrap gap-2">
           <Badge variant="secondary" className="bg-white/95 text-xs font-medium text-foreground shadow-sm backdrop-blur-sm">

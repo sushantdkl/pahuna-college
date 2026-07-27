@@ -1,6 +1,10 @@
 import { demoDestinations, demoExperiences, demoItineraries } from "@server/services";
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_ORIGIN = (process.env.NEXT_PUBLIC_API_URL || API_BASE).replace(/\/api\/v1$/, "");
+const destinationFallbackImage = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80";
+const routeFallbackImage = "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80";
+const serviceFallbackImage = "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80";
 
 type ApiResponse<T> = {
   success: boolean;
@@ -27,7 +31,11 @@ async function getApi<T>(path: string) {
 }
 
 function imageFrom(value: Record<string, any> | null | undefined, fallback: string) {
-  return value?.images?.[0] || value?.image || value?.coverImage || fallback;
+  const image = value?.images?.[0] || value?.image || value?.coverImage || fallback;
+  if (typeof image === "string" && image.startsWith("/uploads/")) {
+    return `${API_ORIGIN}${image}`;
+  }
+  return image;
 }
 
 export async function getLiveExperiences() {
@@ -39,8 +47,8 @@ export async function getLiveExperiences() {
       slug: experience.slug || slugify(experience.name || experience.title || experience._id),
       title: experience.title || experience.name,
       name: experience.name || experience.title,
-      coverImage: imageFrom(experience, "/images/placeholders/service-placeholder.svg"),
-      image: imageFrom(experience, "/images/placeholders/service-placeholder.svg"),
+      coverImage: imageFrom(experience, serviceFallbackImage),
+      image: imageFrom(experience, serviceFallbackImage),
       shortDesc: experience.shortDesc || experience.shortDescription || experience.description,
       shortDescription: experience.shortDescription || experience.shortDesc || experience.description,
       difficulty: experience.difficulty || experience.category || "Experience",
@@ -50,7 +58,7 @@ export async function getLiveExperiences() {
   } catch {
     return demoExperiences.map((experience) => ({
       ...experience,
-      coverImage: experience.coverImage || experience.image || "/images/placeholders/service-placeholder.svg",
+      coverImage: experience.coverImage || experience.image || serviceFallbackImage,
       shortDesc: experience.shortDesc || experience.shortDescription || experience.description,
       difficulty: experience.difficulty || experience.category || "Experience",
       priceRange: experience.priceRange || experience.price || "Confirm locally",
@@ -67,8 +75,8 @@ export async function getLiveDestinations() {
       id: destination._id || destination.id,
       slug: destination.slug || slugify(destination.name || destination.title || destination._id),
       title: destination.title || destination.name,
-      coverImage: imageFrom(destination, "/images/placeholders/destination-placeholder.svg"),
-      image: imageFrom(destination, "/images/placeholders/destination-placeholder.svg"),
+      coverImage: imageFrom(destination, destinationFallbackImage),
+      image: imageFrom(destination, destinationFallbackImage),
       bestSeason: destination.bestSeason || destination.bestTimeToVisit || "Confirm locally",
       entryFee: destination.entryFee || "Confirm locally",
     }));
@@ -125,7 +133,7 @@ export async function getLiveItineraries() {
       estimatedCost: itinerary.estimatedCost || (typeof itinerary.budget === "number" ? `NPR ${itinerary.budget.toLocaleString("en-IN")}` : "Confirm locally"),
       bestSeason: itinerary.bestSeason || "Confirm locally",
       groupSize: itinerary.groupSize || "Custom group",
-      coverImage: imageFrom(itinerary.destinationId, "/images/placeholders/route-placeholder.svg"),
+      coverImage: imageFrom(itinerary.destinationId, routeFallbackImage),
       isFeatured: Boolean(itinerary.isFeatured || itinerary.isPublic),
       days: itinerary.days || itineraryDays(itinerary),
     }));

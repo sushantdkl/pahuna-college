@@ -5,7 +5,7 @@ import { CheckCircle, MapPin, MessageCircle, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getImageOrPlaceholder } from "@/lib/assets";
+import { getImageOrPlaceholder, isBackendUploadImage } from "@/lib/assets";
 import { AddToTripButton } from "@/components/trip-planner/add-to-trip-button";
 import type { PublicFoodProvider } from "@/lib/services/food";
 
@@ -27,6 +27,7 @@ export function FoodCard({ provider }: { provider: PublicFoodProvider }) {
           alt={provider.name}
           fill
           sizes="(max-width: 768px) 100vw, 33vw"
+          unoptimized={isBackendUploadImage(image)}
           className="object-cover"
         />
         <div className="absolute left-3 top-3 flex flex-wrap gap-2">

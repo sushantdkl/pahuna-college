@@ -5,6 +5,7 @@ import { Analytics } from "@/components/analytics";
 import { SITE_CONFIG } from "@server/lib/constants";
 import { AuthProvider } from "@/context/AuthContext";
 import { AppChrome } from "@/components/layout/app-chrome";
+import { getAdminPreviewState } from "@/lib/admin-preview";
 import Script from "next/script";
 
 export const viewport: Viewport = {
@@ -83,11 +84,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const adminPreview = await getAdminPreviewState();
+
   return (
     <html lang="en" className="scroll-smooth">
       <head>
@@ -109,7 +112,7 @@ export default function RootLayout({
           >
             Skip to main content
           </a>
-            <AppChrome>{children}</AppChrome>
+            <AppChrome adminPreviewEnabled={adminPreview.enabled}>{children}</AppChrome>
             <Toaster position="bottom-right" />
         </AuthProvider>
         <Analytics />

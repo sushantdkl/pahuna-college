@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "@/lib/api/axios-instance";
+import { apiGet, apiPost, resolveApiAssetUrl } from "@/lib/api/axios-instance";
 import type { TripPackageFormData } from "@/schemas/trip-package.schema";
 
 export type TripPackageDestination = {
@@ -49,12 +49,21 @@ function queryString(params: Record<string, unknown>) {
   return value ? `?${value}` : "";
 }
 
-export function getTripPackages(params: TripPackageListParams = {}) {
-  return apiGet<TripPackage[]>(`/trip-packages${queryString(params)}`);
+function normalizeTripPackage(pkg: TripPackage): TripPackage {
+  return {
+    ...pkg,
+    images: (pkg.images || []).map((image) => resolveApiAssetUrl(image) || image),
+  };
 }
 
-export function getTripPackage(slug: string) {
-  return apiGet<TripPackage>(`/trip-packages/${encodeURIComponent(slug)}`);
+export async function getTripPackages(params: TripPackageListParams = {}) {
+  const response = await apiGet<TripPackage[]>(`/trip-packages${queryString(params)}`);
+  return { ...response, data: response.data?.map(normalizeTripPackage) || [] };
+}
+
+export async function getTripPackage(slug: string) {
+  const response = await apiGet<TripPackage>(`/trip-packages/${encodeURIComponent(slug)}`);
+  return { ...response, data: response.data ? normalizeTripPackage(response.data) : null };
 }
 
 export function createTripPackageInquiry(tripPackage: TripPackage) {

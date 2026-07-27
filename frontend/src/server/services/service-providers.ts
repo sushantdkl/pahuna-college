@@ -1,10 +1,13 @@
 export type PublicServiceProvider = any;
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_ORIGIN = (process.env.NEXT_PUBLIC_API_URL || API_BASE).replace(/\/api\/v1$/, "");
+const stayFallbackImage = "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80";
+const resortFallbackImage = "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1200&q=80";
 
 const fallbackProviders: PublicServiceProvider[] = [
-  { id: "stay-1", slug: "hotel-suva", name: "Hotel Suva", type: "HOTEL", propertyType: "HOTEL", typeLabel: "Hotel", district: "Surkhet", area: "Birendranagar", address: "Birendranagar, Surkhet", shortDesc: "Comfortable city hotel in Surkhet.", shortDescription: "Comfortable city hotel in Surkhet.", longDescription: "A practical stay base for Surkhet and Karnali trips.", priceFrom: 2500, priceMin: 2500, currency: "NPR", rating: 4.2, verificationStatus: "VERIFIED", consentStatus: "APPROVED", featured: true, isFeatured: true, amenities: ["Wi-Fi", "Parking"], services: ["Rooms", "Food"], images: ["/images/placeholders/stay-placeholder.svg"], coverImage: "/images/placeholders/stay-placeholder.svg", googleMapLink: "https://www.openstreetmap.org/search?query=Hotel%20Suva%20Surkhet", latitude: 28.6019, longitude: 81.6339 },
-  { id: "stay-2", slug: "siddhartha-sunny-resort", name: "Siddhartha Sunny Resort", type: "RESORT", propertyType: "RESORT", typeLabel: "Resort", district: "Surkhet", area: "Birendranagar", address: "Surkhet", shortDesc: "Resort stay with local access.", shortDescription: "Resort stay with local access.", longDescription: "A comfortable resort option.", priceFrom: 6100, priceMin: 6100, currency: "NPR", rating: 4.4, verificationStatus: "VERIFIED", consentStatus: "APPROVED", featured: true, isFeatured: true, amenities: ["Garden", "Restaurant"], services: ["Rooms"], images: ["/images/placeholders/stay-placeholder.svg"], coverImage: "/images/placeholders/stay-placeholder.svg", googleMapLink: "https://www.openstreetmap.org/search?query=Siddhartha%20Sunny%20Resort", latitude: 28.59, longitude: 81.62 },
+  { id: "stay-1", slug: "hotel-suva", name: "Hotel Suva", type: "HOTEL", propertyType: "HOTEL", typeLabel: "Hotel", district: "Surkhet", area: "Birendranagar", address: "Birendranagar, Surkhet", shortDesc: "Comfortable city hotel in Surkhet.", shortDescription: "Comfortable city hotel in Surkhet.", longDescription: "A practical stay base for Surkhet and Karnali trips.", priceFrom: 2500, priceMin: 2500, currency: "NPR", rating: 4.2, verificationStatus: "VERIFIED", consentStatus: "APPROVED", featured: true, isFeatured: true, amenities: ["Wi-Fi", "Parking"], services: ["Rooms", "Food"], images: [stayFallbackImage], coverImage: stayFallbackImage, googleMapLink: "https://www.openstreetmap.org/search?query=Hotel%20Suva%20Surkhet", latitude: 28.6019, longitude: 81.6339 },
+  { id: "stay-2", slug: "siddhartha-sunny-resort", name: "Siddhartha Sunny Resort", type: "RESORT", propertyType: "RESORT", typeLabel: "Resort", district: "Surkhet", area: "Birendranagar", address: "Surkhet", shortDesc: "Resort stay with local access.", shortDescription: "Resort stay with local access.", longDescription: "A comfortable resort option.", priceFrom: 6100, priceMin: 6100, currency: "NPR", rating: 4.4, verificationStatus: "VERIFIED", consentStatus: "APPROVED", featured: true, isFeatured: true, amenities: ["Garden", "Restaurant"], services: ["Rooms"], images: [resortFallbackImage], coverImage: resortFallbackImage, googleMapLink: "https://www.openstreetmap.org/search?query=Siddhartha%20Sunny%20Resort", latitude: 28.59, longitude: 81.62 },
 ];
 
 export const serviceProviders: PublicServiceProvider[] = fallbackProviders;
@@ -16,7 +19,7 @@ type ApiResponse<T> = {
 
 function assetUrl(value?: string) {
   if (!value || !value.startsWith("/uploads/")) return value;
-  return `${API_BASE}${value}`;
+  return `${API_ORIGIN}${value}`;
 }
 
 function titleCase(value?: string) {
@@ -36,7 +39,7 @@ async function getApi<T>(path: string) {
 
 function toProvider(record: Record<string, any>): PublicServiceProvider {
   const propertyType = record.propertyType || record.type || "HOTEL";
-  const images = (record.images?.length ? record.images : ["/images/placeholders/stay-placeholder.svg"]).map((image: string) => assetUrl(image));
+  const images = (record.images?.length ? record.images : [stayFallbackImage]).map((image: string) => assetUrl(image));
   const mapsQuery = [record.name, record.address, record.district].filter(Boolean).join(", ");
 
   return {

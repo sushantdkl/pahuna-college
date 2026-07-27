@@ -20,6 +20,7 @@ export function LoginForm({ mode = "user" }: LoginFormProps) {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
   const adminError = mode === "admin" || searchParams.get("error") === "admin";
+  const resetSuccess = mode === "user" && searchParams.get("reset") === "1";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,7 +57,7 @@ export function LoginForm({ mode = "user" }: LoginFormProps) {
       const nextUrl = getSafeRedirectPath(
         null,
         callbackUrl,
-        isAdmin || mode === "admin" ? "/admin" : "/profile",
+        isAdmin || mode === "admin" ? "/dashboard" : "/profile",
       );
 
       setTimeout(() => {
@@ -91,6 +92,12 @@ export function LoginForm({ mode = "user" }: LoginFormProps) {
               {success}
             </div>
           )}
+          {resetSuccess && !success && (
+            <div className="flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
+              Password reset successfully. Please log in with your new password.
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -114,6 +121,14 @@ export function LoginForm({ mode = "user" }: LoginFormProps) {
               required
               autoComplete="current-password"
             />
+            {mode === "user" ? (
+              <Link
+                href="/forgot-password"
+                className="inline-flex w-full items-center justify-center rounded-md border border-emerald-900/15 bg-white px-3 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50 hover:text-emerald-900"
+              >
+                Forgot password?
+              </Link>
+            ) : null}
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>

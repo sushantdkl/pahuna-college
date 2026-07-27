@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getBlogPosts, type BlogPost } from "@/lib/api/blog-posts";
+import { getImageOrPlaceholder, isBackendUploadImage } from "@/lib/assets";
 import { demoBlogPosts } from "@server/services";
 
 export const metadata: Metadata = {
@@ -59,7 +60,10 @@ export default async function BlogPage() {
       <section className="py-16">
         <Container>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
+            {posts.map((post) => {
+              const image = getImageOrPlaceholder(post.coverImage, "destination");
+
+              return (
               <Card
                 key={post.slug}
                 className="group overflow-hidden flex flex-col hover:shadow-lg transition-shadow"
@@ -67,10 +71,11 @@ export default async function BlogPage() {
                 <div className="aspect-[16/10] overflow-hidden bg-muted relative">
                   <div className="h-full w-full relative transition-transform duration-500 group-hover:scale-105">
                     <Image
-                      src={post.coverImage}
+                      src={image}
                       alt={post.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
+                      unoptimized={isBackendUploadImage(image)}
                       className="object-cover"
                     />
                   </div>
@@ -110,7 +115,8 @@ export default async function BlogPage() {
                   </Button>
                 </CardContent>
               </Card>
-            ))}
+              );
+            })}
           </div>
 
           {!posts.length ? (

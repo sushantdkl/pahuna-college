@@ -30,6 +30,20 @@ function bodyPayload(body: Record<string, unknown>) {
   }).filter(([, value]) => value !== undefined));
 }
 
+function blogPostPayload(req: AuthRequest) {
+  const file = req.file;
+  const payload = bodyPayload(req.body);
+
+  if (!file) {
+    return payload;
+  }
+
+  return {
+    ...payload,
+    coverImage: `/uploads/blog/${file.filename}`,
+  };
+}
+
 export class AdminBlogPostController {
   async listPosts(req: AuthRequest, res: Response) {
     try {
@@ -53,7 +67,7 @@ export class AdminBlogPostController {
 
   async createPost(req: AuthRequest, res: Response) {
     try {
-      const parsed = CreateBlogPostDTO.safeParse(bodyPayload(req.body));
+      const parsed = CreateBlogPostDTO.safeParse(blogPostPayload(req));
       if (!parsed.success) return ApiResponseHelper.error(res, z.prettifyError(parsed.error), 400);
       const post = await blogPostService.createPost(parsed.data);
       return ApiResponseHelper.success(res, post, "Blog post created successfully", 201);
@@ -64,7 +78,7 @@ export class AdminBlogPostController {
 
   async updatePost(req: AuthRequest, res: Response) {
     try {
-      const parsed = UpdateBlogPostDTO.safeParse(bodyPayload(req.body));
+      const parsed = UpdateBlogPostDTO.safeParse(blogPostPayload(req));
       if (!parsed.success) return ApiResponseHelper.error(res, z.prettifyError(parsed.error), 400);
       const post = await blogPostService.updatePost(readId(req), parsed.data);
       return ApiResponseHelper.success(res, post, "Blog post updated successfully");

@@ -1,10 +1,13 @@
 export type PublicFoodProvider = any;
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_ORIGIN = (process.env.NEXT_PUBLIC_API_URL || API_BASE).replace(/\/api\/v1$/, "");
+const foodFallbackImage = "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80";
+const coffeeShopImage = "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80";
 
 const fallbackFoodProviders: PublicFoodProvider[] = [
-  { id: "food-1", slug: "4s-cafe", name: "4S Cafe", type: "CAFE", typeLabel: "Cafe", district: "Surkhet", area: "Birendranagar", shortDescription: "Friendly local cafe.", longDescription: "A casual cafe for travelers.", image: "/images/food/cafe-placeholder.svg", images: ["/images/food/cafe-placeholder.svg"], gallery: ["/images/food/cafe-placeholder.svg"], cuisines: ["Cafe", "Snacks"], services: ["Breakfast", "Coffee"], features: ["Family friendly"], priceLevel: "NPR 300 - 900", rating: 4.1, verificationStatus: "PUBLIC_LISTING", googleMapLink: "https://www.openstreetmap.org/search?query=4S%20Cafe%20Surkhet", latitude: 28.602, longitude: 81.634 },
-  { id: "food-2", slug: "tuina-coffee-shop", name: "Tuina Coffee Shop", type: "CAFE", typeLabel: "Cafe", district: "Surkhet", area: "Birendranagar", shortDescription: "Coffee and quick bites.", longDescription: "A simple stop for coffee.", image: "/images/food/cafe-placeholder.svg", images: ["/images/food/cafe-placeholder.svg"], gallery: ["/images/food/cafe-placeholder.svg"], cuisines: ["Coffee"], services: ["Coffee"], features: ["Local"], priceLevel: "NPR 250 - 800", rating: 4.0, verificationStatus: "PUBLIC_LISTING", googleMapLink: "https://www.openstreetmap.org/search?query=Tuina%20Coffee%20Surkhet", latitude: 28.603, longitude: 81.632 },
+  { id: "food-1", slug: "4s-cafe", name: "4S Cafe", type: "CAFE", typeLabel: "Cafe", district: "Surkhet", area: "Birendranagar", shortDescription: "Friendly local cafe.", longDescription: "A casual cafe for travelers.", image: foodFallbackImage, images: [foodFallbackImage], gallery: [foodFallbackImage], cuisines: ["Cafe", "Snacks"], services: ["Breakfast", "Coffee"], features: ["Family friendly"], priceLevel: "NPR 300 - 900", rating: 4.1, verificationStatus: "PUBLIC_LISTING", googleMapLink: "https://www.openstreetmap.org/search?query=4S%20Cafe%20Surkhet", latitude: 28.602, longitude: 81.634 },
+  { id: "food-2", slug: "tuina-coffee-shop", name: "Tuina Coffee Shop", type: "CAFE", typeLabel: "Cafe", district: "Surkhet", area: "Birendranagar", shortDescription: "Coffee and quick bites.", longDescription: "A simple stop for coffee.", image: coffeeShopImage, images: [coffeeShopImage], gallery: [coffeeShopImage], cuisines: ["Coffee"], services: ["Coffee"], features: ["Local"], priceLevel: "NPR 250 - 800", rating: 4.0, verificationStatus: "PUBLIC_LISTING", googleMapLink: "https://www.openstreetmap.org/search?query=Tuina%20Coffee%20Surkhet", latitude: 28.603, longitude: 81.632 },
 ];
 
 export const foodProviders: PublicFoodProvider[] = fallbackFoodProviders;
@@ -16,7 +19,7 @@ type ApiResponse<T> = {
 
 function assetUrl(value?: string) {
   if (!value || !value.startsWith("/uploads/")) return value;
-  return `${API_BASE}${value}`;
+  return `${API_ORIGIN}${value}`;
 }
 
 function titleCase(value?: string) {
@@ -31,7 +34,7 @@ async function getApi<T>(path: string) {
 }
 
 function toFoodProvider(record: Record<string, any>): PublicFoodProvider {
-  const images = (record.images?.length ? record.images : ["/images/placeholders/food-placeholder.svg"]).map((image: string) => assetUrl(image));
+  const images = (record.images?.length ? record.images : [foodFallbackImage]).map((image: string) => assetUrl(image));
   const mapsQuery = [record.name, record.area, record.district].filter(Boolean).join(", ");
 
   return {

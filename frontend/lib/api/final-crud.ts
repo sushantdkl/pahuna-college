@@ -1,4 +1,4 @@
-import { apiDelete, apiGet, apiPatch, apiPost } from "@/lib/api/axios-instance";
+import { apiDelete, apiGet, apiPatch, apiPost, resolveApiAssetUrl } from "@/lib/api/axios-instance";
 
 export type FoodProvider = {
   _id: string;
@@ -104,24 +104,73 @@ function queryString(params: Record<string, unknown>) {
   return value ? `?${value}` : "";
 }
 
-export function getFoodProviders(params: ListParams = {}) {
-  return apiGet<FoodProvider[]>(`/food-providers${queryString(params)}`);
+function normalizeFoodProvider(provider: FoodProvider): FoodProvider {
+  return {
+    ...provider,
+    images: (provider.images || []).map((image) => resolveApiAssetUrl(image) || image),
+  };
 }
 
-export function getFoodProvider(slug: string) {
-  return apiGet<FoodProvider>(`/food-providers/${encodeURIComponent(slug)}`);
+export async function getFoodProviders(params: ListParams = {}) {
+  const response = await apiGet<FoodProvider[]>(`/food-providers${queryString(params)}`);
+  return { ...response, data: response.data?.map(normalizeFoodProvider) || [] };
 }
 
-export function getAdminFoodProviders(params: ListParams = {}) {
-  return apiGet<FoodProvider[]>(`/admin/food-providers${queryString(params)}`, true);
+export async function getFoodProvider(slug: string) {
+  const response = await apiGet<FoodProvider>(`/food-providers/${encodeURIComponent(slug)}`);
+  return { ...response, data: response.data ? normalizeFoodProvider(response.data) : null };
 }
 
-export function createAdminFoodProvider(payload: FoodProviderPayload) {
-  return apiPost<FoodProvider>("/admin/food-providers", payload, true);
+export async function getAdminFoodProviders(params: ListParams = {}) {
+  const response = await apiGet<FoodProvider[]>(`/admin/food-providers${queryString(params)}`, true);
+  return { ...response, data: response.data?.map(normalizeFoodProvider) || [] };
 }
 
-export function updateAdminFoodProvider(id: string, payload: FoodProviderPayload) {
-  return apiPatch<FoodProvider>(`/admin/food-providers/${id}`, payload, true);
+function toFoodProviderFormData(
+  payload: FoodProviderPayload,
+  files?: FileList | File[] | null,
+) {
+  const formData = new FormData();
+
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value === undefined || value === "") return;
+
+    if (Array.isArray(value)) {
+      formData.set(key, JSON.stringify(value));
+      return;
+    }
+
+    formData.set(key, String(value));
+  });
+
+  Array.from(files || []).forEach((file) => {
+    formData.append("images", file);
+  });
+
+  return formData;
+}
+
+export function createAdminFoodProvider(
+  payload: FoodProviderPayload,
+  files?: FileList | File[] | null,
+) {
+  return apiPost<FoodProvider>(
+    "/admin/food-providers",
+    files?.length ? toFoodProviderFormData(payload, files) : payload,
+    true,
+  );
+}
+
+export function updateAdminFoodProvider(
+  id: string,
+  payload: FoodProviderPayload,
+  files?: FileList | File[] | null,
+) {
+  return apiPatch<FoodProvider>(
+    `/admin/food-providers/${id}`,
+    files?.length ? toFoodProviderFormData(payload, files) : payload,
+    true,
+  );
 }
 
 export function deleteAdminFoodProvider(id: string) {

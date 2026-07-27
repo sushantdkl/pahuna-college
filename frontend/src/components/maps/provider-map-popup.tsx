@@ -7,7 +7,7 @@ import { ExternalLink, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { InquiryCollectorButton } from "@/components/inquiries/InquiryCollectorButton";
-import { getImageOrPlaceholder } from "@/lib/assets";
+import { getImageOrPlaceholder, isBackendUploadImage } from "@/lib/assets";
 import { formatPrice } from "@/lib/utils";
 
 export interface ProviderMapPopupProvider {
@@ -42,7 +42,7 @@ export function ProviderMapPopup({ provider }: { provider: ProviderMapPopupProvi
     <div className="w-[280px] space-y-3">
       <div className="flex gap-3">
         <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-muted">
-          <Image src={image} alt={`${provider.name} listing image`} fill sizes="64px" className="object-cover" />
+          <Image src={image} alt={`${provider.name} listing image`} fill sizes="64px" unoptimized={isBackendUploadImage(image)} className="object-cover" />
         </div>
         <div className="min-w-0 flex-1">
           <p className="line-clamp-2 text-sm font-semibold leading-tight text-slate-950">
