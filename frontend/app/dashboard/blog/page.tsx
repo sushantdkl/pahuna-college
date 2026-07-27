@@ -1,240 +1,225 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import { AdminReplicaFrame, ReplicaStatCard, ReplicaStatusBadge } from "@/components/admin-replica-dashboard";
 import {
-  AdminReplicaFrame,
-  ReplicaDataCard,
-  ReplicaStatCard,
-} from "@/app/_components/admin-replica-dashboard";
-import {
-  createAdminBlogPostAction,
-  deleteAdminBlogPostAction,
-  getAdminBlogPostsAction,
-  updateAdminBlogPostAction,
-} from "@/lib/actions/admin-blog-post-actions";
-import type { AdminBlogPost } from "@/lib/api/admin-blog-posts";
-import type { BlogAuthor } from "@/lib/api/blog-posts";
-import {
-  blogPostFormSchema,
-  type BlogPostFormData,
+  createAdminBlogPost,
+  deleteAdminBlogPost,
+  getAdminBlogPosts,
+  updateAdminBlogPost,
+  type BlogPost,
+  type BlogPostPayload,
   type BlogPostStatus,
-} from "@/schemas/blog-post.schema";
+} from "@/lib/api/blog-posts";
 
-type BlogFormState = {
+type FormMode = "create" | "edit";
+type BlogForm = {
   title: string;
   slug: string;
   excerpt: string;
   content: string;
+  coverImage: string;
+  authorName: string;
   category: string;
   tags: string;
-  featuredImage: string;
+  seoTitle: string;
+  seoDescription: string;
   status: BlogPostStatus;
+  isFeatured: boolean;
 };
 
-const emptyForm: BlogFormState = {
+const emptyForm: BlogForm = {
   title: "",
   slug: "",
   excerpt: "",
   content: "",
-  category: "Travel Guide",
+  coverImage: "",
+  authorName: "Pahuna Team",
+  category: "",
   tags: "",
-  featuredImage: "",
+  seoTitle: "",
+  seoDescription: "",
   status: "DRAFT",
+  isFeatured: false,
 };
 
-const statuses: BlogPostStatus[] = ["DRAFT", "PUBLISHED", "ARCHIVED"];
-const categorySeeds = ["Travel Guide", "Destination", "Culture", "Food", "Adventure", "Planning"];
-const imageSuggestions = [
-  "/images/hero/karnali-hero.jpg",
-  "/images/karnali/rara-lake.jpg",
-  "/images/karnali/phoksundo-lake.jpg",
-  "/images/surkhet/bulbule-lake.jpg",
-  "/images/surkhet/kakrebihar.jpg",
-];
 const inputClassName = "w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100";
 
 export default function DashboardBlogPage() {
-  const [posts, setPosts] = useState<AdminBlogPost[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [page, setPage] = useState(1);
-  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<BlogPostStatus | "">("");
-  const [category, setCategory] = useState("");
-  const [meta, setMeta] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
-  const [summary, setSummary] = useState({ total: 0, published: 0, draft: 0, archived: 0 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [meta, setMeta] = useState({ page: 1, limit: 10, total: 0, totalPages: 1, summary: {} as Record<string, number> });
+  const [isFetching, setIsFetching] = useState(false);
   const [notice, setNotice] = useState("");
-  const [viewing, setViewing] = useState<AdminBlogPost | null>(null);
-  const [editing, setEditing] = useState<AdminBlogPost | "create" | null>(null);
-  const [deleting, setDeleting] = useState<AdminBlogPost | null>(null);
-  const [form, setForm] = useState<BlogFormState>(emptyForm);
+  const [error, setError] = useState("");
+  const [mode, setMode] = useState<FormMode | null>(null);
+  const [selected, setSelected] = useState<BlogPost | null>(null);
+  const [viewPost, setViewPost] = useState<BlogPost | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<BlogPost | null>(null);
+  const [form, setForm] = useState<BlogForm>(emptyForm);
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [formError, setFormError] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [savingId, setSavingId] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const loadPosts = useCallback(async () => {
-    setLoading(true);
+    setIsFetching(true);
     setError("");
     try {
-      const response = await getAdminBlogPostsAction({
-        page,
-        limit: 10,
-        search,
-        status,
-        category,
-      });
+      const response = await getAdminBlogPosts({ page, limit: 10, search, status });
       setPosts(response.data || []);
-      setMeta(response.meta || { page, limit: 10, total: response.data?.length || 0, totalPages: 1 });
-      setSummary({
-        total: response.meta?.summary?.total || 0,
-        published: response.meta?.summary?.published || 0,
-        draft: response.meta?.summary?.draft || 0,
-        archived: response.meta?.summary?.archived || 0,
-      });
+      setMeta({ page, limit: 10, total: response.meta?.total || 0, totalPages: response.meta?.totalPages || 1, summary: response.meta?.summary || {} });
     } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : "Unable to load blog posts");
       setPosts([]);
+      setError(loadError instanceof Error ? loadError.message : "Unable to load blog posts");
     } finally {
-      setLoading(false);
+      setIsFetching(false);
     }
-  }, [category, page, search, status]);
+  }, [page, search, status]);
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => void loadPosts(), 0);
+    const timeout = window.setTimeout(() => void loadPosts(), 250);
     return () => window.clearTimeout(timeout);
   }, [loadPosts]);
 
-  const categories = useMemo(
-    () => Array.from(new Set([...categorySeeds, ...posts.map((post) => post.category || "").filter(Boolean)])),
-    [posts],
-  );
+  const stats = useMemo(() => ({
+    total: meta.summary.total ?? meta.total,
+    published: meta.summary.published ?? posts.filter((post) => post.status === "PUBLISHED").length,
+    drafts: meta.summary.drafts ?? posts.filter((post) => post.status === "DRAFT").length,
+    featured: meta.summary.featured ?? posts.filter((post) => post.isFeatured).length,
+  }), [meta, posts]);
 
   function openCreate() {
+    setSelected(null);
     setForm(emptyForm);
+    setCoverImageFile(null);
     setFormError("");
-    setEditing("create");
+    setMode("create");
   }
 
-  function openEdit(post: AdminBlogPost) {
+  function openEdit(post: BlogPost) {
+    setSelected(post);
+    setCoverImageFile(null);
     setForm({
       title: post.title,
       slug: post.slug,
       excerpt: post.excerpt,
       content: post.content,
+      coverImage: post.coverImage || "",
+      authorName: post.authorName,
       category: post.category || "",
       tags: post.tags.join(", "),
-      featuredImage: post.featuredImage || "",
+      seoTitle: post.seoTitle || "",
+      seoDescription: post.seoDescription || "",
       status: post.status,
+      isFeatured: post.isFeatured,
     });
     setFormError("");
-    setEditing(post);
-  }
-
-  function payload(): BlogPostFormData {
-    return {
-      title: form.title,
-      slug: form.slug || undefined,
-      excerpt: form.excerpt,
-      content: form.content,
-      category: form.category || undefined,
-      tags: form.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
-      featuredImage: form.featuredImage || undefined,
-      status: form.status,
-    };
+    setMode("edit");
   }
 
   async function handleSave(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setFormError("");
     setNotice("");
-    const parsed = blogPostFormSchema.safeParse(payload());
-    if (!parsed.success) {
-      setFormError(parsed.error.issues[0]?.message || "Please check the blog post form");
+    setFormError("");
+    const payload = toPayload(form);
+    if (!payload.title || !payload.excerpt || !payload.content || !payload.authorName) {
+      setFormError("Title, excerpt, content, and author are required");
       return;
     }
-    setSaving(true);
+    setIsSaving(true);
     try {
-      if (editing === "create") {
-        await createAdminBlogPostAction(parsed.data);
-        setNotice("Blog post created successfully");
-      } else if (editing) {
-        await updateAdminBlogPostAction(editing._id, parsed.data);
-        setNotice("Blog post updated successfully");
+      if (mode === "create") {
+        await createAdminBlogPost(payload, coverImageFile);
+        setNotice("Blog post created");
+      } else if (selected) {
+        await updateAdminBlogPost(selected._id, payload, coverImageFile);
+        setNotice("Blog post updated");
       }
-      setEditing(null);
+      setCoverImageFile(null);
+      setMode(null);
       await loadPosts();
     } catch (saveError) {
       setFormError(saveError instanceof Error ? saveError.message : "Unable to save blog post");
     } finally {
-      setSaving(false);
+      setIsSaving(false);
     }
   }
 
-  async function togglePublished(post: AdminBlogPost) {
-    const nextStatus: BlogPostStatus = post.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
-    setSavingId(post._id);
+  async function quickPatch(post: BlogPost, payload: BlogPostPayload, message: string) {
+    setNotice("");
+    setError("");
+    try {
+      await updateAdminBlogPost(post._id, payload);
+      setNotice(message);
+      await loadPosts();
+    } catch (updateError) {
+      setError(updateError instanceof Error ? updateError.message : "Unable to update blog post");
+    }
+  }
+
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
     setError("");
     setNotice("");
     try {
-      await updateAdminBlogPostAction(post._id, { status: nextStatus });
-      setNotice(`${post.title} ${nextStatus === "PUBLISHED" ? "published" : "moved to draft"}`);
-      await loadPosts();
-    } catch (updateError) {
-      setError(updateError instanceof Error ? updateError.message : "Unable to update publish status");
-    } finally {
-      setSavingId("");
-    }
-  }
-
-  async function confirmDelete() {
-    if (!deleting) return;
-    setSaving(true);
-    setError("");
-    try {
-      await deleteAdminBlogPostAction(deleting._id);
-      setNotice("Blog post deleted successfully");
-      setDeleting(null);
+      await deleteAdminBlogPost(deleteTarget._id);
+      setNotice("Blog post deleted");
+      setDeleteTarget(null);
       await loadPosts();
     } catch (deleteError) {
       setError(deleteError instanceof Error ? deleteError.message : "Unable to delete blog post");
     } finally {
-      setSaving(false);
+      setIsDeleting(false);
     }
   }
 
   return (
     <AdminReplicaFrame>
       <div className="space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><h1 className="text-2xl font-bold tracking-tight">Blog Posts</h1><p className="text-sm text-stone-500">Manage travel guides, destination stories, and Pahuna content</p></div><button onClick={openCreate} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800">New Blog Post</button></div>
-
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><ReplicaStatCard title="Total Posts" value={summary.total} subtitle="All content" icon="BP" /><ReplicaStatCard title="Published Posts" value={summary.published} subtitle="Publicly visible" icon="PB" /><ReplicaStatCard title="Draft Posts" value={summary.draft} subtitle="Admin only" icon="DR" /><ReplicaStatCard title="Archived Posts" value={summary.archived} subtitle="Stored history" icon="AR" /></div>
-        {notice ? <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">{notice}</p> : null}
-        {error ? <div className="flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><span>{error}</span><button onClick={() => void loadPosts()} className="font-bold underline">Retry</button></div> : null}
-
-        <ReplicaDataCard title="Blog post records" description="Create, edit, publish, archive, or delete" count={meta.total}>
-          <form onSubmit={(event) => { event.preventDefault(); setPage(1); setSearch(searchInput.trim()); }} className="mb-5 grid gap-3 lg:grid-cols-[1fr_190px_220px_auto]"><input value={searchInput} onChange={(event) => setSearchInput(event.target.value)} placeholder="Search title, slug, content, category, or tag" className={inputClassName} /><select value={status} onChange={(event) => { setPage(1); setStatus(event.target.value as BlogPostStatus | ""); }} className={inputClassName}><option value="">All statuses</option>{statuses.map((value) => <option key={value} value={value}>{label(value)}</option>)}</select><select value={category} onChange={(event) => { setPage(1); setCategory(event.target.value); }} className={inputClassName}><option value="">All categories</option>{categories.map((value) => <option key={value} value={value}>{value}</option>)}</select><button type="submit" className="rounded-lg bg-emerald-700 px-5 py-2 text-sm font-semibold text-white">Search</button></form>
-
-          {loading ? <div className="py-14 text-center text-sm font-medium text-stone-500">Loading blog posts...</div> : posts.length ? <table className="w-full min-w-[1050px] text-sm"><thead><tr className="border-b text-left text-stone-500"><th className="pb-3 pr-4 font-medium">Title</th><th className="pb-3 pr-4 font-medium">Category</th><th className="pb-3 pr-4 font-medium">Status</th><th className="pb-3 pr-4 font-medium">Author</th><th className="pb-3 pr-4 font-medium">Published</th><th className="pb-3 pr-4 font-medium">Updated</th><th className="pb-3 font-medium">Actions</th></tr></thead><tbody>{posts.map((post) => <tr key={post._id} className="border-b border-stone-100 align-top last:border-0"><td className="py-4 pr-4"><p className="font-semibold text-stone-900">{post.title}</p><p className="mt-1 text-xs text-stone-500">/{post.slug}</p></td><td className="py-4 pr-4 text-stone-600">{post.category || "Uncategorized"}</td><td className="py-4 pr-4"><StatusBadge status={post.status} /></td><td className="py-4 pr-4 text-stone-600">{authorName(post.authorId)}</td><td className="py-4 pr-4 text-stone-500">{post.publishedAt ? formatDate(post.publishedAt) : "Not published"}</td><td className="py-4 pr-4 text-stone-500">{formatDate(post.updatedAt)}</td><td className="py-4"><div className="flex min-w-80 flex-wrap gap-2">{post.status === "PUBLISHED" ? <Link href={`/blog/${post.slug}`} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-stone-200 px-3 py-2 text-xs font-semibold hover:bg-stone-50">View</Link> : <button onClick={() => setViewing(post)} className="rounded-lg border border-stone-200 px-3 py-2 text-xs font-semibold hover:bg-stone-50">View</button>}<button onClick={() => openEdit(post)} className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">Edit</button><button disabled={savingId === post._id} onClick={() => void togglePublished(post)} className="rounded-lg bg-emerald-700 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50">{savingId === post._id ? "Saving..." : post.status === "PUBLISHED" ? "Unpublish" : "Publish"}</button><button onClick={() => setDeleting(post)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">Delete</button></div></td></tr>)}</tbody></table> : <div className="py-14 text-center"><p className="font-semibold text-stone-800">No blog posts found.</p><p className="mt-2 text-sm text-stone-500">Create a draft or adjust the filters.</p><button onClick={openCreate} className="mt-4 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white">Create post</button></div>}
-          <div className="mt-5 flex items-center justify-between border-t border-stone-200 pt-4 text-sm text-stone-500"><span>Page {page} of {meta.totalPages}</span><div className="flex gap-2"><button disabled={page <= 1 || loading} onClick={() => setPage((value) => Math.max(1, value - 1))} className="rounded-lg border border-stone-200 px-4 py-2 font-semibold disabled:opacity-40">Previous</button><button disabled={page >= meta.totalPages || loading} onClick={() => setPage((value) => Math.min(meta.totalPages, value + 1))} className="rounded-lg border border-stone-200 px-4 py-2 font-semibold disabled:opacity-40">Next</button></div></div>
-        </ReplicaDataCard>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div><h1 className="text-2xl font-bold tracking-tight">Blog Posts</h1><p className="text-sm text-stone-500">Create, edit, publish, feature, and remove public travel stories.</p></div>
+          <button onClick={openCreate} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800">Create Post</button>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><ReplicaStatCard title="Blog Posts" value={stats.total} subtitle="Database records" icon="blog" /><ReplicaStatCard title="Published" value={stats.published} subtitle="Visible publicly" icon="published" /><ReplicaStatCard title="Drafts" value={stats.drafts} subtitle="Private posts" icon="draft" /><ReplicaStatCard title="Featured" value={stats.featured} subtitle="Highlighted posts" icon="featured" /></div>
+        <section className="rounded-xl border border-stone-200 bg-white shadow-sm">
+          <div className="grid gap-3 border-b border-stone-200 px-6 py-5 sm:grid-cols-[1fr_180px]"><input value={search} onChange={(event) => { setPage(1); setSearch(event.target.value); }} placeholder="Search title, excerpt, author, or tag" className={inputClassName} /><select value={status} onChange={(event) => { setPage(1); setStatus(event.target.value as BlogPostStatus | ""); }} className={inputClassName}><option value="">All status</option><option value="DRAFT">Draft</option><option value="PUBLISHED">Published</option></select></div>
+          {notice ? <Alert tone="success" message={notice} /> : null}{error ? <Alert tone="error" message={error} onRetry={loadPosts} /> : null}
+          <div className="overflow-x-auto px-6 py-5"><table className="w-full min-w-[1040px] text-sm"><thead><tr className="border-b text-left"><th className="pb-3 pr-5 font-medium text-stone-500">Post</th><th className="pb-3 pr-5 font-medium text-stone-500">Author</th><th className="pb-3 pr-5 font-medium text-stone-500">Category</th><th className="pb-3 pr-5 font-medium text-stone-500">Status</th><th className="pb-3 pr-5 font-medium text-stone-500">Published</th><th className="pb-3 pr-5 text-right font-medium text-stone-500">Actions</th></tr></thead><tbody>{isFetching ? <LoadingRows /> : posts.length ? posts.map((post) => <tr key={post._id} className="border-b last:border-0"><td className="py-3 pr-5"><p className="font-semibold text-stone-950">{post.title}</p><p className="mt-1 line-clamp-1 text-xs text-stone-500">{post.excerpt}</p></td><td className="py-3 pr-5 text-stone-700">{post.authorName}</td><td className="py-3 pr-5 text-stone-700">{post.category || "Not set"}</td><td className="py-3 pr-5"><ReplicaStatusBadge tone={post.status === "PUBLISHED" ? "success" : "warning"}>{post.status === "PUBLISHED" ? "Published" : "Draft"}</ReplicaStatusBadge></td><td className="py-3 pr-5 text-stone-700">{post.publishedAt ? formatDate(post.publishedAt) : "Not published"}</td><td className="py-3 pr-0"><div className="flex flex-wrap justify-end gap-2"><button onClick={() => setViewPost(post)} className="rounded-lg border border-stone-200 px-3 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50">View</button><button onClick={() => openEdit(post)} className="rounded-lg border border-emerald-200 px-3 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-50">Edit</button><button onClick={() => void quickPatch(post, { status: post.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED" }, post.status === "PUBLISHED" ? "Post moved to draft" : "Post published")} className="rounded-lg border border-amber-200 px-3 py-2 text-xs font-semibold text-amber-800 hover:bg-amber-50">{post.status === "PUBLISHED" ? "Unpublish" : "Publish"}</button><button onClick={() => void quickPatch(post, { isFeatured: !post.isFeatured }, post.isFeatured ? "Post unfeatured" : "Post featured")} className="rounded-lg border border-amber-200 px-3 py-2 text-xs font-semibold text-amber-800 hover:bg-amber-50">{post.isFeatured ? "Unfeature" : "Feature"}</button><button onClick={() => setDeleteTarget(post)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">Delete</button></div></td></tr>) : <tr><td colSpan={6} className="py-14 text-center"><p className="text-base font-semibold text-stone-900">No blog posts found</p><p className="mt-2 text-sm text-stone-500">Create a post or adjust your filters.</p></td></tr>}</tbody></table></div>
+          <div className="flex flex-col gap-3 border-t border-stone-200 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"><p className="text-sm text-stone-500">Page {meta.page} of {meta.totalPages} - {meta.total} posts</p><div className="flex gap-2"><button onClick={() => setPage((value) => Math.max(value - 1, 1))} disabled={isFetching || meta.page <= 1} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold text-stone-700 hover:bg-stone-50 disabled:opacity-50">Previous</button><button onClick={() => setPage((value) => Math.min(value + 1, meta.totalPages))} disabled={isFetching || meta.page >= meta.totalPages} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-50">Next</button></div></div>
+        </section>
       </div>
-
-      {viewing ? <ViewDialog post={viewing} onClose={() => setViewing(null)} /> : null}
-      {editing ? <FormDialog mode={editing === "create" ? "create" : "edit"} form={form} setForm={setForm} categories={categories} error={formError} saving={saving} onClose={() => setEditing(null)} onSubmit={handleSave} /> : null}
-      {deleting ? <ModalShell title="Delete blog post?" eyebrow="Permanent action" onClose={() => setDeleting(null)}><p className="text-sm leading-6 text-stone-600">Delete <strong>{deleting.title}</strong>? This cannot be undone.</p><div className="mt-6 flex justify-end gap-3"><button onClick={() => setDeleting(null)} disabled={saving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button onClick={() => void confirmDelete()} disabled={saving} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Deleting..." : "Delete post"}</button></div></ModalShell> : null}
+      {mode ? <BlogFormDialog mode={mode} form={form} coverImageFile={coverImageFile} error={formError} isSaving={isSaving} onChange={setForm} onCoverImageChange={setCoverImageFile} onClose={() => { setCoverImageFile(null); setMode(null); }} onSubmit={handleSave} /> : null}
+      {viewPost ? <ViewDialog post={viewPost} onClose={() => setViewPost(null)} /> : null}
+      {deleteTarget ? <DeleteDialog post={deleteTarget} isDeleting={isDeleting} onCancel={() => setDeleteTarget(null)} onConfirm={handleDelete} /> : null}
     </AdminReplicaFrame>
   );
 }
 
-function FormDialog({ mode, form, setForm, categories, error, saving, onClose, onSubmit }: { mode: "create" | "edit"; form: BlogFormState; setForm: React.Dispatch<React.SetStateAction<BlogFormState>>; categories: string[]; error: string; saving: boolean; onClose: () => void; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) { return <ModalShell title={mode === "create" ? "Create blog post" : "Edit blog post"} eyebrow="Content management" onClose={onClose}><form onSubmit={onSubmit}><div className="grid gap-4 sm:grid-cols-2"><Field label="Title"><input value={form.title} onChange={(event) => setForm((value) => ({ ...value, title: event.target.value }))} className={inputClassName} /></Field><Field label="Slug (optional)"><input value={form.slug} onChange={(event) => setForm((value) => ({ ...value, slug: event.target.value }))} placeholder="generated-from-title" className={inputClassName} /></Field><Field label="Category"><input list="blog-categories" value={form.category} onChange={(event) => setForm((value) => ({ ...value, category: event.target.value }))} className={inputClassName} /><datalist id="blog-categories">{categories.map((value) => <option key={value} value={value} />)}</datalist></Field><Field label="Status"><select value={form.status} onChange={(event) => setForm((value) => ({ ...value, status: event.target.value as BlogPostStatus }))} className={inputClassName}>{statuses.map((value) => <option key={value} value={value}>{label(value)}</option>)}</select></Field><Field label="Tags (comma separated)"><input value={form.tags} onChange={(event) => setForm((value) => ({ ...value, tags: event.target.value }))} placeholder="karnali, rara, planning" className={inputClassName} /></Field><Field label="Featured image path"><input list="blog-images" value={form.featuredImage} onChange={(event) => setForm((value) => ({ ...value, featuredImage: event.target.value }))} placeholder="/images/karnali/rara-lake.jpg" className={inputClassName} /><datalist id="blog-images">{imageSuggestions.map((value) => <option key={value} value={value} />)}</datalist></Field></div><Field label="Excerpt" className="mt-4"><textarea value={form.excerpt} onChange={(event) => setForm((value) => ({ ...value, excerpt: event.target.value }))} className={`${inputClassName} min-h-24`} /></Field><Field label="Content" className="mt-4"><textarea value={form.content} onChange={(event) => setForm((value) => ({ ...value, content: event.target.value }))} className={`${inputClassName} min-h-64`} placeholder="Write the full travel guide or story" /></Field>{error ? <p className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{error}</p> : null}<div className="mt-6 flex justify-end gap-3"><button type="button" onClick={onClose} disabled={saving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button type="submit" disabled={saving} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Saving..." : mode === "create" ? "Create post" : "Save changes"}</button></div></form></ModalShell>; }
-function ViewDialog({ post, onClose }: { post: AdminBlogPost; onClose: () => void }) { return <ModalShell title={post.title} eyebrow={post.category || "Blog post"} onClose={onClose}><div className="grid gap-3 sm:grid-cols-2"><Detail label="Status" value={label(post.status)} /><Detail label="Author" value={authorName(post.authorId)} /><Detail label="Slug" value={`/${post.slug}`} /><Detail label="Featured image" value={post.featuredImage || "Fallback image"} /></div><TextBlock label="Excerpt" value={post.excerpt} /><TextBlock label="Content" value={post.content} />{post.tags.length ? <p className="mt-4 text-sm text-stone-600">Tags: {post.tags.join(", ")}</p> : null}</ModalShell>; }
-function ModalShell({ title, eyebrow, onClose, children }: { title: string; eyebrow: string; onClose: () => void; children: React.ReactNode }) { return <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-stone-950/55 px-4 py-8"><section className="w-full max-w-3xl rounded-2xl bg-white p-6 shadow-2xl"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">{eyebrow}</p><h2 className="mt-2 text-2xl font-bold">{title}</h2></div><button onClick={onClose} className="rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold">Close</button></div><div className="mt-6">{children}</div></section></div>; }
-function Field({ label: fieldLabel, className = "", children }: { label: string; className?: string; children: React.ReactNode }) { return <label className={`block space-y-2 text-xs font-bold uppercase tracking-[0.12em] text-stone-500 ${className}`}>{fieldLabel}{children}</label>; }
-function Detail({ label: detailLabel, value }: { label: string; value: string }) { return <div className="rounded-xl border border-stone-200 bg-stone-50 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-stone-400">{detailLabel}</p><p className="mt-1 break-words text-sm font-semibold text-stone-800">{value}</p></div>; }
-function TextBlock({ label: blockLabel, value }: { label: string; value: string }) { return <div className="mt-4 rounded-xl border border-stone-200 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-stone-400">{blockLabel}</p><p className="mt-2 max-h-64 overflow-y-auto whitespace-pre-wrap text-sm leading-6 text-stone-700">{value}</p></div>; }
-function StatusBadge({ status }: { status: BlogPostStatus }) { const tone = status === "PUBLISHED" ? "bg-emerald-100 text-emerald-800" : status === "ARCHIVED" ? "bg-stone-100 text-stone-600" : "bg-amber-100 text-amber-900"; return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${tone}`}>{label(status)}</span>; }
-function label(value: string) { return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase()); }
-function authorName(author: string | BlogAuthor) { return typeof author === "string" ? "Pahuna admin" : author.fullName; }
+function BlogFormDialog({ mode, form, coverImageFile, error, isSaving, onChange, onCoverImageChange, onClose, onSubmit }: { mode: FormMode; form: BlogForm; coverImageFile: File | null; error: string; isSaving: boolean; onChange: (form: BlogForm) => void; onCoverImageChange: (file: File | null) => void; onClose: () => void; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) {
+  return <Modal title={mode === "create" ? "Create post" : "Edit post"} eyebrow="Publishing" onClose={onClose}><form onSubmit={onSubmit} className="space-y-4"><div className="grid gap-4 sm:grid-cols-2"><Field label="Title"><input value={form.title} onChange={(event) => onChange({ ...form, title: event.target.value })} className={inputClassName} /></Field><Field label="Slug"><input value={form.slug} onChange={(event) => onChange({ ...form, slug: event.target.value })} className={inputClassName} placeholder="auto-generated if blank" /></Field><Field label="Author"><input value={form.authorName} onChange={(event) => onChange({ ...form, authorName: event.target.value })} className={inputClassName} /></Field><Field label="Category"><input value={form.category} onChange={(event) => onChange({ ...form, category: event.target.value })} className={inputClassName} /></Field><Field label="Cover image"><input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => onCoverImageChange(event.target.files?.[0] || null)} className={inputClassName} />{coverImageFile ? <span className="text-xs font-medium text-emerald-700">Selected: {coverImageFile.name}</span> : form.coverImage ? <span className="text-xs font-medium text-stone-500">Current image will be kept unless you choose a new file.</span> : null}</Field><Field label="Tags"><input value={form.tags} onChange={(event) => onChange({ ...form, tags: event.target.value })} className={inputClassName} /></Field><Field label="Status"><select value={form.status} onChange={(event) => onChange({ ...form, status: event.target.value as BlogPostStatus })} className={inputClassName}><option value="DRAFT">Draft</option><option value="PUBLISHED">Published</option></select></Field><label className="flex items-center gap-3 rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold"><input type="checkbox" checked={form.isFeatured} onChange={(event) => onChange({ ...form, isFeatured: event.target.checked })} />Featured</label><label className="space-y-2 text-sm font-semibold text-stone-700 sm:col-span-2"><span>Excerpt</span><textarea value={form.excerpt} onChange={(event) => onChange({ ...form, excerpt: event.target.value })} className={`${inputClassName} min-h-20`} /></label><label className="space-y-2 text-sm font-semibold text-stone-700 sm:col-span-2"><span>Content</span><textarea value={form.content} onChange={(event) => onChange({ ...form, content: event.target.value })} className={`${inputClassName} min-h-48 font-mono`} /></label><Field label="SEO title"><input value={form.seoTitle} onChange={(event) => onChange({ ...form, seoTitle: event.target.value })} className={inputClassName} /></Field><Field label="SEO description"><input value={form.seoDescription} onChange={(event) => onChange({ ...form, seoDescription: event.target.value })} className={inputClassName} /></Field></div>{error ? <p className="rounded-lg bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{error}</p> : null}<div className="flex justify-end gap-3"><button type="button" onClick={onClose} disabled={isSaving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button type="submit" disabled={isSaving} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{isSaving ? "Saving..." : "Save post"}</button></div></form></Modal>;
+}
+
+function toPayload(form: BlogForm): BlogPostPayload {
+  return { title: form.title.trim(), slug: form.slug.trim() || undefined, excerpt: form.excerpt.trim(), content: form.content.trim(), coverImage: form.coverImage.trim() || undefined, authorName: form.authorName.trim(), category: form.category.trim() || undefined, tags: form.tags.split(",").map((tag) => tag.trim()).filter(Boolean), seoTitle: form.seoTitle.trim() || undefined, seoDescription: form.seoDescription.trim() || undefined, status: form.status, isFeatured: form.isFeatured };
+}
+
+function ViewDialog({ post, onClose }: { post: BlogPost; onClose: () => void }) {
+  return <Modal title={post.title} eyebrow="Post preview" onClose={onClose}><div className="space-y-4"><div className="grid gap-3 sm:grid-cols-2"><Detail label="Author" value={post.authorName} /><Detail label="Status" value={post.status === "PUBLISHED" ? "Published" : "Draft"} /><Detail label="Category" value={post.category || "Not set"} /><Detail label="Slug" value={post.slug} /></div><p className="rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 text-sm leading-6 text-stone-700">{post.excerpt}</p><div className="max-h-72 overflow-y-auto whitespace-pre-wrap rounded-lg border border-stone-200 px-4 py-3 text-sm leading-7 text-stone-700">{post.content}</div></div></Modal>;
+}
+
+function DeleteDialog({ post, isDeleting, onCancel, onConfirm }: { post: BlogPost; isDeleting: boolean; onCancel: () => void; onConfirm: () => void }) {
+  return <Modal title="Confirm deletion" eyebrow="Delete blog post" onClose={onCancel}><p className="text-sm leading-6 text-stone-600">This will remove <span className="font-bold">{post.title}</span>. Published posts disappear from the public blog immediately.</p><div className="mt-6 flex justify-end gap-3"><button onClick={onCancel} disabled={isDeleting} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold disabled:opacity-50">Cancel</button><button onClick={onConfirm} disabled={isDeleting} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{isDeleting ? "Deleting..." : "Delete post"}</button></div></Modal>;
+}
+
+function Alert({ tone, message, onRetry }: { tone: "success" | "error"; message: string; onRetry?: () => void }) {
+  return <div className={`mx-6 mt-5 rounded-lg border px-4 py-3 text-sm ${tone === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-red-200 bg-red-50 text-red-700"}`}><div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><span>{message}</span>{onRetry ? <button onClick={onRetry} className="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700">Retry</button> : null}</div></div>;
+}
+function LoadingRows() { return Array.from({ length: 6 }).map((_, rowIndex) => <tr key={rowIndex}>{Array.from({ length: 6 }).map((__, cellIndex) => <td key={cellIndex} className="py-4 pr-5"><div className="h-4 animate-pulse rounded-full bg-stone-100" /></td>)}</tr>); }
+function Modal({ title, eyebrow, children, onClose }: { title: string; eyebrow: string; children: React.ReactNode; onClose: () => void }) { return <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/55 px-4 py-6"><section className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl"><div className="mb-6 flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">{eyebrow}</p><h2 className="mt-2 text-2xl font-bold text-stone-950">{title}</h2></div><button onClick={onClose} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold text-stone-600 hover:bg-stone-50">Close</button></div>{children}</section></div>; }
+function Field({ label, children }: { label: string; children: React.ReactNode }) { return <label className="space-y-2 text-sm font-semibold text-stone-700"><span>{label}</span>{children}</label>; }
+function Detail({ label, value }: { label: string; value: string }) { return <div className="rounded-lg border border-stone-200 bg-stone-50 px-4 py-3"><p className="text-xs font-bold uppercase tracking-[0.14em] text-stone-400">{label}</p><p className="mt-1 text-sm font-semibold text-stone-900">{value}</p></div>; }
 function formatDate(value: string) { return new Date(value).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); }

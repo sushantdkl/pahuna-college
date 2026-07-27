@@ -13,6 +13,8 @@ export type AuthUser = {
   location?: string;
   bio?: string;
   profileImage?: string;
+  isActive?: boolean;
+  emailVerified?: boolean;
   role?: string;
   createdAt?: string;
 };
@@ -52,4 +54,15 @@ export async function updatePasswordApi(data: PasswordUpdateFormData) {
   void confirmPassword;
 
   return apiPatch<{ message: string }>("/auth/update-password", payload, true);
+}
+
+export async function requestPasswordResetApi(data: { email: string }) {
+  return apiPost<{ message: string }>("/auth/request-password-reset", data);
+}
+
+export async function resetPasswordApi(token: string, data: { newPassword: string }) {
+  return apiPost<{ message: string }>(
+    `/auth/reset-password/${encodeURIComponent(token)}`,
+    data,
+  );
 }

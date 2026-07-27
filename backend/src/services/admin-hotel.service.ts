@@ -15,6 +15,14 @@ type ListHotelsParams = {
   featured?: string;
 };
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function readBooleanFilter(value?: string) {
   if (value === undefined || value === "") return undefined;
   return value.toLowerCase() === "true";
@@ -66,6 +74,28 @@ export class AdminHotelService {
       availableRooms: hotel.availableRooms,
       createdAt: hotel.createdAt,
       updatedAt: hotel.updatedAt,
+    };
+  }
+
+  private toPublicHotel(hotel: IHotel) {
+    return {
+      _id: hotel._id.toString(),
+      slug: slugify(hotel.name),
+      name: hotel.name,
+      description: hotel.description,
+      address: hotel.address,
+      district: hotel.district,
+      latitude: hotel.latitude,
+      longitude: hotel.longitude,
+      propertyType: hotel.propertyType,
+      starRating: hotel.starRating,
+      priceMin: hotel.priceMin,
+      priceMax: hotel.priceMax,
+      amenities: hotel.amenities || [],
+      images: hotel.images || [],
+      isVerified: hotel.isVerified,
+      isFeatured: hotel.isFeatured,
+      availableRooms: hotel.availableRooms,
     };
   }
 
@@ -139,6 +169,40 @@ export class AdminHotelService {
         totalPages: Math.max(Math.ceil(total / limit), 1),
       },
     };
+  }
+
+  async listPublicHotels(params: ListHotelsParams) {
+    await this.seedHotelsIfEmpty();
+
+    const page = Math.max(Number(params.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(params.limit) || 12, 1), 50);
+    const skip = (page - 1) * limit;
+    const filter = { ...this.buildFilter(params), isActive: true };
+
+    const [hotels, total] = await Promise.all([
+      HotelModel.find(filter).sort({ createdAt: -1, updatedAt: -1 }).skip(skip).limit(limit),
+      HotelModel.countDocuments(filter),
+    ]);
+
+    return {
+      hotels: hotels.map((hotel) => this.toPublicHotel(hotel)),
+      meta: { page, limit, total, totalPages: Math.max(Math.ceil(total / limit), 1) },
+    };
+  }
+
+  async getPublicHotel(identifier: string) {
+    await this.seedHotelsIfEmpty();
+    const hotel = mongoose.Types.ObjectId.isValid(identifier)
+      ? await HotelModel.findOne({ _id: identifier, isActive: true })
+      : (await HotelModel.find({ isActive: true })).find(
+          (candidate) => slugify(candidate.name) === identifier.toLowerCase(),
+        );
+
+    if (!hotel) {
+      throw new HttpException(404, "Hotel not found");
+    }
+
+    return this.toPublicHotel(hotel);
   }
 
   async getHotel(id: string) {

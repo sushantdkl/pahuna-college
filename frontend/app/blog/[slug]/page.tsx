@@ -1,84 +1,136 @@
-"use client";
-
-import { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
-import { getPublishedBlogPostAction } from "@/lib/actions/blog-post-actions";
-import type { BlogAuthor, BlogPost } from "@/lib/api/blog-posts";
+import { notFound } from "next/navigation";
+import { ChevronRight, Tag, ArrowLeft } from "lucide-react";
+import { Container } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { getBlogPost, getBlogPosts, type BlogPost } from "@/lib/api/blog-posts";
+import { getImageOrPlaceholder, isBackendUploadImage } from "@/lib/assets";
+import { demoBlogPosts, getBlogPostSlugs } from "@server/services";
+import Image from "next/image";
 
-const fallbackImage = "/images/hero/karnali-hero.jpg";
+interface BlogPostPageProps {
+  params: Promise<{ slug: string }>;
+}
 
-export default function BlogPostDetailPage() {
-  const params = useParams<{ slug: string }>();
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+export async function generateStaticParams() {
+  try {
+    const response = await getBlogPosts({ page: 1, limit: 50 });
+    if (response.data?.length) return response.data.map((post) => ({ slug: post.slug }));
+  } catch {
+    return getBlogPostSlugs().map((slug) => ({ slug }));
+  }
 
-  const loadPost = useCallback(async () => {
-    if (!params.slug) return;
-    setLoading(true);
-    setError("");
-    try {
-      const response = await getPublishedBlogPostAction(params.slug);
-      setPost(response.data || null);
-    } catch (loadError) {
-      setError(
-        loadError instanceof Error
-          ? loadError.message
-          : "Unable to load this blog post",
-      );
-      setPost(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [params.slug]);
+  return [];
+}
 
-  useEffect(() => {
-    const timeout = window.setTimeout(() => void loadPost(), 0);
-    return () => window.clearTimeout(timeout);
-  }, [loadPost]);
+async function loadPost(slug: string): Promise<BlogPost | null> {
+  try {
+    const response = await getBlogPost(slug);
+    return response.data || null;
+  } catch {
+    return (demoBlogPosts as BlogPost[]).find((post) => post.slug === slug) || null;
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: BlogPostPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await loadPost(slug);
+  if (!post) return { title: "Post Not Found" };
+  return {
+    title: post.title,
+    description: post.excerpt,
+  };
+}
+
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const { slug } = await params;
+  const post = await loadPost(slug);
+
+  if (!post) notFound();
+  const image = getImageOrPlaceholder(post.coverImage, "destination");
 
   return (
-    <main className="min-h-screen bg-[#fffaf0] text-stone-950">
-      <SiteHeader />
-      {loading ? <div className="mx-auto flex min-h-[65vh] max-w-4xl items-center justify-center px-4 text-sm font-bold text-stone-500">Loading published story...</div> : error || !post ? (
-        <div className="mx-auto flex min-h-[65vh] max-w-3xl flex-col items-center justify-center px-4 text-center"><p className="text-2xl font-black">Story not available</p><p className="mt-3 text-sm text-stone-600">{error || "This story may be a draft or has been removed."}</p><div className="mt-6 flex gap-3"><button onClick={() => void loadPost()} className="rounded-full border border-emerald-200 bg-white px-5 py-3 text-sm font-bold text-emerald-800">Retry</button><Link href="/blog" className="rounded-full bg-emerald-700 px-5 py-3 text-sm font-bold text-white">Back to blog</Link></div></div>
-      ) : (
-        <article>
-          <section className="relative min-h-[430px] overflow-hidden bg-emerald-950">
-            <Image src={post.featuredImage || fallbackImage} alt={post.title} fill priority sizes="100vw" className="object-cover opacity-70" />
-            <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/45 to-transparent" />
-            <div className="relative mx-auto flex min-h-[430px] max-w-5xl flex-col justify-end px-4 py-14 text-white sm:px-6 lg:px-8">
-              <Link href="/blog" className="mb-8 w-fit rounded-full border border-white/30 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] backdrop-blur">← All stories</Link>
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-200">{post.category || "Travel guide"}</p>
-              <h1 className="mt-4 max-w-4xl text-4xl font-black leading-tight sm:text-5xl">{post.title}</h1>
-              <p className="mt-5 max-w-3xl text-base leading-7 text-white/85">{post.excerpt}</p>
-              <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-white/75"><span>By {authorName(post.authorId)}</span><time>{formatDate(post.publishedAt || post.createdAt)}</time></div>
+    <>
+      <section className="bg-linear-to-br from-slate-100/80 via-indigo-50/40 to-background py-16">
+        <Container>
+          <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
+            <Link href="/" className="hover:text-primary">
+              Home
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <Link href="/blog" className="hover:text-primary">
+              Blog
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-foreground font-medium line-clamp-1">
+              {post.title}
+            </span>
+          </nav>
+
+          <div className="mx-auto max-w-3xl">
+            {post.category && (
+              <Badge variant="secondary" className="mb-4">
+                {post.category}
+              </Badge>
+            )}
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+              {post.title}
+            </h1>
+            <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+              <span>{post.authorName}</span>
             </div>
-          </section>
+            {post.tags && post.tags.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {post.tags.map((tag) => (
+                  <Badge key={tag} variant="outline" className="text-xs">
+                    <Tag className="mr-1 h-3 w-3" />
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        </Container>
+      </section>
 
-          <section className="mx-auto max-w-4xl px-4 py-14 sm:px-6 lg:px-8">
-            {post.tags.length ? <div className="mb-8 flex flex-wrap gap-2">{post.tags.map((tag) => <span key={tag} className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800">#{tag}</span>)}</div> : null}
-            <div className="whitespace-pre-wrap text-base leading-8 text-stone-700">{post.content}</div>
-            <div className="mt-12 border-t border-emerald-900/10 pt-8"><Link href="/blog" className="inline-flex rounded-full bg-emerald-700 px-5 py-3 text-sm font-black text-white hover:bg-emerald-800">Explore more stories</Link></div>
-          </section>
-        </article>
-      )}
-      <SiteFooter />
-    </main>
+      <section className="py-16">
+        <Container>
+          <article className="mx-auto max-w-3xl prose prose-neutral">
+            <div className="relative mb-8 aspect-[16/9] overflow-hidden rounded-2xl bg-muted">
+              <Image
+                src={image}
+                alt={post.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 768px"
+                unoptimized={isBackendUploadImage(image)}
+                className="object-cover"
+              />
+            </div>
+            <p className="text-lg font-medium text-muted-foreground leading-relaxed">
+              {post.excerpt}
+            </p>
+            <Separator className="my-8" />
+            <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
+              {post.content}
+            </div>
+          </article>
+
+          <div className="mx-auto max-w-3xl mt-12">
+            <Separator className="mb-8" />
+            <Button asChild variant="outline">
+              <Link href="/blog">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Blog
+              </Link>
+            </Button>
+          </div>
+        </Container>
+      </section>
+    </>
   );
-}
-
-function authorName(author: string | BlogAuthor) {
-  return typeof author === "string" ? "Pahuna team" : author.fullName;
-}
-
-function formatDate(value: string) {
-  return new Date(value).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 }

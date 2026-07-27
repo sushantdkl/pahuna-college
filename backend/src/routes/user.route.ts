@@ -9,6 +9,8 @@ const userController = new UserController();
 // Routes only map HTTP endpoints to controller methods; validation and auth rules stay in deeper layers.
 userRouter.post("/register", userController.createUser);
 userRouter.post("/login", userController.loginUser);
+userRouter.post("/request-password-reset", userController.requestPasswordReset);
+userRouter.post("/reset-password/:token", userController.resetPassword);
 userRouter.get("/whoami", authorized, userController.getCurrentUser);
 userRouter.patch(
   "/update",

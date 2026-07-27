@@ -20,3 +20,10 @@ export const SMTP_PASS = process.env.SMTP_PASS || "";
 export const SMTP_FROM = process.env.SMTP_FROM || SMTP_USER;
 export const PAHUNA_NOTIFICATION_EMAIL =
   process.env.PAHUNA_NOTIFICATION_EMAIL || "";
+
+export const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+export const EMAIL_USER = process.env.EMAIL_USER || SMTP_USER;
+export const EMAIL_PASS = process.env.EMAIL_PASS || SMTP_PASS;
+export const EMAIL_FROM_NAME = process.env.EMAIL_FROM_NAME || "Pahuna";
+export const EMAIL_TEST_RECIPIENT =
+  process.env.EMAIL_TEST_RECIPIENT || PAHUNA_NOTIFICATION_EMAIL;

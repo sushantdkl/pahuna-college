@@ -120,5 +120,5 @@ function formatDate(value: string) {
 
 function dateRange(itinerary: Itinerary) {
   if (!itinerary.startDate && !itinerary.endDate) return "Flexible";
-  return `${itinerary.startDate ? formatDate(itinerary.startDate) : "Flexible"} – ${itinerary.endDate ? formatDate(itinerary.endDate) : "Flexible"}`;
+  return `${itinerary.startDate ? formatDate(itinerary.startDate) : "Flexible"} - ${itinerary.endDate ? formatDate(itinerary.endDate) : "Flexible"}`;
 }

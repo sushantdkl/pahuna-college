@@ -3,16 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { ProfileSettingsPanel } from "@/app/_components/profile-forms";
-import { SiteFooter } from "@/app/_components/pahuna-layout";
+import { ProfileSettingsPanel } from "@/components/profile-forms";
+import { SiteFooter } from "@/components/pahuna-layout";
 
 const navItems = [
   { label: "Profile Settings", href: "#profile-settings" },
   { label: "Security & Password", href: "#password" },
-  { label: "Notifications", href: "#notifications" },
-  { label: "Privacy", href: "#privacy" },
-  { label: "Payment Methods", href: "#payment" },
-  { label: "App Preferences", href: "#preferences" },
 ];
 
 export default function AccountSettingsPage() {
@@ -39,7 +35,7 @@ export default function AccountSettingsPage() {
           <p className="text-xs font-black uppercase tracking-[0.28em] text-emerald-700">Traveler Account</p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">Account Settings</h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-600">
-            Manage your profile, password, preferences, and Pahuna account details with clean spacing and connected Sprint 3 forms.
+            Manage your profile, password, preferences, and Pahuna account details from one focused account workspace.
           </p>
         </div>
 
@@ -57,30 +53,10 @@ export default function AccountSettingsPage() {
 
           <div className="space-y-6">
             <ProfileSettingsPanel compact />
-            <PlaceholderSection id="notifications" title="Notification Preferences" text="Email updates, stay availability, route reminders, and inquiry replies can be connected in the next module." />
-            <PlaceholderSection id="privacy" title="Privacy Settings" text="Public profile visibility and saved traveler preferences are prepared as frontend UI placeholders." />
-            <PlaceholderSection id="payment" title="Payment Methods" text="Payment method management is not connected in Sprint 3, so no backend/payment logic was changed." />
-            <PlaceholderSection id="preferences" title="App Preferences" text="Language, display theme, and route preference controls can be connected later." />
-            <section className="rounded-[28px] border border-red-200 bg-red-50 p-6 shadow-sm">
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-red-700">Danger Zone</p>
-              <h2 className="mt-2 text-2xl font-black text-red-800">Account actions</h2>
-              <p className="mt-3 text-sm leading-6 text-red-700">Account deletion is intentionally not connected in Sprint 3.</p>
-              <button disabled className="mt-5 rounded-full bg-red-200 px-5 py-3 text-sm font-black text-red-800 opacity-70">Delete Account Disabled</button>
-            </section>
           </div>
         </div>
       </section>
       <SiteFooter />
     </main>
-  );
-}
-
-function PlaceholderSection({ id, title, text }: { id: string; title: string; text: string }) {
-  return (
-    <section id={id} className="rounded-[28px] border border-emerald-900/10 bg-white p-6 shadow-lg shadow-emerald-900/5">
-      <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">{title}</p>
-      <h2 className="mt-2 text-2xl font-black text-stone-950">{title}</h2>
-      <p className="mt-3 text-sm leading-6 text-stone-600">{text}</p>
-    </section>
   );
 }

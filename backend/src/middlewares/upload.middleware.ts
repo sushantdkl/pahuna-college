@@ -7,11 +7,17 @@ const profileUploadDirectory = path.join(process.cwd(), "uploads", "profiles");
 const hotelUploadDirectory = path.join(process.cwd(), "uploads", "hotels");
 const destinationUploadDirectory = path.join(process.cwd(), "uploads", "destinations");
 const experienceUploadDirectory = path.join(process.cwd(), "uploads", "experiences");
+const blogUploadDirectory = path.join(process.cwd(), "uploads", "blog");
+const packageUploadDirectory = path.join(process.cwd(), "uploads", "packages");
+const foodUploadDirectory = path.join(process.cwd(), "uploads", "food");
 
 fs.mkdirSync(profileUploadDirectory, { recursive: true });
 fs.mkdirSync(hotelUploadDirectory, { recursive: true });
 fs.mkdirSync(destinationUploadDirectory, { recursive: true });
 fs.mkdirSync(experienceUploadDirectory, { recursive: true });
+fs.mkdirSync(blogUploadDirectory, { recursive: true });
+fs.mkdirSync(packageUploadDirectory, { recursive: true });
+fs.mkdirSync(foodUploadDirectory, { recursive: true });
 
 function createImageStorage(uploadDirectory: string) {
   return multer.diskStorage({
@@ -29,6 +35,9 @@ const profileStorage = createImageStorage(profileUploadDirectory);
 const hotelStorage = createImageStorage(hotelUploadDirectory);
 const destinationStorage = createImageStorage(destinationUploadDirectory);
 const experienceStorage = createImageStorage(experienceUploadDirectory);
+const blogStorage = createImageStorage(blogUploadDirectory);
+const packageStorage = createImageStorage(packageUploadDirectory);
+const foodStorage = createImageStorage(foodUploadDirectory);
 
 const fileFilter = (
   req: Request,
@@ -73,6 +82,32 @@ export const uploadDestinationImages = multer({
 
 export const uploadExperienceImages = multer({
   storage: experienceStorage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+    files: 6,
+  },
+});
+
+export const uploadBlogCoverImage = multer({
+  storage: blogStorage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+});
+
+export const uploadTripPackageImages = multer({
+  storage: packageStorage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+    files: 8,
+  },
+});
+
+export const uploadFoodProviderImages = multer({
+  storage: foodStorage,
   fileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024,

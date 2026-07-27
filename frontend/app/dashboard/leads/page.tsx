@@ -5,7 +5,7 @@ import {
   AdminReplicaFrame,
   ReplicaDataCard,
   ReplicaStatCard,
-} from "@/app/_components/admin-replica-dashboard";
+} from "@/components/admin-replica-dashboard";
 import {
   deleteAdminInquiryAction,
   getAdminInquiriesAction,
@@ -260,3 +260,4 @@ function hotelLabel(inquiry: AdminInquiry) {
 }
 function formatLabel(value: string) { return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase()); }
 function formatDate(value: string) { return new Date(value).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); }
+

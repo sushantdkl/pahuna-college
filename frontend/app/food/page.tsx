@@ -1,188 +1,163 @@
-"use client";
-
-import { useMemo, useState } from "react";
-import Image from "next/image";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { ButtonLink, PageShell, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
-import { foodProviders, images, safeImage } from "@/lib/pahuna-content";
+import { ArrowRight, Coffee, MapPin, MessageCircle, UtensilsCrossed } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Container } from "@/components/layout/container";
+import { FoodCard } from "@/components/food/food-card";
+import { FoodExplorer } from "@/components/food/food-explorer";
+import { InquiryCollectorButton } from "@/components/inquiries/InquiryCollectorButton";
+import { getFeaturedFoodProviders, getFoodProviders } from "@server/services/food";
 
-const ALL = "All";
-const foodCategories = ["Cafes", "Momo & Fast Food", "Family Restaurants", "Viewpoint Cafes", "Local Food", "Events & Party Venues"];
+export const metadata: Metadata = {
+  title: "Cafes & Restaurants in Surkhet | Pahuna",
+  description:
+    "Explore cafes, restaurants, momo spots, bakeries, tea shops, lounges, party venues, and local food places in Birendranagar and Surkhet with Pahuna.",
+  alternates: { canonical: "/food" },
+};
 
-export default function FoodPage() {
-  const [query, setQuery] = useState("");
-  const [activeType, setActiveType] = useState(ALL);
-  const [activeArea, setActiveArea] = useState(ALL);
-  const [activeCuisine, setActiveCuisine] = useState(ALL);
-  const [activeFeature, setActiveFeature] = useState(ALL);
+const FOOD_CATEGORIES = [
+  "Cafes",
+  "Momo & Fast Food",
+  "Family Restaurants",
+  "Viewpoint Cafes",
+  "Local Food",
+  "Events & Party Venues",
+];
 
-  const options = useMemo(() => {
-    const unique = (values: string[]) => [ALL, ...Array.from(new Set(values.filter(Boolean))).sort()];
-
-    return {
-      types: unique(foodProviders.map((provider) => provider.typeLabel)),
-      areas: unique(foodProviders.map((provider) => provider.area)),
-      cuisines: unique(foodProviders.flatMap((provider) => provider.cuisines)),
-      features: unique(foodProviders.flatMap((provider) => provider.features)),
-    };
-  }, []);
-
-  const visibleProviders = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-
-    return foodProviders.filter((provider) => {
-      if (activeType !== ALL && provider.typeLabel !== activeType) return false;
-      if (activeArea !== ALL && provider.area !== activeArea) return false;
-      if (activeCuisine !== ALL && !provider.cuisines.includes(activeCuisine)) return false;
-      if (activeFeature !== ALL && !provider.features.includes(activeFeature)) return false;
-      if (!needle) return true;
-
-      return [
-        provider.name,
-        provider.type,
-        provider.typeLabel,
-        provider.area,
-        provider.district,
-        provider.shortDescription,
-        ...provider.cuisines,
-        ...provider.services,
-        ...provider.features,
-      ].join(" ").toLowerCase().includes(needle);
-    });
-  }, [activeArea, activeCuisine, activeFeature, activeType, query]);
-
-  const featured = foodProviders.filter((provider) => provider.featured).slice(0, 4);
+export default async function FoodPage() {
+  const [providers, featuredProviders] = await Promise.all([
+    getFoodProviders(),
+    getFeaturedFoodProviders(6),
+  ]);
 
   return (
-    <PageShell>
-      <SiteHeader />
-      <SectionShell className="pt-14">
-        <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          <div>
-            <SectionHeader
-              eyebrow="Food & cafes"
-              title="Cafes, restaurants, momo spots, tea shops, and route food."
-              description="A fuller Surkhet food explorer inspired by the reference: categories, featured listings, search, filters, food detail pages, and inquiry-first planning."
-            />
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="#food-listings">Browse food places</ButtonLink>
-              <ButtonLink href="/contact" variant="secondary">Send food inquiry</ButtonLink>
+    <>
+      <section className="relative overflow-hidden bg-[#f8f1e4] py-20 sm:py-24">
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-background to-transparent" />
+        <Container className="relative">
+          <div className="max-w-3xl">
+            <Badge className="mb-5 bg-primary/10 text-primary hover:bg-primary/15">
+              <UtensilsCrossed className="mr-1.5 h-3.5 w-3.5" />
+              Surkhet food guide
+            </Badge>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+              Cafes & Restaurants in Surkhet
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
+              Find local cafes, restaurants, momo spots, tea shops, bakeries, lounges,
+              party venues, and hangout places around Birendranagar and Surkhet.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button asChild size="lg">
+                <a href="#food-listings">
+                  Browse food places <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+              <InquiryCollectorButton
+                label="Send food inquiry"
+                leadType="SERVICE_INQUIRY"
+                selectedService="Food & Cafes inquiry"
+                sourcePage="/food"
+                leadSource="food-page"
+                size="lg"
+                variant="outline"
+              />
             </div>
           </div>
-          <div className="relative min-h-[380px] overflow-hidden rounded-[32px] bg-stone-900 shadow-2xl shadow-emerald-900/10">
-            <Image src={images.cafe} alt="Pahuna food and cafe guide" fill priority sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6 text-white">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-200">Surkhet food guide</p>
-              <p className="mt-2 text-2xl font-black">Plan food before the route gets difficult.</p>
-            </div>
+        </Container>
+      </section>
+
+      <section className="py-12">
+        <Container>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+            {FOOD_CATEGORIES.map((category) => (
+              <Card key={category} className="rounded-2xl border-emerald-100 bg-white shadow-sm">
+                <CardContent className="p-4">
+                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Coffee className="h-5 w-5" />
+                  </div>
+                  <p className="text-sm font-semibold leading-snug">{category}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </div>
+        </Container>
+      </section>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-6">
-          {foodCategories.map((category) => (
-            <div key={category} className="rounded-[24px] border border-emerald-900/10 bg-white p-5 shadow-sm">
-              <div className="mb-4 h-1.5 w-14 rounded-full bg-amber-400" />
-              <p className="text-sm font-black text-stone-900">{category}</p>
+      {featuredProviders.length > 0 && (
+        <section className="py-12">
+          <Container>
+            <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+                  Featured food places
+                </p>
+                <h2 className="mt-1 text-3xl font-bold tracking-tight">
+                  Traveler-friendly food stops around Birendranagar
+                </h2>
+              </div>
+              <Button asChild variant="outline">
+                <Link href="#food-listings">View all listings</Link>
+              </Button>
             </div>
-          ))}
-        </div>
-      </SectionShell>
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {featuredProviders.map((provider) => (
+                <FoodCard key={provider.slug} provider={provider} />
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
-      {featured.length ? (
-        <SectionShell className="py-8">
+      <section id="food-listings" className="py-14">
+        <Container>
           <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <SectionHeader eyebrow="Featured food places" title="Traveler-friendly food stops around Birendranagar." />
-            <ButtonLink href="#food-listings" variant="secondary">View all listings</ButtonLink>
-          </div>
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {featured.map((provider) => (
-              <FoodCard key={provider.slug} provider={provider} compact />
-            ))}
-          </div>
-        </SectionShell>
-      ) : null}
-
-      <SectionShell id="food-listings" className="pt-8">
-        <div className="rounded-[30px] border border-emerald-900/10 bg-white p-4 shadow-lg shadow-emerald-900/5">
-          <div className="grid gap-3 xl:grid-cols-[1fr_auto_auto_auto_auto]">
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              className="rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
-              placeholder="Search cafes, momo, thakali, route snacks, area..."
-            />
-            <FilterSelect label="Type" value={activeType} onChange={setActiveType} options={options.types} />
-            <FilterSelect label="Area" value={activeArea} onChange={setActiveArea} options={options.areas} />
-            <FilterSelect label="Cuisine" value={activeCuisine} onChange={setActiveCuisine} options={options.cuisines} />
-            <FilterSelect label="Feature" value={activeFeature} onChange={setActiveFeature} options={options.features} />
-          </div>
-          <p className="mt-4 text-sm font-semibold text-stone-600">Showing {visibleProviders.length} of {foodProviders.length} food listings.</p>
-        </div>
-
-        {visibleProviders.length ? (
-          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {visibleProviders.map((provider) => (
-              <FoodCard key={provider.slug} provider={provider} />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-8 rounded-[28px] border border-emerald-900/10 bg-white p-8 text-center shadow-lg shadow-emerald-900/5">
-            <h2 className="text-2xl font-black">No food listings found.</h2>
-            <p className="mt-3 text-sm text-stone-600">Try changing the filters or ask Pahuna for local food help.</p>
-            <div className="mt-6">
-              <ButtonLink href="/contact" variant="secondary">Suggest or ask food place</ButtonLink>
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+                All listings
+              </p>
+              <h2 className="mt-1 text-3xl font-bold tracking-tight">
+                Search food places in Surkhet
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+                Listings marked as public require physical verification before final commercial use.
+                Opening hours, prices, menus, and availability should be confirmed through inquiry.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4 text-primary" />
+              Map support can be enabled when coordinates are added.
             </div>
           </div>
-        )}
-      </SectionShell>
-      <SiteFooter />
-    </PageShell>
-  );
-}
+          <FoodExplorer providers={providers} />
+        </Container>
+      </section>
 
-function FoodCard({ provider, compact = false }: { provider: (typeof foodProviders)[number]; compact?: boolean }) {
-  const trustBadge = provider.verificationStatus === "VERIFIED" || provider.verificationStatus === "PARTNER" ? "Verified" : "Public Listing";
-
-  return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
-      <div className={`relative bg-emerald-50 ${compact ? "h-48" : "h-56"}`}>
-        <Image src={safeImage(provider.image, images.foodFallback)} alt={provider.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
-        <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-          <span className="rounded-full bg-white/95 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-800">{provider.typeLabel}</span>
-          <span className="rounded-full bg-emerald-600 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white">{trustBadge}</span>
-        </div>
-        {provider.rating ? (
-          <div className="absolute bottom-4 right-4 rounded-2xl bg-white/95 px-3 py-2 text-sm font-black text-stone-900 shadow">{provider.rating.toFixed(1)} / 5</div>
-        ) : null}
-      </div>
-      <div className="flex flex-1 flex-col p-5">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">{provider.area}, {provider.district}</p>
-        <h2 className="mt-2 text-xl font-black">{provider.name}</h2>
-        <p className="mt-3 text-sm leading-6 text-stone-600">{provider.shortDescription}</p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          {Array.from(new Set([...provider.cuisines, ...provider.features])).slice(0, 5).map((item) => (
-            <span key={item} className="rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold text-stone-600">{item}</span>
-          ))}
-        </div>
-        <div className="mt-auto grid gap-2 pt-6 sm:grid-cols-2">
-          <Link href={`/food/${provider.slug}`} className="rounded-xl border border-emerald-200 px-3 py-2 text-center text-xs font-bold text-emerald-800 hover:bg-emerald-50">View Details</Link>
-          <Link href="/contact" className="rounded-xl bg-emerald-700 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-800">Send Inquiry</Link>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function FilterSelect({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: string[] }) {
-  return (
-    <label>
-      <span className="sr-only">{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)} className="w-full rounded-2xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500">
-        {options.map((option) => (
-          <option key={option} value={option}>{option === ALL ? label : option}</option>
-        ))}
-      </select>
-    </label>
+      <section className="bg-muted/30 py-16">
+        <Container>
+          <div className="rounded-3xl border border-primary/20 bg-white p-8 text-center shadow-sm">
+            <MessageCircle className="mx-auto h-10 w-10 text-primary" />
+            <h2 className="mt-4 text-2xl font-bold tracking-tight">
+              Suggest a food place
+            </h2>
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+              Know a cafe, restaurant, tea shop, local food provider, or group dining venue
+              that travelers should discover around Surkhet?
+            </p>
+            <div className="mt-6">
+              <InquiryCollectorButton
+                label="Suggest a food place"
+                leadType="SERVICE_INQUIRY"
+                selectedService="Food place suggestion"
+                sourcePage="/food"
+                leadSource="food-suggestion"
+              />
+            </div>
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }

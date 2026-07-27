@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { AdminReplicaFrame, ReplicaStatCard, ReplicaStatusBadge } from "@/app/_components/admin-replica-dashboard";
+import { useSearchParams } from "next/navigation";
+import { AdminReplicaFrame, ReplicaStatCard, ReplicaStatusBadge } from "@/components/admin-replica-dashboard";
+import { AdminReservationsPanel } from "@/components/reservations/admin-reservations-panel";
 import {
   createAdminHotelAction,
   deleteAdminHotelAction,
@@ -66,11 +68,14 @@ const emptyForm: HotelFormState = {
 };
 
 export default function DashboardHotelsPage() {
+  const searchParams = useSearchParams();
+  const requestedEdit = searchParams.get("edit");
+  const requestedSearch = searchParams.get("search");
   const [hotels, setHotels] = useState<AdminHotel[]>([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [search, setSearch] = useState(requestedSearch || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(requestedSearch || "");
   const [propertyType, setPropertyType] = useState("");
   const [district, setDistrict] = useState("");
   const [verified, setVerified] = useState("");
@@ -185,6 +190,23 @@ export default function DashboardHotelsPage() {
     setImageFiles(null);
     setFormMode("edit");
   }
+
+  useEffect(() => {
+    if (!requestedEdit || !hotels.length || formMode) return;
+
+    const target = hotels.find((hotel) => {
+      const nameSlug = hotel.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      return hotel._id === requestedEdit || nameSlug === requestedEdit;
+    });
+
+    if (!target) return;
+
+    const timeout = window.setTimeout(() => {
+      openEditForm(target);
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
+  }, [formMode, hotels, requestedEdit]);
 
   function toPayload(state: HotelFormState): AdminHotelFormData {
     return {
@@ -305,6 +327,8 @@ export default function DashboardHotelsPage() {
           <ReplicaStatCard title="Map Coverage" value={`${stats.coverage}%`} subtitle={`${stats.mapped}/${hotels.length} visible records`} icon="map" />
         </div>
 
+        <AdminReservationsPanel />
+
         <section className="rounded-xl border border-stone-200 bg-white shadow-sm">
           <div className="grid gap-3 border-b border-stone-200 px-6 py-5 lg:grid-cols-[1.2fr_repeat(5,minmax(0,0.7fr))]">
             <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name, address, email, phone" className={inputClassName} />
@@ -366,7 +390,7 @@ export default function DashboardHotelsPage() {
                       <td className="py-3 pr-5"><ReplicaStatusBadge>{hotel.isVerified ? "Verified" : "Unverified"}</ReplicaStatusBadge></td>
                       <td className="py-3 pr-5"><ReplicaStatusBadge>{hotel.isFeatured ? "Featured" : "Standard"}</ReplicaStatusBadge></td>
                       <td className="py-3 pr-5 text-stone-700">{formatRooms(hotel)}</td>
-                      <td className="py-3 pr-5 text-stone-700">{hasCoordinates(hotel) ? "Ready" : "Missing"}</td>
+                      <td className="py-3 pr-5 text-stone-700">{hasCoordinates(hotel) ? "Mapped" : "Missing"}</td>
                       <td className="py-3 pr-5 text-stone-700">{formatDate(hotel.createdAt)}</td>
                       <td className="py-3 pr-0">
                         <div className="flex flex-wrap justify-end gap-2">
@@ -587,3 +611,4 @@ function formatDate(value: string) {
     day: "numeric",
   });
 }
+

@@ -10,6 +10,10 @@ export type AdminUser = {
   email: string;
   phoneNumber?: string;
   location?: string;
+  bio?: string;
+  profileImage?: string;
+  isActive?: boolean;
+  emailVerified?: boolean;
   role: "admin" | "user";
   createdAt: string;
   updatedAt: string;
@@ -19,6 +23,9 @@ export type AdminUserListParams = {
   page: number;
   limit: number;
   search?: string;
+  role?: string;
+  active?: string;
+  verified?: string;
 };
 
 export type AdminUserDeleteResponse = {
@@ -34,6 +41,10 @@ function toQueryString(params: AdminUserListParams) {
   if (params.search?.trim()) {
     searchParams.set("search", params.search.trim());
   }
+
+  if (params.role) searchParams.set("role", params.role);
+  if (params.active) searchParams.set("active", params.active);
+  if (params.verified) searchParams.set("verified", params.verified);
 
   return searchParams.toString();
 }

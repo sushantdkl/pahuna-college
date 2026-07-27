@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Shared user validation keeps DTOs and model-facing types aligned for Sprint 2 auth requests.
+// Shared user validation keeps DTOs and model-facing types aligned for auth requests.
 export const UserSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email address"),
@@ -11,6 +11,8 @@ export const UserSchema = z.object({
   location: z.string().trim().optional(),
   bio: z.string().trim().max(500, "Bio must be 500 characters or less").optional(),
   profileImage: z.string().trim().optional(),
+  isActive: z.boolean().default(true),
+  emailVerified: z.boolean().default(false),
   password: z.string().min(6, "Password must be at least 6 character long"),
   role: z.enum(["admin", "user"]).default("user"),
 });

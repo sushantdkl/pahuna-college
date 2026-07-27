@@ -5,7 +5,7 @@ import {
   AdminReplicaFrame,
   ReplicaDataCard,
   ReplicaStatCard,
-} from "@/app/_components/admin-replica-dashboard";
+} from "@/components/admin-replica-dashboard";
 import {
   createAdminItineraryAction,
   deleteAdminItineraryAction,
@@ -320,3 +320,4 @@ function userEmail(itinerary: AdminItinerary) { return typeof itinerary.userId =
 function dateInputValue(value?: string) { return value ? new Date(value).toISOString().slice(0, 10) : ""; }
 function formatDate(value: string) { return new Date(value).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); }
 function dateRange(itinerary: AdminItinerary) { if (!itinerary.startDate && !itinerary.endDate) return "Dates not set"; return `${itinerary.startDate ? formatDate(itinerary.startDate) : "Flexible"} – ${itinerary.endDate ? formatDate(itinerary.endDate) : "Flexible"}`; }
+

@@ -5,7 +5,7 @@ import {
   AdminReplicaFrame,
   ReplicaDataCard,
   ReplicaStatCard,
-} from "@/app/_components/admin-replica-dashboard";
+} from "@/components/admin-replica-dashboard";
 import {
   deleteAdminContactMessageAction,
   getAdminContactMessagesAction,
@@ -191,3 +191,4 @@ function MessageBlock({ label, value }: { label: string; value: string }) { retu
 function StatusBadge({ status }: { status: ContactMessageStatus }) { const tone = status === "NEW" ? "bg-amber-100 text-amber-800" : status === "CLOSED" ? "bg-stone-100 text-stone-600" : "bg-emerald-50 text-emerald-700"; return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${tone}`}>{formatLabel(status)}</span>; }
 function formatLabel(value: string) { return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase()); }
 function formatDate(value: string) { return new Date(value).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); }
+

@@ -1,93 +1,45 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { BlogPostStatus } from "../types/blog-post.type";
+
+export type BlogPostStatus = "DRAFT" | "PUBLISHED";
 
 export interface IBlogPost extends Document {
-  _id: mongoose.Types.ObjectId;
-  authorId: mongoose.Types.ObjectId;
   title: string;
   slug: string;
   excerpt: string;
   content: string;
+  coverImage?: string;
+  authorName: string;
   category?: string;
   tags: string[];
-  featuredImage?: string;
+  seoTitle?: string;
+  seoDescription?: string;
   status: BlogPostStatus;
+  isFeatured: boolean;
   publishedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const BlogPostMongoSchema: Schema<IBlogPost> = new Schema(
+const BlogPostMongoSchema = new Schema<IBlogPost>(
   {
-    authorId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-      index: true,
-    },
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 200,
-    },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-      maxlength: 220,
-    },
-    excerpt: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 600,
-    },
-    content: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 50000,
-    },
-    category: {
-      type: String,
-      trim: true,
-      maxlength: 80,
-    },
-    tags: {
-      type: [String],
-      default: [],
-    },
-    featuredImage: {
-      type: String,
-      trim: true,
-    },
-    status: {
-      type: String,
-      enum: ["DRAFT", "PUBLISHED", "ARCHIVED"],
-      default: "DRAFT",
-      index: true,
-    },
-    publishedAt: Date,
+    title: { type: String, required: true, trim: true },
+    slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    excerpt: { type: String, required: true, trim: true, maxlength: 700 },
+    content: { type: String, required: true, trim: true },
+    coverImage: { type: String, trim: true },
+    authorName: { type: String, required: true, trim: true },
+    category: { type: String, trim: true },
+    tags: [{ type: String, trim: true }],
+    seoTitle: { type: String, trim: true },
+    seoDescription: { type: String, trim: true },
+    status: { type: String, enum: ["DRAFT", "PUBLISHED"], default: "DRAFT" },
+    isFeatured: { type: Boolean, default: false },
+    publishedAt: { type: Date },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
-BlogPostMongoSchema.index({ publishedAt: -1, createdAt: -1 });
-BlogPostMongoSchema.index({
-  title: "text",
-  slug: "text",
-  excerpt: "text",
-  content: "text",
-  category: "text",
-  tags: "text",
-});
+BlogPostMongoSchema.index({ status: 1, publishedAt: -1, createdAt: -1 });
+BlogPostMongoSchema.index({ title: "text", excerpt: "text", content: "text", tags: "text" });
 
-export const BlogPostModel = mongoose.model<IBlogPost>(
-  "BlogPost",
-  BlogPostMongoSchema,
-);
+export const BlogPostModel = mongoose.model<IBlogPost>("BlogPost", BlogPostMongoSchema);

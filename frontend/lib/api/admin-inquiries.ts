@@ -19,10 +19,18 @@ type InquiryHotel = {
   propertyType: string;
 };
 
+type InquiryTripPackage = {
+  _id: string;
+  title: string;
+  slug: string;
+  durationDays?: number;
+};
+
 export type AdminInquiry = {
   _id: string;
   userId: InquiryUser | null;
   hotelId?: InquiryHotel;
+  tripPackageId?: InquiryTripPackage;
   title: string;
   message: string;
   inquiryType: InquiryKind;
@@ -40,6 +48,7 @@ export type AdminInquiryListParams = {
   status?: InquiryStatus | "";
   inquiryType?: InquiryKind | "";
   hotelId?: string;
+  tripPackageId?: string;
 };
 
 function toQueryString(params: AdminInquiryListParams) {
@@ -50,8 +59,9 @@ function toQueryString(params: AdminInquiryListParams) {
 
   if (params.search?.trim()) query.set("search", params.search.trim());
   if (params.status) query.set("status", params.status);
-  if (params.inquiryType) query.set("type", params.inquiryType);
+  if (params.inquiryType) query.set("inquiryType", params.inquiryType);
   if (params.hotelId) query.set("hotelId", params.hotelId);
+  if (params.tripPackageId) query.set("tripPackageId", params.tripPackageId);
 
   return query.toString();
 }

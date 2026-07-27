@@ -1,50 +1,109 @@
-import Image from "next/image";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { ButtonLink, SectionHeader, SectionShell, SiteFooter, SiteHeader } from "@/app/_components/pahuna-layout";
-import { destinations, images } from "@/lib/pahuna-content";
+import { Compass, Route } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Container } from "@/components/layout/container";
+import { PageHero } from "@/components/shared/page-hero";
+import { DestinationCard } from "@/components/destinations/destination-card";
+import { DestinationsExplorer } from "@/components/destinations/destinations-explorer";
+import { getDestinations, getFeaturedDestinations } from "@server/services/destinations";
 
-export default function DestinationsPage() {
+export const metadata: Metadata = {
+  title: "Karnali Destinations | Explore Surkhet, Rara, Jumla, Dolpa & Humla",
+  description:
+    "Explore Karnali destinations across Surkhet, Dailekh, Salyan, Jajarkot, Rukum West, Kalikot, Jumla, Mugu, Dolpa, and Humla with Pahuna.",
+  alternates: { canonical: "/destinations" },
+};
+
+export default async function DestinationsPage() {
+  const [destinations, featuredDestinations] = await Promise.all([
+    getDestinations(),
+    getFeaturedDestinations(6),
+  ]);
+
   return (
-    <main className="min-h-screen bg-[#fffaf0] text-stone-950">
-      <SiteHeader />
-      <section className="relative overflow-hidden bg-stone-950 text-white">
-        <Image src={images.karnaliHero} alt="Karnali destinations" fill priority sizes="100vw" className="object-cover opacity-60" />
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-emerald-950/70 to-transparent" />
-        <SectionShell className="relative z-10 py-24">
-          <div className="max-w-3xl">
-            <p className="text-xs font-black uppercase tracking-[0.34em] text-emerald-200">Destinations</p>
-            <h1 className="mt-4 text-5xl font-black tracking-tight sm:text-6xl">Surkhet first, Karnali next.</h1>
-            <p className="mt-6 text-lg leading-8 text-white/80">A practical visual entry for Rara, Phoksundo, Kupinde Daha, river routes, and cultural extensions.</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/explore">Explore Surkhet</ButtonLink>
-              <ButtonLink href="/trip-planner" variant="secondary">Plan route</ButtonLink>
+    <>
+      <PageHero
+        badge={{ icon: <Compass className="h-3 w-3" />, label: "Karnali travel guide" }}
+        title="Karnali Destinations"
+        highlight="From Surkhet to the high Himalaya"
+        subtitle="Build a careful Karnali route across gateway cities, lakes, temples, heritage places, national parks, trekking villages, and river corridors."
+      >
+        <div className="flex flex-wrap justify-center gap-3">
+          <Button asChild size="lg">
+            <Link href="/trip-planner">
+              <Route className="h-4 w-4" />
+              Build My Karnali Route
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="bg-white/10 text-white hover:bg-white/20">
+            <Link href="/hotels">Find stays & services</Link>
+          </Button>
+        </div>
+      </PageHero>
+
+      {featuredDestinations.length > 0 && (
+        <section className="py-16">
+          <Container>
+            <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-sm font-medium uppercase tracking-wide text-primary">
+                  Featured destinations
+                </p>
+                <h2 className="text-3xl font-bold tracking-tight">
+                  Start with the key Karnali anchors
+                </h2>
+              </div>
+              <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+                These entries are planning references. Routes, access, permits, stays,
+                and operator availability should be confirmed before travel.
+              </p>
             </div>
-          </div>
-        </SectionShell>
+
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {featuredDestinations.map((destination) => (
+                <DestinationCard key={destination.slug} destination={destination} />
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      <section className="bg-muted/30 py-16">
+        <Container>
+          <DestinationsExplorer destinations={destinations} />
+        </Container>
       </section>
 
-      <SectionShell>
-        <SectionHeader title="Popular Karnali destinations" description="Each card keeps the action visible and routes back to inquiry or planning instead of dead buttons." />
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {destinations.map((destination) => (
-            <article id={destination.title.toLowerCase().split(" ")[0]} key={destination.title} className="overflow-hidden rounded-[28px] border border-emerald-900/10 bg-white shadow-lg shadow-emerald-900/5">
-              <div className="relative h-64">
-                <Image src={destination.image || images.destinationFallback} alt={destination.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
+      <section className="py-16">
+        <Container>
+          <div className="rounded-3xl border border-border/70 bg-linear-to-br from-emerald-50 via-amber-50/70 to-background p-8 shadow-sm md:p-10">
+            <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div>
+                <p className="text-sm font-medium uppercase tracking-wide text-primary">
+                  Route planning
+                </p>
+                <h2 className="mt-2 text-3xl font-bold tracking-tight">
+                  Build your Karnali route around real districts
+                </h2>
+                <p className="mt-3 max-w-2xl text-muted-foreground">
+                  Choose days, budget, interests, and gateway points. Pahuna helps turn
+                  Surkhet, Rara, Jumla, Dailekh, Dolpa, Humla, and other Karnali stops
+                  into a practical route plan.
+                </p>
               </div>
-              <div className="p-6">
-                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">{destination.eyebrow}</p>
-                <h2 className="mt-2 text-2xl font-black">{destination.title}</h2>
-                <p className="mt-3 text-sm leading-6 text-stone-600">{destination.description}</p>
-                <div className="mt-6 grid gap-2 sm:grid-cols-2">
-                  <Link href="/trip-planner" className="rounded-xl border border-emerald-200 px-3 py-2 text-center text-xs font-bold text-emerald-800 hover:bg-emerald-50">Plan Trip</Link>
-                  <Link href="/contact" className="rounded-xl bg-emerald-700 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-800">Ask Route</Link>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </SectionShell>
-      <SiteFooter />
-    </main>
+              <Button asChild size="lg">
+                <Link href="/trip-planner">
+                  Build My Karnali Route
+                  <Route className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }
+
+

@@ -2,18 +2,38 @@ import path from "path";
 import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import multer from "multer";
+import adminFoodProviderRoutes from "./routes/admin-food-provider.route";
 import adminBlogPostRoutes from "./routes/admin-blog-post.route";
+import adminConsultingLeadRoutes from "./routes/admin-consulting-lead.route";
+import adminConsultingServiceRoutes from "./routes/admin-consulting-service.route";
 import adminContactMessageRoutes from "./routes/admin-contact-message.route";
+import adminDashboardRoutes from "./routes/admin-dashboard.route";
 import adminDestinationRoutes from "./routes/admin-destination.route";
 import adminExperienceRoutes from "./routes/admin-experience.route";
 import adminHotelRoutes from "./routes/admin-hotel.route";
 import adminInquiryRoutes from "./routes/admin-inquiry.route";
 import adminItineraryRoutes from "./routes/admin-itinerary.route";
+import adminPartnerApplicationRoutes from "./routes/admin-partner-application.route";
+import adminRouteSegmentRoutes from "./routes/admin-route-segment.route";
+import adminTrainingCourseRoutes from "./routes/admin-training-course.route";
+import adminTrainingEnrollmentRoutes from "./routes/admin-training-enrollment.route";
+import adminTransportRouteRoutes from "./routes/admin-transport-route.route";
+import adminTripPackageRoutes from "./routes/admin-trip-package.route";
 import adminUserRoutes from "./routes/admin-user.route";
+import consultingRoutes from "./routes/consulting.route";
 import blogPostRoutes from "./routes/blog-post.route";
 import contactMessageRoutes from "./routes/contact-message.route";
+import foodProviderRoutes from "./routes/food-provider.route";
 import inquiryRoutes from "./routes/inquiry.route";
 import itineraryRoutes from "./routes/itinerary.route";
+import partnerApplicationRoutes from "./routes/partner-application.route";
+import publicCatalogRoutes from "./routes/public-catalog.route";
+import reservationRoutes from "./routes/reservation.route";
+import adminReservationRoutes from "./routes/admin-reservation.route";
+import routeSegmentRoutes from "./routes/route-segment.route";
+import trainingRoutes from "./routes/training.route";
+import transportRouteRoutes from "./routes/transport-route.route";
+import tripPackageRoutes from "./routes/trip-package.route";
 import userRoutes from "./routes/user.route";
 
 const app: Application = express();
@@ -38,20 +58,46 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-// Sprint 2 auth endpoints are grouped under /api/v1/auth before being handled by the user route/controller layers.
+// Auth endpoints are grouped under /api/v1/auth before reaching the user route/controller layers.
 app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1", publicCatalogRoutes);
 app.use("/api/v1/admin/users", adminUserRoutes);
+app.use("/api/v1/admin/dashboard", adminDashboardRoutes);
+app.use("/api/v1/blog-posts", blogPostRoutes);
+app.use("/api/v1/admin/blog-posts", adminBlogPostRoutes);
 app.use("/api/v1/admin/hotels", adminHotelRoutes);
+app.use("/api/v1", reservationRoutes);
+app.use("/api/v1/admin/reservations", adminReservationRoutes);
 app.use("/api/v1/admin/destinations", adminDestinationRoutes);
 app.use("/api/v1/admin/experiences", adminExperienceRoutes);
 app.use("/api/v1/inquiries", inquiryRoutes);
 app.use("/api/v1/admin/inquiries", adminInquiryRoutes);
 app.use("/api/v1/itineraries", itineraryRoutes);
 app.use("/api/v1/admin/itineraries", adminItineraryRoutes);
-app.use("/api/v1/blog-posts", blogPostRoutes);
-app.use("/api/v1/admin/blog-posts", adminBlogPostRoutes);
 app.use("/api/v1/contact-messages", contactMessageRoutes);
 app.use("/api/v1/admin/contact-messages", adminContactMessageRoutes);
+app.use("/api/v1/partner-applications", partnerApplicationRoutes);
+app.use(
+  "/api/v1/admin/partner-applications",
+  adminPartnerApplicationRoutes,
+);
+app.use("/api/v1", trainingRoutes);
+app.use("/api/v1/admin/training-courses", adminTrainingCourseRoutes);
+app.use(
+  "/api/v1/admin/training-enrollments",
+  adminTrainingEnrollmentRoutes,
+);
+app.use("/api/v1", consultingRoutes);
+app.use("/api/v1/admin/consulting-services", adminConsultingServiceRoutes);
+app.use("/api/v1/admin/consulting-leads", adminConsultingLeadRoutes);
+app.use("/api/v1/trip-packages", tripPackageRoutes);
+app.use("/api/v1/admin/trip-packages", adminTripPackageRoutes);
+app.use("/api/v1/food-providers", foodProviderRoutes);
+app.use("/api/v1/admin/food-providers", adminFoodProviderRoutes);
+app.use("/api/v1/transport-routes", transportRouteRoutes);
+app.use("/api/v1/admin/transport-routes", adminTransportRouteRoutes);
+app.use("/api/v1/route-segments", routeSegmentRoutes);
+app.use("/api/v1/admin/route-segments", adminRouteSegmentRoutes);
 
 app.use((req: Request, res: Response) => {
   return res.status(404).json({

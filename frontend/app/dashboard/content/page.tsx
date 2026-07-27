@@ -6,7 +6,7 @@ import {
   AdminReplicaFrame,
   ReplicaStatCard,
   ReplicaStatusBadge,
-} from "@/app/_components/admin-replica-dashboard";
+} from "@/components/admin-replica-dashboard";
 import {
   createAdminDestinationAction,
   deleteAdminDestinationAction,
@@ -538,3 +538,4 @@ function formatDate(value: string) {
     day: "numeric",
   });
 }
+

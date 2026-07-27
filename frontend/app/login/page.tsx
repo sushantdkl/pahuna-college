@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { flushSync } from "react-dom";
 import Image from "next/image";
@@ -14,7 +14,7 @@ import { loginSchema } from "@/schemas/auth.schema";
 
 function safeRedirectFor(role: string | undefined) {
   const search = new URLSearchParams(window.location.search);
-  const requested = search.get("redirect");
+  const requested = search.get("redirect") || search.get("callbackUrl");
   const isAdmin = role?.toLowerCase() === "admin";
 
   if (requested?.startsWith("/") && !requested.startsWith("//")) {
@@ -37,6 +37,12 @@ export default function LoginPage() {
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const registeredMessage = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    return new URLSearchParams(window.location.search).get("registered") === "1"
+      ? "Registration successful. Sign in to continue."
+      : "";
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -107,6 +113,11 @@ export default function LoginPage() {
             </div>
 
             <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+              {registeredMessage && status === "idle" ? (
+                <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
+                  {registeredMessage}
+                </p>
+              ) : null}
               <Field label="Email address" htmlFor="email">
                 <input
                   id="email"
@@ -122,7 +133,18 @@ export default function LoginPage() {
                 />
               </Field>
 
-              <Field label="Password" htmlFor="password">
+              <Field
+                label="Password"
+                htmlFor="password"
+                action={
+                  <Link
+                    href="/forgot-password"
+                    className="rounded-full border border-emerald-900/10 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-800 transition hover:bg-emerald-100 hover:text-emerald-900"
+                  >
+                    Forgot password?
+                  </Link>
+                }
+              >
                 <div className="relative">
                   <input
                     id="password"
@@ -179,12 +201,25 @@ export default function LoginPage() {
   );
 }
 
-function Field({ label, htmlFor, children }: { label: string; htmlFor: string; children: ReactNode }) {
+function Field({
+  label,
+  htmlFor,
+  children,
+  action,
+}: {
+  label: string;
+  htmlFor: string;
+  children: ReactNode;
+  action?: ReactNode;
+}) {
   return (
     <div className="space-y-2">
-      <label htmlFor={htmlFor} className="text-xs font-black uppercase tracking-[0.16em] text-stone-500">
-        {label}
-      </label>
+      <div className="flex items-center justify-between gap-3">
+        <label htmlFor={htmlFor} className="text-xs font-black uppercase tracking-[0.16em] text-stone-500">
+          {label}
+        </label>
+        {action}
+      </div>
       {children}
     </div>
   );

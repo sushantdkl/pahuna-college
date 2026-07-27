@@ -36,3 +36,15 @@ export const UpdatePasswordDTO = z.object({
 });
 
 export type UpdatePasswordDTO = z.infer<typeof UpdatePasswordDTO>;
+
+export const RequestPasswordResetDTO = z.object({
+  email: z.email("Enter a valid email address").trim().toLowerCase(),
+});
+
+export type RequestPasswordResetDTO = z.infer<typeof RequestPasswordResetDTO>;
+
+export const ResetPasswordDTO = z.object({
+  newPassword: z.string().min(6, "New password must be at least 6 characters long"),
+});
+
+export type ResetPasswordDTO = z.infer<typeof ResetPasswordDTO>;

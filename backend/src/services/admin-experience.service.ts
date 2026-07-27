@@ -16,6 +16,14 @@ type ListExperiencesParams = {
   providerId?: string;
 };
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function readBooleanFilter(value?: string) {
   if (value === undefined || value === "") return undefined;
   return value.toLowerCase() === "true";
@@ -61,6 +69,25 @@ export class AdminExperienceService {
       isActive: experience.isActive,
       createdAt: experience.createdAt,
       updatedAt: experience.updatedAt,
+    };
+  }
+
+  private toPublicExperience(experience: IExperience) {
+    return {
+      _id: experience._id.toString(),
+      slug: slugify(experience.name),
+      name: experience.name,
+      description: experience.description,
+      category: experience.category,
+      price: experience.price,
+      duration: experience.duration,
+      location: experience.location,
+      latitude: experience.latitude,
+      longitude: experience.longitude,
+      maxParticipants: experience.maxParticipants,
+      images: experience.images || [],
+      rating: experience.rating,
+      reviewCount: experience.reviewCount,
     };
   }
 
@@ -126,6 +153,40 @@ export class AdminExperienceService {
         totalPages: Math.max(Math.ceil(total / limit), 1),
       },
     };
+  }
+
+  async listPublicExperiences(params: ListExperiencesParams) {
+    await this.seedExperiencesIfEmpty();
+
+    const page = Math.max(Number(params.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(params.limit) || 12, 1), 50);
+    const skip = (page - 1) * limit;
+    const filter = { ...this.buildFilter(params), isActive: true };
+
+    const [experiences, total] = await Promise.all([
+      ExperienceModel.find(filter).sort({ createdAt: -1, updatedAt: -1 }).skip(skip).limit(limit),
+      ExperienceModel.countDocuments(filter),
+    ]);
+
+    return {
+      experiences: experiences.map((experience) => this.toPublicExperience(experience)),
+      meta: { page, limit, total, totalPages: Math.max(Math.ceil(total / limit), 1) },
+    };
+  }
+
+  async getPublicExperience(identifier: string) {
+    await this.seedExperiencesIfEmpty();
+    const experience = mongoose.Types.ObjectId.isValid(identifier)
+      ? await ExperienceModel.findOne({ _id: identifier, isActive: true })
+      : (await ExperienceModel.find({ isActive: true })).find(
+          (candidate) => slugify(candidate.name) === identifier.toLowerCase(),
+        );
+
+    if (!experience) {
+      throw new HttpException(404, "Experience not found");
+    }
+
+    return this.toPublicExperience(experience);
   }
 
   async getExperience(id: string) {

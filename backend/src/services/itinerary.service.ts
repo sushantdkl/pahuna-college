@@ -11,6 +11,7 @@ import { DestinationModel } from "../models/destination.model";
 import { ExperienceModel } from "../models/experience.model";
 import { HotelModel } from "../models/hotel.model";
 import { IItinerary, ItineraryModel } from "../models/itinerary.model";
+import { ItineraryStatus } from "../types/itinerary.type";
 
 type ReferencePayload = {
   destinationId?: string;
@@ -42,6 +43,13 @@ export class ItineraryService {
       .populate("destinationId", "name slug district category images")
       .populate("hotelIds", "name address propertyType images")
       .populate("experienceIds", "name category location duration images");
+  }
+
+  private publicPopulate(query: any) {
+    return query
+      .populate("destinationId", "name slug district category images latitude longitude")
+      .populate("hotelIds", "name address propertyType images latitude longitude")
+      .populate("experienceIds", "name category location duration images latitude longitude");
   }
 
   private async validateReferences(payload: ReferencePayload) {
@@ -121,6 +129,51 @@ export class ItineraryService {
     ]);
 
     return { destinations, hotels, experiences };
+  }
+
+  async listPublicItineraries(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    const publicStatuses: ItineraryStatus[] = ["PLANNED", "CONFIRMED", "COMPLETED"];
+    const filter = { isPublic: true, status: { $in: publicStatuses } };
+    const [itineraries, total] = await Promise.all([
+      this.publicPopulate(
+        ItineraryModel.find(filter)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit),
+      ),
+      ItineraryModel.countDocuments(filter),
+    ]);
+
+    return {
+      itineraries,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.max(Math.ceil(total / limit), 1),
+      },
+    };
+  }
+
+  async getPublicItinerary(identifier: string) {
+    const match = identifier.match(/[a-f\d]{24}$/i);
+    const id = match?.[0] || identifier;
+    this.assertValidId(id);
+    const itinerary = await ItineraryModel.findOne({
+      _id: id,
+      isPublic: true,
+      status: { $in: ["PLANNED", "CONFIRMED", "COMPLETED"] },
+    })
+      .populate("destinationId", "name slug district category images latitude longitude")
+      .populate("hotelIds", "name address propertyType images latitude longitude")
+      .populate("experienceIds", "name category location duration images latitude longitude");
+
+    if (!itinerary) {
+      throw new HttpException(404, "Itinerary not found");
+    }
+
+    return itinerary;
   }
 
   async createItinerary(userId: string, payload: CreateItineraryDTO) {

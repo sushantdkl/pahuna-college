@@ -6,6 +6,10 @@ export const AdminCreateUserDTO = UserSchema.pick({
   email: true,
   phoneNumber: true,
   location: true,
+  bio: true,
+  profileImage: true,
+  isActive: true,
+  emailVerified: true,
   password: true,
   role: true,
 });
@@ -17,6 +21,10 @@ export const AdminUpdateUserDTO = UserSchema.pick({
   email: true,
   phoneNumber: true,
   location: true,
+  bio: true,
+  profileImage: true,
+  isActive: true,
+  emailVerified: true,
   role: true,
 })
   .extend({

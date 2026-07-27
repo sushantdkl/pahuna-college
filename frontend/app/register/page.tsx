@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { registerAction } from "@/lib/actions/auth-actions";
 import { images } from "@/lib/pahuna-content";
 import { registerSchema } from "@/schemas/auth.schema";
@@ -11,6 +12,7 @@ import { registerSchema } from "@/schemas/auth.schema";
 const accountTypes = ["Traveler", "Hotel Owner", "Provider"];
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [accountType, setAccountType] = useState("Traveler");
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState("");
@@ -47,9 +49,10 @@ export default function RegisterPage() {
       const response = await registerAction(parsedData.data);
       setStatus("success");
       setMessage(response.message || `${accountType} account created successfully. You can sign in now.`);
+      router.replace("/login?registered=1");
     } catch (error) {
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Registration failed");
+      setMessage(error instanceof Error ? error.message : "Registration failed. Please check your details and try again.");
     } finally {
       setIsSubmitting(false);
     }
