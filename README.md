@@ -61,25 +61,29 @@ npm run build:backend
 
 ## Docker Compose
 
-Copy the example env file if `.env` does not exist:
+Use separate Docker Compose projects from each app folder. Do not start the frontend image directly from Docker Desktop, because that skips the backend URL environment variables.
 
-```powershell
-Copy-Item .env.example .env
-```
-
-For local Docker, use:
+The separate Docker projects are:
 
 ```text
-FRONTEND_PORT=3001
-CLIENT_URL=http://localhost:3001
-NEXT_PUBLIC_SITE_URL=http://localhost:3001
-NEXT_PUBLIC_API_URL=http://localhost:5050
-SERVER_API_URL=http://backend:5050
+backend/  -> Docker project: pahuna-backend  -> http://localhost:5050
+frontend/ -> Docker project: pahuna-frontend -> http://localhost:3001
+mongo     -> inside backend project           -> localhost:27017
 ```
 
-Start the full stack:
+Start backend and Mongo first:
 
 ```powershell
+cd C:\Users\Acer\Desktop\pahuna-college\backend
+Copy-Item .env.example .env
+docker compose up --build
+```
+
+Then open a second PowerShell and start frontend:
+
+```powershell
+cd C:\Users\Acer\Desktop\pahuna-college\frontend
+Copy-Item .env.docker.example .env
 docker compose up --build
 ```
 
@@ -91,14 +95,23 @@ Backend: http://localhost:5050
 MongoDB: localhost:27017
 ```
 
-Stop:
+Stop frontend:
 
 ```powershell
+cd C:\Users\Acer\Desktop\pahuna-college\frontend
 docker compose down
 ```
 
-Reset database/uploads volumes:
+Stop backend and Mongo:
 
 ```powershell
+cd C:\Users\Acer\Desktop\pahuna-college\backend
+docker compose down
+```
+
+Reset backend database/uploads volumes only when you want a fresh reset:
+
+```powershell
+cd C:\Users\Acer\Desktop\pahuna-college\backend
 docker compose down -v
 ```

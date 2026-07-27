@@ -1,10 +1,13 @@
 import { getCookie } from "@/lib/cookies";
 
 function getApiBaseUrl() {
-  const configuredOrigin = process.env.NEXT_PUBLIC_API_URL;
-  const runtimeOrigin = typeof window !== "undefined"
-    ? `${window.location.protocol}//${window.location.hostname}:4000`
-    : "http://localhost:4000";
+  const isBrowser = typeof window !== "undefined";
+  const configuredOrigin = isBrowser
+    ? process.env.NEXT_PUBLIC_API_URL
+    : process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL;
+  const runtimeOrigin = isBrowser
+    ? `${window.location.protocol}//${window.location.hostname}:5050`
+    : "http://pahuna-backend:5050";
   const apiOrigin = configuredOrigin || runtimeOrigin;
 
   return apiOrigin.endsWith("/api/v1")
