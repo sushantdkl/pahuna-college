@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Clock, MapPin, Mountain, Route } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { getImageOrPlaceholder, isBackendUploadImage } from "@/lib/assets";
 import { AddToTripButton } from "@/components/trip-planner/add-to-trip-button";
 import type { PublicDestination } from "@/lib/services/destinations";
@@ -70,15 +70,13 @@ export function DestinationCard({ destination, compact = false }: DestinationCar
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <AddToTripButton listKey="selectedDestinations" itemId={destination.slug} label={destination.name} />
-          <Button asChild size="sm">
-            <Link href={`/destinations/${destination.slug}`}>View guide</Link>
-          </Button>
-          <Button asChild variant="outline" size="sm">
-            <Link href={`/trip-planner?destination=${destination.slug}`}>
-              <Route className="h-4 w-4" />
-              Build route
-            </Link>
-          </Button>
+          <Link href={`/destinations/${destination.slug}`} className={buttonVariants({ size: "sm" })}>
+            View guide
+          </Link>
+          <Link href={`/trip-planner?destination=${destination.slug}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+            <Route className="h-4 w-4" />
+            Build route
+          </Link>
         </div>
       </div>
     </article>

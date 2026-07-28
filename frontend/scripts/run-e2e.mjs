@@ -4,6 +4,7 @@ const isWindows = process.platform === "win32";
 const npm = isWindows ? "npm.cmd" : "npm";
 const npx = isWindows ? "npx.cmd" : "npx";
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3100";
+const serverPort = new URL(baseURL).port || (baseURL.startsWith("https:") ? "443" : "80");
 
 function run(command, args, options = {}) {
   return spawn(command, args, {
@@ -15,11 +16,19 @@ function run(command, args, options = {}) {
 }
 
 async function isReady() {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 3000);
+
   try {
-    const response = await fetch(baseURL, { method: "HEAD" });
+    const response = await fetch(baseURL, {
+      method: "GET",
+      signal: controller.signal,
+    });
     return response.ok || response.status < 500;
   } catch {
     return false;
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -61,8 +70,8 @@ let startedServer = false;
 
 try {
   if (!(await isReady())) {
-    server = run(npm, ["run", "start", "--", "--port", "3100"], {
-      stdio: ["ignore", "pipe", "pipe"],
+    server = run(npm, ["run", "start", "--", "--port", serverPort], {
+      stdio: "inherit",
     });
     startedServer = true;
     await waitForServer();
@@ -88,4 +97,6 @@ try {
   if (startedServer) {
     await stopServer(server);
   }
+
+  process.exit(process.exitCode ?? 0);
 }
