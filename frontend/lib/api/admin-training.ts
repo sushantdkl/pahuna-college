@@ -38,6 +38,25 @@ function queryString(params: Record<string, unknown>) {
   return value ? `?${value}` : "";
 }
 
+function courseFormData(
+  payload: Partial<TrainingCourseFormData>,
+  imageFile?: File | null,
+) {
+  const formData = new FormData();
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return;
+    if (Array.isArray(value)) {
+      value.forEach((item) => formData.append(key, String(item)));
+      return;
+    }
+    formData.append(key, String(value));
+  });
+  if (imageFile) {
+    formData.append("imageFile", imageFile);
+  }
+  return formData;
+}
+
 export function getAdminTrainingCourses(params: AdminTrainingCourseListParams = {}) {
   return apiGet<AdminTrainingCourse[]>(
     `/admin/training-courses${queryString(params)}`,
@@ -49,12 +68,27 @@ export function getAdminTrainingCourse(id: string) {
   return apiGet<AdminTrainingCourse>(`/admin/training-courses/${id}`, true);
 }
 
-export function createAdminTrainingCourse(payload: TrainingCourseFormData) {
-  return apiPost<AdminTrainingCourse>("/admin/training-courses", payload, true);
+export function createAdminTrainingCourse(
+  payload: TrainingCourseFormData,
+  imageFile?: File | null,
+) {
+  return apiPost<AdminTrainingCourse>(
+    "/admin/training-courses",
+    imageFile ? courseFormData(payload, imageFile) : payload,
+    true,
+  );
 }
 
-export function updateAdminTrainingCourse(id: string, payload: Partial<TrainingCourseFormData>) {
-  return apiPatch<AdminTrainingCourse>(`/admin/training-courses/${id}`, payload, true);
+export function updateAdminTrainingCourse(
+  id: string,
+  payload: Partial<TrainingCourseFormData>,
+  imageFile?: File | null,
+) {
+  return apiPatch<AdminTrainingCourse>(
+    `/admin/training-courses/${id}`,
+    imageFile ? courseFormData(payload, imageFile) : payload,
+    true,
+  );
 }
 
 export function deleteAdminTrainingCourse(id: string) {

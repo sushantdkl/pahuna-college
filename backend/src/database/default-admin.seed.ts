@@ -23,7 +23,7 @@ export const ensureDefaultAdmin = async (): Promise<void> => {
       },
     },
     {
-      new: true,
+      returnDocument: "after",
       setDefaultsOnInsert: true,
       upsert: true,
     },

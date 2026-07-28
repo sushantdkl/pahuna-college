@@ -1,8 +1,12 @@
 "use server";
 
-import { db } from "@server/lib/db";
+import { createNewsletterSubscriberApi } from "@/lib/api/newsletter-subscribers";
 import { newsletterSchema, type NewsletterInput } from "@server/lib/validations";
 import type { ActionResult } from "@server/lib/types/actions";
+
+function text(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
 
 export async function subscribeNewsletter(data: NewsletterInput): Promise<ActionResult> {
   const parsed = newsletterSchema.safeParse(data);
@@ -11,18 +15,17 @@ export async function subscribeNewsletter(data: NewsletterInput): Promise<Action
   }
 
   try {
-    // Upsert to handle duplicate subscriptions gracefully
-    await db.newsletterSubscriber.upsert({
-      where: { email: parsed.data.email },
-      update: { isActive: true, name: parsed.data.name || undefined },
-      create: { email: parsed.data.email, name: parsed.data.name || null },
+    await createNewsletterSubscriberApi({
+      email: text(parsed.data.email),
+      name: text(parsed.data.name) || undefined,
     });
 
     return { success: true };
   } catch (error) {
     console.error("Newsletter subscription error:", error);
-    return { success: false, error: "Failed to subscribe. Please try again." };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to subscribe. Please try again.",
+    };
   }
 }
-
-

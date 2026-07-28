@@ -5,9 +5,13 @@ export const UserSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email address"),
   phoneNumber: z
+    .preprocess(
+      (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+      z
     .string()
     .min(10, "Phone number must be at least 10 digits long")
     .optional(),
+    ),
   location: z.string().trim().optional(),
   bio: z.string().trim().max(500, "Bio must be 500 characters or less").optional(),
   profileImage: z.string().trim().optional(),

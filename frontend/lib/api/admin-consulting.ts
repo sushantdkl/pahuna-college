@@ -33,6 +33,25 @@ function queryString(params: Record<string, unknown>) {
   return value ? `?${value}` : "";
 }
 
+function serviceFormData(
+  payload: Partial<ConsultingServiceFormData>,
+  imageFile?: File | null,
+) {
+  const formData = new FormData();
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return;
+    if (Array.isArray(value)) {
+      value.forEach((item) => formData.append(key, String(item)));
+      return;
+    }
+    formData.append(key, String(value));
+  });
+  if (imageFile) {
+    formData.append("imageFile", imageFile);
+  }
+  return formData;
+}
+
 export function getAdminConsultingServices(params: AdminConsultingServiceListParams = {}) {
   return apiGet<AdminConsultingService[]>(
     `/admin/consulting-services${queryString(params)}`,
@@ -40,12 +59,27 @@ export function getAdminConsultingServices(params: AdminConsultingServiceListPar
   );
 }
 
-export function createAdminConsultingService(payload: ConsultingServiceFormData) {
-  return apiPost<AdminConsultingService>("/admin/consulting-services", payload, true);
+export function createAdminConsultingService(
+  payload: ConsultingServiceFormData,
+  imageFile?: File | null,
+) {
+  return apiPost<AdminConsultingService>(
+    "/admin/consulting-services",
+    imageFile ? serviceFormData(payload, imageFile) : payload,
+    true,
+  );
 }
 
-export function updateAdminConsultingService(id: string, payload: Partial<ConsultingServiceFormData>) {
-  return apiPatch<AdminConsultingService>(`/admin/consulting-services/${id}`, payload, true);
+export function updateAdminConsultingService(
+  id: string,
+  payload: Partial<ConsultingServiceFormData>,
+  imageFile?: File | null,
+) {
+  return apiPatch<AdminConsultingService>(
+    `/admin/consulting-services/${id}`,
+    imageFile ? serviceFormData(payload, imageFile) : payload,
+    true,
+  );
 }
 
 export function deleteAdminConsultingService(id: string) {

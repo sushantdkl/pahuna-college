@@ -16,7 +16,7 @@ interface ConsultingCtaProps {
 
 export function ConsultingCta({
   title = "Ready to Transform Your Business?",
-  subtitle = "Book a free discovery call. We\u2019ll analyze your challenges and outline a realistic plan â€” no commitment required.",
+  subtitle = "Book a free discovery call. We\u2019ll analyze your challenges and outline a realistic plan - no commitment required.",
   variant = "gradient",
 }: ConsultingCtaProps) {
   const bgClass =

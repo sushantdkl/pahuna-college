@@ -134,7 +134,7 @@ export function FilterableTable<T extends { id: string }>({
                       >
                         {col.cell
                           ? col.cell(row[col.accessorKey], row)
-                          : String(row[col.accessorKey] ?? "â€”")}
+                          : String(row[col.accessorKey] ?? "-")}
                       </td>
                     ))}
                   </tr>

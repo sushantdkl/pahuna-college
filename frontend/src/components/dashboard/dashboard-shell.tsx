@@ -36,7 +36,6 @@ import type {
   DashboardSubmission,
   DashboardTrend,
 } from "@/lib/api/admin-dashboard";
-import { DashboardHeader } from "./dashboard-header";
 import { DashboardMobileNav, DashboardSidebar } from "./dashboard-sidebar";
 
 const ranges: Array<{ label: string; value: DashboardRange }> = [
@@ -144,9 +143,8 @@ export function AdminReplicaFrame({ children }: { children: ReactNode }) {
   return (
     <main className="flex h-screen flex-col overflow-hidden bg-[#f7f4ed] text-stone-950">
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        <DashboardSidebar />
+        <DashboardSidebar onLogout={() => logout("/admin/login")} />
         <section className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <DashboardHeader user={user} onLogout={() => logout("/admin/login")} />
           <DashboardMobileNav />
           <div className="flex-1 overflow-y-auto p-4 md:p-6">{children}</div>
         </section>

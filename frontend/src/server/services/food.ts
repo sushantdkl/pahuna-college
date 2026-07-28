@@ -1,9 +1,9 @@
 export type PublicFoodProvider = any;
 
-const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050").replace(/\/$/, "");
 const API_ORIGIN = (process.env.NEXT_PUBLIC_API_URL || API_BASE).replace(/\/api\/v1$/, "");
-const foodFallbackImage = "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80";
-const coffeeShopImage = "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80";
+const foodFallbackImage = "/images/cafe_interior.jpg";
+const coffeeShopImage = "/images/food/restaurant-placeholder.svg";
 
 const fallbackFoodProviders: PublicFoodProvider[] = [
   { id: "food-1", slug: "4s-cafe", name: "4S Cafe", type: "CAFE", typeLabel: "Cafe", district: "Surkhet", area: "Birendranagar", shortDescription: "Friendly local cafe.", longDescription: "A casual cafe for travelers.", image: foodFallbackImage, images: [foodFallbackImage], gallery: [foodFallbackImage], cuisines: ["Cafe", "Snacks"], services: ["Breakfast", "Coffee"], features: ["Family friendly"], priceLevel: "NPR 300 - 900", rating: 4.1, verificationStatus: "PUBLIC_LISTING", googleMapLink: "https://www.openstreetmap.org/search?query=4S%20Cafe%20Surkhet", latitude: 28.602, longitude: 81.634 },
@@ -34,7 +34,10 @@ async function getApi<T>(path: string) {
 }
 
 function toFoodProvider(record: Record<string, any>): PublicFoodProvider {
-  const images = (record.images?.length ? record.images : [foodFallbackImage]).map((image: string) => assetUrl(image));
+  const sourceImages = record.images?.length
+    ? record.images
+    : [record.image, record.coverImage, record.featuredImage].filter(Boolean);
+  const images = (sourceImages.length ? sourceImages : [foodFallbackImage]).map((image: string) => assetUrl(image));
   const mapsQuery = [record.name, record.area, record.district].filter(Boolean).join(", ");
 
   return {

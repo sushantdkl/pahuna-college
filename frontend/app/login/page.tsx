@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { flushSync } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { loginAction } from "@/lib/actions/auth-actions";
 import { storeAuthCookies } from "@/lib/cookies";
@@ -37,11 +38,15 @@ export default function LoginPage() {
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const registeredMessage = useMemo(() => {
-    if (typeof window === "undefined") return "";
-    return new URLSearchParams(window.location.search).get("registered") === "1"
-      ? "Registration successful. Sign in to continue."
-      : "";
+  const [registeredMessage, setRegisteredMessage] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setRegisteredMessage(
+      params.get("registered") === "1"
+        ? "Registration successful. Sign in to continue."
+        : "",
+    );
   }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -72,10 +77,13 @@ export default function LoginPage() {
       flushSync(() => setUser(user));
       setStatus("success");
       setMessage(response.message || "Signed in successfully");
+      toast.success(response.message || "Signed in successfully");
       router.replace(safeRedirectFor(user.role));
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Login failed";
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Login failed");
+      setMessage(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

@@ -1,10 +1,10 @@
 import { demoDestinations, demoExperiences, demoItineraries } from "@server/services";
 
-const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050").replace(/\/$/, "");
 const API_ORIGIN = (process.env.NEXT_PUBLIC_API_URL || API_BASE).replace(/\/api\/v1$/, "");
-const destinationFallbackImage = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80";
-const routeFallbackImage = "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80";
-const serviceFallbackImage = "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80";
+const destinationFallbackImage = "/images/surkhet/bulbule-lake.jpg";
+const routeFallbackImage = "/images/surkhet_road.jpg";
+const serviceFallbackImage = "/images/karnali_bridge.jpg";
 
 type ApiResponse<T> = {
   success: boolean;

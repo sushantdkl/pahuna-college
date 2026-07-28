@@ -91,7 +91,7 @@ export function HotelListingClient({ hotels, adminPreview = false }: HotelListin
         )}
       </div>
 
-      {/* â”€â”€ List Your Hotel CTA (inline) â”€â”€ */}
+      {/* -- List Your Hotel CTA (inline) -- */}
       <Card className="mt-12 border-dashed border-primary/30 bg-primary/5">
         <CardContent className="p-6 flex flex-col sm:flex-row items-center gap-6">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10">

@@ -38,6 +38,10 @@ function courseBody(body: Record<string, unknown>) {
   );
 }
 
+function uploadedCourseImage(req: AuthRequest) {
+  return req.file ? `/uploads/training/${req.file.filename}` : undefined;
+}
+
 export class AdminTrainingCourseController {
   async listCourses(req: AuthRequest, res: Response) {
     try {
@@ -101,7 +105,10 @@ export class AdminTrainingCourseController {
   async createCourse(req: AuthRequest, res: Response) {
     try {
       const parsedData = CreateTrainingCourseDTO.safeParse(
-        courseBody(req.body),
+        {
+          ...courseBody(req.body),
+          ...(uploadedCourseImage(req) ? { image: uploadedCourseImage(req) } : {}),
+        },
       );
 
       if (!parsedData.success) {
@@ -134,7 +141,10 @@ export class AdminTrainingCourseController {
   async updateCourse(req: AuthRequest, res: Response) {
     try {
       const parsedData = UpdateTrainingCourseDTO.safeParse(
-        courseBody(req.body),
+        {
+          ...courseBody(req.body),
+          ...(uploadedCourseImage(req) ? { image: uploadedCourseImage(req) } : {}),
+        },
       );
 
       if (!parsedData.success) {

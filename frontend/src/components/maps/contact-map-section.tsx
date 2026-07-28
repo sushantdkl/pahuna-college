@@ -17,11 +17,11 @@ const contactDetails = [
   { icon: MapPin, label: "Address", value: SITE_CONFIG.address },
   { icon: Phone, label: "Phone", value: SITE_CONFIG.phone },
   { icon: Mail, label: "Email", value: SITE_CONFIG.email },
-  { icon: Clock, label: "Hours", value: "Sun â€“ Fri: 9 AM â€“ 6 PM (NPT)" },
+  { icon: Clock, label: "Hours", value: "Sun - Fri: 9 AM - 6 PM (NPT)" },
 ] as const;
 
 /**
- * Contact page map â€” shows Pahuna office location with address details
+ * Contact page map - shows Pahuna office location with address details
  * and OpenStreetMap directions. Uses the shared Pahuna map system.
  */
 export function ContactMapSection() {
@@ -29,18 +29,18 @@ export function ContactMapSection() {
 
   return (
     <div className="grid lg:grid-cols-3 gap-6">
-      {/* â”€â”€ Map â”€â”€ */}
+      {/* -- Map -- */}
       <div className="lg:col-span-2">
         <GoogleMapsProvider>
           <PahunaMap
             center={OFFICE_POSITION}
             zoom={ZOOM.detail}
             className="w-full h-[300px] md:h-[420px] rounded-2xl overflow-hidden"
-            fallbackLabel="Birendranagar, Surkhet â€” Karnali Province, Nepal"
+            fallbackLabel="Birendranagar, Surkhet - Karnali Province, Nepal"
           >
             <PahunaMarker
               position={OFFICE_POSITION}
-              title="Pahuna â€” Birendranagar"
+              title="Pahuna - Birendranagar"
               category="office"
             >
               <div className="p-2 max-w-[220px]">
@@ -61,7 +61,7 @@ export function ContactMapSection() {
         </GoogleMapsProvider>
       </div>
 
-      {/* â”€â”€ Contact Details Panel â”€â”€ */}
+      {/* -- Contact Details Panel -- */}
       <Card className="border shadow-sm h-fit">
         <CardContent className="p-6 space-y-5">
           <div>
