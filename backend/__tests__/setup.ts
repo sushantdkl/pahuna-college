@@ -7,8 +7,7 @@ dotenv.config({ path: ".env.test" });
 dotenv.config();
 
 const testDbUrl = process.env.DATABASE_URL_TEST
-  || process.env.MONGODB_URL_TEST
-  || "mongodb://127.0.0.1:27017/pahuna_college_test";
+  || process.env.MONGODB_URL_TEST;
 
 function assertSafeTestDatabase(url: string) {
   const lowered = url.toLowerCase();
@@ -18,11 +17,17 @@ function assertSafeTestDatabase(url: string) {
     || lowered.endsWith("/pahuna_college");
 
   if (!isTestDb || looksProduction) {
-    throw new Error(`Refusing to run tests against unsafe database URL: ${url}`);
+    throw new Error("Refusing to run tests against unsafe database URL.");
   }
 }
 
 beforeAll(async () => {
+  if (!testDbUrl) {
+    throw new Error(
+      "MONGODB_URL_TEST or DATABASE_URL_TEST must be set before running backend tests.",
+    );
+  }
+
   process.env.MONGODB_URL = testDbUrl;
   process.env.JWT_SECRET = process.env.JWT_SECRET || "QA-TEST-JWT-SECRET";
   assertSafeTestDatabase(testDbUrl);

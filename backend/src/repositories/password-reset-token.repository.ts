@@ -38,7 +38,7 @@ export class PasswordResetTokenRepository {
     return PasswordResetTokenModel.findByIdAndUpdate(
       id,
       { $set: { usedAt: new Date() } },
-      { new: true },
+      { returnDocument: "after" },
     );
   }
 }

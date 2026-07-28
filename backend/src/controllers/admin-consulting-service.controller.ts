@@ -32,6 +32,10 @@ function serviceBody(body: Record<string, unknown>) {
   );
 }
 
+function uploadedServiceImage(req: AuthRequest) {
+  return req.file ? `/uploads/consulting/${req.file.filename}` : undefined;
+}
+
 export class AdminConsultingServiceController {
   async listServices(req: AuthRequest, res: Response) {
     try {
@@ -89,7 +93,10 @@ export class AdminConsultingServiceController {
   async createService(req: AuthRequest, res: Response) {
     try {
       const parsedData = CreateConsultingServiceDTO.safeParse(
-        serviceBody(req.body),
+        {
+          ...serviceBody(req.body),
+          ...(uploadedServiceImage(req) ? { image: uploadedServiceImage(req) } : {}),
+        },
       );
       if (!parsedData.success) {
         return ApiResponseHelper.error(
@@ -119,7 +126,10 @@ export class AdminConsultingServiceController {
   async updateService(req: AuthRequest, res: Response) {
     try {
       const parsedData = UpdateConsultingServiceDTO.safeParse(
-        serviceBody(req.body),
+        {
+          ...serviceBody(req.body),
+          ...(uploadedServiceImage(req) ? { image: uploadedServiceImage(req) } : {}),
+        },
       );
       if (!parsedData.success) {
         return ApiResponseHelper.error(

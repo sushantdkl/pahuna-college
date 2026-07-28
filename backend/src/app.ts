@@ -26,6 +26,7 @@ import contactMessageRoutes from "./routes/contact-message.route";
 import foodProviderRoutes from "./routes/food-provider.route";
 import inquiryRoutes from "./routes/inquiry.route";
 import itineraryRoutes from "./routes/itinerary.route";
+import newsletterSubscriberRoutes from "./routes/newsletter-subscriber.route";
 import partnerApplicationRoutes from "./routes/partner-application.route";
 import publicCatalogRoutes from "./routes/public-catalog.route";
 import reservationRoutes from "./routes/reservation.route";
@@ -76,6 +77,7 @@ app.use("/api/v1/itineraries", itineraryRoutes);
 app.use("/api/v1/admin/itineraries", adminItineraryRoutes);
 app.use("/api/v1/contact-messages", contactMessageRoutes);
 app.use("/api/v1/admin/contact-messages", adminContactMessageRoutes);
+app.use("/api/v1/newsletter-subscribers", newsletterSubscriberRoutes);
 app.use("/api/v1/partner-applications", partnerApplicationRoutes);
 app.use(
   "/api/v1/admin/partner-applications",

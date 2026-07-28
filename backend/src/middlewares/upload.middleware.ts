@@ -10,6 +10,8 @@ const experienceUploadDirectory = path.join(process.cwd(), "uploads", "experienc
 const blogUploadDirectory = path.join(process.cwd(), "uploads", "blog");
 const packageUploadDirectory = path.join(process.cwd(), "uploads", "packages");
 const foodUploadDirectory = path.join(process.cwd(), "uploads", "food");
+const trainingUploadDirectory = path.join(process.cwd(), "uploads", "training");
+const consultingUploadDirectory = path.join(process.cwd(), "uploads", "consulting");
 
 fs.mkdirSync(profileUploadDirectory, { recursive: true });
 fs.mkdirSync(hotelUploadDirectory, { recursive: true });
@@ -18,6 +20,8 @@ fs.mkdirSync(experienceUploadDirectory, { recursive: true });
 fs.mkdirSync(blogUploadDirectory, { recursive: true });
 fs.mkdirSync(packageUploadDirectory, { recursive: true });
 fs.mkdirSync(foodUploadDirectory, { recursive: true });
+fs.mkdirSync(trainingUploadDirectory, { recursive: true });
+fs.mkdirSync(consultingUploadDirectory, { recursive: true });
 
 function createImageStorage(uploadDirectory: string) {
   return multer.diskStorage({
@@ -38,6 +42,8 @@ const experienceStorage = createImageStorage(experienceUploadDirectory);
 const blogStorage = createImageStorage(blogUploadDirectory);
 const packageStorage = createImageStorage(packageUploadDirectory);
 const foodStorage = createImageStorage(foodUploadDirectory);
+const trainingStorage = createImageStorage(trainingUploadDirectory);
+const consultingStorage = createImageStorage(consultingUploadDirectory);
 
 const fileFilter = (
   req: Request,
@@ -112,5 +118,21 @@ export const uploadFoodProviderImages = multer({
   limits: {
     fileSize: 5 * 1024 * 1024,
     files: 6,
+  },
+});
+
+export const uploadTrainingCourseImage = multer({
+  storage: trainingStorage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+});
+
+export const uploadConsultingServiceImage = multer({
+  storage: consultingStorage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
   },
 });
