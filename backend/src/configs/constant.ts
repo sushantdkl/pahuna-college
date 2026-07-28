@@ -1,0 +1,29 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
+export const PORT: number = Number(process.env.PORT) || 4000;
+
+// MongoDB URL decides where registration data is stored for the auth flow.
+export const MONGODB_URL: string =
+  process.env.MONGODB_URL || "mongodb://localhost:27017/pahuna_college";
+
+// SECRET_KEY signs login tokens; JWT_SECRET is supported for clearer auth-specific naming.
+export const SECRET_KEY: string =
+  process.env.JWT_SECRET || process.env.SECRET_KEY || "4kgamingFF@#";
+
+export const SMTP_HOST = process.env.SMTP_HOST || "";
+export const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
+export const SMTP_SECURE = process.env.SMTP_SECURE === "true";
+export const SMTP_USER = process.env.SMTP_USER || "";
+export const SMTP_PASS = process.env.SMTP_PASS || "";
+export const SMTP_FROM = process.env.SMTP_FROM || SMTP_USER;
+export const PAHUNA_NOTIFICATION_EMAIL =
+  process.env.PAHUNA_NOTIFICATION_EMAIL || "";
+
+export const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+export const EMAIL_USER = process.env.EMAIL_USER || SMTP_USER;
+export const EMAIL_PASS = process.env.EMAIL_PASS || SMTP_PASS;
+export const EMAIL_FROM_NAME = process.env.EMAIL_FROM_NAME || "Pahuna";
+export const EMAIL_TEST_RECIPIENT =
+  process.env.EMAIL_TEST_RECIPIENT || PAHUNA_NOTIFICATION_EMAIL;

@@ -1,0 +1,79 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: pahuna-mongodb
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - mern-net
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-pahuna_college}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS:-passpass}
+
+  backend:
+    build:
+      context: ./backend
+    container_name: pahuna-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-5050}:5050"
+    depends_on:
+      - mongo
+    volumes:
+      - backend-uploads:/app/uploads
+    networks:
+      - mern-net
+    environment:
+      NODE_ENV: production
+      PORT: 5050
+      MONGODB_URL: mongodb://${MONGO_USER:-root}:${MONGO_PASS:-passpass}@mongo:27017/${MONGO_DB:-pahuna_college}?authSource=admin
+      JWT_SECRET: ${JWT_SECRET:-change-this-before-production}
+      DEFAULT_ADMIN_EMAIL: ${DEFAULT_ADMIN_EMAIL:-admin@pahuna.com}
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD:-123456}
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:3000}
+      EMAIL_USER: ${EMAIL_USER:-}
+      EMAIL_PASS: ${EMAIL_PASS:-}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_FROM: ${SMTP_FROM:-}
+      PAHUNA_NOTIFICATION_EMAIL: ${PAHUNA_NOTIFICATION_EMAIL:-}
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:5050}
+        SERVER_API_URL: ${SERVER_API_URL:-http://backend:5050}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+        MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+        MISTRAL_MODEL: ${MISTRAL_MODEL:-mistral-small-latest}
+    container_name: pahuna-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      - backend
+    networks:
+      - mern-net
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:5050}
+      SERVER_API_URL: ${SERVER_API_URL:-http://backend:5050}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+      MISTRAL_MODEL: ${MISTRAL_MODEL:-mistral-small-latest}
+
+volumes:
+  mongo-data:
+  backend-uploads:
+
+networks:
+  mern-net:
+    driver: bridge

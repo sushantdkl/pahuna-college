@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600" role="img" aria-label="Mountain landscape illustration">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#2b3a3f" />
+      <stop offset="55%" stop-color="#7a6a53" />
+      <stop offset="100%" stop-color="#0f1416" />
+    </linearGradient>
+    <linearGradient id="haze" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#d2b88a" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#5a5a5a" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1600" fill="url(#sky)" />
+  <g opacity="0.9">
+    <path d="M0 1100L420 650L720 980L980 720L1280 1020L1600 840V1600H0Z" fill="#202b2e" />
+    <path d="M0 1200L360 820L640 1080L980 780L1600 1120V1600H0Z" fill="#182123" />
+    <path d="M0 1360L300 1040L620 1280L900 980L1200 1260L1600 1100V1600H0Z" fill="#12191b" />
+  </g>
+  <rect y="900" width="1600" height="500" fill="url(#haze)" />
+</svg>

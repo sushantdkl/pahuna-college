@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Pahuna AI travel placeholder">
+  <rect width="1200" height="800" fill="#f8f1e4"/>
+  <path d="M142 524 348 342l151 130 202-227 180 211 123-91 106 159v188H142z" fill="#dcebd4"/>
+  <path d="M246 574h708" stroke="#0f6b44" stroke-width="22" stroke-linecap="round"/>
+  <circle cx="430" cy="574" r="42" fill="#dba847"/>
+  <circle cx="770" cy="574" r="42" fill="#dba847"/>
+  <path d="m600 230 24 74 78 1-63 45 23 75-62-46-64 46 24-75-63-45 78-1z" fill="#0f6b44"/>
+  <text x="600" y="684" text-anchor="middle" font-family="Arial, sans-serif" font-size="46" font-weight="700" fill="#244f3a">Pahuna AI Travel</text>
+</svg>

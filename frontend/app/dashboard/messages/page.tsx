@@ -1,0 +1,194 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import {
+  AdminReplicaFrame,
+  ReplicaDataCard,
+  ReplicaStatCard,
+} from "@/components/admin-replica-dashboard";
+import {
+  deleteAdminContactMessageAction,
+  getAdminContactMessagesAction,
+  updateAdminContactMessageAction,
+} from "@/lib/actions/admin-contact-message-actions";
+import type { AdminContactMessage } from "@/lib/api/admin-contact-messages";
+import type { ContactMessageStatus } from "@/schemas/contact-message.schema";
+
+const pageSize = 10;
+const statuses: Array<ContactMessageStatus | ""> = [
+  "",
+  "NEW",
+  "READ",
+  "RESPONDED",
+  "CLOSED",
+];
+
+export default function DashboardMessagesPage() {
+  const [messages, setMessages] = useState<AdminContactMessage[]>([]);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [summary, setSummary] = useState({ total: 0, new: 0, responded: 0, closed: 0 });
+  const [query, setQuery] = useState("");
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState<ContactMessageStatus | "">("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [selected, setSelected] = useState<AdminContactMessage | null>(null);
+  const [responding, setResponding] = useState<AdminContactMessage | null>(null);
+  const [deleting, setDeleting] = useState<AdminContactMessage | null>(null);
+  const [savingId, setSavingId] = useState("");
+
+  const loadMessages = useCallback(async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await getAdminContactMessagesAction({
+        page,
+        limit: pageSize,
+        search,
+        status,
+      });
+      setMessages(response.data || []);
+      setTotal(response.meta?.total || 0);
+      setTotalPages(response.meta?.totalPages || 1);
+      setSummary({
+        total: response.meta?.summary?.total || 0,
+        new: response.meta?.summary?.new || 0,
+        responded: response.meta?.summary?.responded || 0,
+        closed: response.meta?.summary?.closed || 0,
+      });
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : "Unable to load messages");
+    } finally {
+      setLoading(false);
+    }
+  }, [page, search, status]);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      void loadMessages();
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
+  }, [loadMessages]);
+
+  const updateStatus = async (message: AdminContactMessage, nextStatus: ContactMessageStatus) => {
+    setSavingId(message._id);
+    setError("");
+    setNotice("");
+
+    try {
+      await updateAdminContactMessageAction(message._id, { status: nextStatus });
+      setNotice(`Message marked ${formatLabel(nextStatus).toLowerCase()}.`);
+      await loadMessages();
+    } catch (updateError) {
+      setError(updateError instanceof Error ? updateError.message : "Unable to update message");
+    } finally {
+      setSavingId("");
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!deleting) return;
+    setSavingId(deleting._id);
+    setError("");
+
+    try {
+      await deleteAdminContactMessageAction(deleting._id);
+      setNotice("Contact message deleted successfully.");
+      setDeleting(null);
+      await loadMessages();
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : "Unable to delete message");
+    } finally {
+      setSavingId("");
+    }
+  };
+
+  return (
+    <AdminReplicaFrame>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Messages</h1>
+          <p className="text-sm text-stone-500">Contact form submissions and public support messages</p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ReplicaStatCard title="Total Messages" value={summary.total} subtitle="All submissions" icon="MS" />
+          <ReplicaStatCard title="New / Unread" value={summary.new} subtitle="Awaiting review" icon="NW" />
+          <ReplicaStatCard title="Responded" value={summary.responded} subtitle="Response sent" icon="RP" />
+          <ReplicaStatCard title="Closed" value={summary.closed} subtitle="Completed" icon="CL" />
+        </div>
+
+        {notice ? <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">{notice}</p> : null}
+        {error ? <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><span>{error}</span><button onClick={() => void loadMessages()} className="font-bold underline">Retry</button></div> : null}
+
+        <ReplicaDataCard title="Contact messages" description="Search, review, respond, close, or delete" count={total}>
+          <form className="mb-5 grid gap-3 lg:grid-cols-[1fr_190px_auto]" onSubmit={(event) => { event.preventDefault(); setPage(1); setSearch(query.trim()); }}>
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search name, email, phone, subject, message, or status" className="rounded-lg border border-stone-200 px-4 py-2.5 text-sm outline-none focus:border-emerald-500" />
+            <select value={status} onChange={(event) => { setPage(1); setStatus(event.target.value as ContactMessageStatus | ""); }} className="rounded-lg border border-stone-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-500">
+              {statuses.map((value) => <option key={value || "ALL"} value={value}>{value ? formatLabel(value) : "All statuses"}</option>)}
+            </select>
+            <button type="submit" className="rounded-lg bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800">Search</button>
+          </form>
+
+          {loading ? (
+            <div className="py-14 text-center text-sm font-medium text-stone-500">Loading messages...</div>
+          ) : messages.length ? (
+            <table className="min-w-[920px] w-full text-sm">
+              <thead><tr className="border-b text-left text-stone-500"><th className="pb-3 pr-4 font-medium">Name</th><th className="pb-3 pr-4 font-medium">Email</th><th className="pb-3 pr-4 font-medium">Subject</th><th className="pb-3 pr-4 font-medium">Status</th><th className="pb-3 pr-4 font-medium">Created</th><th className="pb-3 font-medium">Actions</th></tr></thead>
+              <tbody>
+                {messages.map((message) => (
+                  <tr key={message._id} className="border-b border-stone-100 align-top last:border-0">
+                    <td className="py-4 pr-4"><p className="font-semibold text-stone-900">{message.name}</p>{message.phone ? <p className="mt-1 text-xs text-stone-500">{message.phone}</p> : null}</td>
+                    <td className="py-4 pr-4 text-stone-600">{message.email}</td>
+                    <td className="py-4 pr-4"><p className="max-w-56 font-medium text-stone-800">{message.subject}</p><p className="mt-1 max-w-56 truncate text-xs text-stone-500">{message.message}</p></td>
+                    <td className="py-4 pr-4"><StatusBadge status={message.status} /></td>
+                    <td className="py-4 pr-4 text-stone-500">{formatDate(message.createdAt)}</td>
+                    <td className="py-4"><div className="flex min-w-80 flex-wrap gap-2">
+                      <button onClick={() => setSelected(message)} className="rounded-lg border border-stone-200 px-3 py-2 text-xs font-semibold hover:bg-stone-50">View</button>
+                      <button onClick={() => setResponding(message)} className="rounded-lg bg-emerald-700 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-800">Respond</button>
+                      {message.status === "NEW" ? <button disabled={savingId === message._id} onClick={() => void updateStatus(message, "READ")} className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 disabled:opacity-50">Mark read</button> : null}
+                      {message.status !== "CLOSED" ? <button disabled={savingId === message._id} onClick={() => void updateStatus(message, "CLOSED")} className="rounded-lg border border-stone-200 px-3 py-2 text-xs font-semibold disabled:opacity-50">Close</button> : null}
+                      <button onClick={() => setDeleting(message)} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">Delete</button>
+                    </div></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="py-14 text-center"><p className="font-semibold text-stone-800">No contact messages found.</p><p className="mt-2 text-sm text-stone-500">Public contact form submissions will appear here.</p></div>
+          )}
+
+          <div className="mt-5 flex items-center justify-between border-t border-stone-200 pt-4 text-sm text-stone-500"><span>Page {page} of {totalPages}</span><div className="flex gap-2"><button disabled={page <= 1 || loading} onClick={() => setPage((value) => Math.max(1, value - 1))} className="rounded-lg border border-stone-200 px-4 py-2 font-semibold disabled:opacity-40">Previous</button><button disabled={page >= totalPages || loading} onClick={() => setPage((value) => Math.min(totalPages, value + 1))} className="rounded-lg border border-stone-200 px-4 py-2 font-semibold disabled:opacity-40">Next</button></div></div>
+        </ReplicaDataCard>
+      </div>
+
+      {selected ? <MessageDetailDialog message={selected} onClose={() => setSelected(null)} /> : null}
+      {responding ? <RespondDialog message={responding} onClose={() => setResponding(null)} onSaved={async () => { setResponding(null); setNotice("Response saved and message marked responded."); await loadMessages(); }} /> : null}
+      {deleting ? <ConfirmDeleteDialog message={deleting} saving={savingId === deleting._id} onCancel={() => setDeleting(null)} onConfirm={() => void confirmDelete()} /> : null}
+    </AdminReplicaFrame>
+  );
+}
+
+function MessageDetailDialog({ message, onClose }: { message: AdminContactMessage; onClose: () => void }) { return <ModalShell title={message.subject} eyebrow={message.name} onClose={onClose}><div className="grid gap-3 sm:grid-cols-2"><Detail label="Email" value={message.email} /><Detail label="Phone" value={message.phone || "Not provided"} /><Detail label="Status" value={formatLabel(message.status)} /><Detail label="Created" value={formatDate(message.createdAt)} /></div><MessageBlock label="Message" value={message.message} />{message.response ? <MessageBlock label="Admin response" value={message.response} /> : null}</ModalShell>; }
+
+function RespondDialog({ message, onClose, onSaved }: { message: AdminContactMessage; onClose: () => void; onSaved: () => Promise<void> }) {
+  const [response, setResponse] = useState(message.response || "");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  return <ModalShell title={`Respond to ${message.name}`} eyebrow={message.subject} onClose={onClose}><MessageBlock label="Public message" value={message.message} /><form className="mt-5" onSubmit={async (event) => { event.preventDefault(); if (!response.trim()) { setError("Response is required"); return; } setSaving(true); setError(""); try { await updateAdminContactMessageAction(message._id, { response: response.trim(), status: "RESPONDED" }); await onSaved(); } catch (saveError) { setError(saveError instanceof Error ? saveError.message : "Unable to save response"); } finally { setSaving(false); } }}><label className="text-sm font-semibold text-stone-700">Response<textarea value={response} onChange={(event) => setResponse(event.target.value)} className="mt-2 min-h-36 w-full rounded-xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-emerald-500" placeholder="Write a helpful response" /></label>{error ? <p className="mt-3 text-sm font-semibold text-red-600">{error}</p> : null}<div className="mt-5 flex justify-end gap-3"><button type="button" onClick={onClose} disabled={saving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button type="submit" disabled={saving} className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Saving..." : "Send response"}</button></div></form></ModalShell>;
+}
+
+function ConfirmDeleteDialog({ message, saving, onCancel, onConfirm }: { message: AdminContactMessage; saving: boolean; onCancel: () => void; onConfirm: () => void }) { return <ModalShell title="Delete contact message?" eyebrow="Permanent action" onClose={onCancel}><p className="text-sm leading-6 text-stone-600">Delete <strong>{message.subject}</strong> from {message.name}? This cannot be undone.</p><div className="mt-6 flex justify-end gap-3"><button onClick={onCancel} disabled={saving} className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold">Cancel</button><button onClick={onConfirm} disabled={saving} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Deleting..." : "Delete message"}</button></div></ModalShell>; }
+
+function ModalShell({ title, eyebrow, onClose, children }: { title: string; eyebrow: string; onClose: () => void; children: React.ReactNode }) { return <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-stone-950/55 px-4 py-8"><section className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">{eyebrow}</p><h2 className="mt-2 text-2xl font-bold">{title}</h2></div><button onClick={onClose} className="rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold">Close</button></div><div className="mt-6">{children}</div></section></div>; }
+function Detail({ label, value }: { label: string; value: string }) { return <div className="rounded-xl border border-stone-200 bg-stone-50 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-stone-400">{label}</p><p className="mt-1 text-sm font-semibold text-stone-800">{value}</p></div>; }
+function MessageBlock({ label, value }: { label: string; value: string }) { return <div className="mt-4 rounded-xl border border-stone-200 p-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-stone-400">{label}</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-stone-700">{value}</p></div>; }
+function StatusBadge({ status }: { status: ContactMessageStatus }) { const tone = status === "NEW" ? "bg-amber-100 text-amber-800" : status === "CLOSED" ? "bg-stone-100 text-stone-600" : "bg-emerald-50 text-emerald-700"; return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${tone}`}>{formatLabel(status)}</span>; }
+function formatLabel(value: string) { return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase()); }
+function formatDate(value: string) { return new Date(value).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); }
+

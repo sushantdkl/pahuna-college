@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Pahuna route placeholder">
+  <rect width="1200" height="800" fill="#f8f1e4"/>
+  <path d="M0 610c130-80 245-88 363-25 111 60 209 59 312-5 134-83 285-80 525 41v179H0z" fill="#dcebd4"/>
+  <path d="M96 570c116-126 222-170 323-132 73 28 111 94 190 104 113 14 188-105 311-85 67 11 126 61 184 132" fill="none" stroke="#0f6b44" stroke-width="18" stroke-linecap="round" stroke-dasharray="2 42"/>
+  <circle cx="139" cy="528" r="30" fill="#dba847"/>
+  <circle cx="1061" cy="602" r="30" fill="#dba847"/>
+  <text x="600" y="377" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="700" fill="#244f3a">Pahuna Route</text>
+</svg>
