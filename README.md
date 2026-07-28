@@ -83,7 +83,7 @@ Then open a second PowerShell and start frontend:
 
 ```powershell
 cd C:\Users\Acer\Desktop\pahuna-college\frontend
-Copy-Item .env.docker.example .env
+Copy-Item .env.example .env
 docker compose up --build
 ```
 
