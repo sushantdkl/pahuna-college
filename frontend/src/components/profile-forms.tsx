@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { UploadCloud, User, X } from "lucide-react";
+import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { updatePasswordAction, updateProfileAction } from "@/lib/actions/auth-actions";
 import { resolveApiAssetUrl } from "@/lib/api/axios-instance";
@@ -138,9 +139,13 @@ export function ProfileSettingsPanel({
       storeUserCookie(updatedUser);
       handleImageChange(null);
       setUploadProgress(100);
-      setProfileStatus(response.message || "Profile updated successfully");
+      const successMessage = response.message || "Profile updated successfully";
+      setProfileStatus(successMessage);
+      toast.success(successMessage);
     } catch (error) {
-      setProfileStatus(error instanceof Error ? error.message : "Profile update failed");
+      const errorMessage = error instanceof Error ? error.message : "Profile update failed";
+      setProfileStatus(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsSavingProfile(false);
       window.setTimeout(() => setUploadProgress(0), 900);
@@ -163,9 +168,13 @@ export function ProfileSettingsPanel({
 
       const response = await updatePasswordAction(parsed.data);
       form.reset();
-      setPasswordStatus(response.message || "Password updated successfully");
+      const successMessage = response.message || "Password updated successfully";
+      setPasswordStatus(successMessage);
+      toast.success(successMessage);
     } catch (error) {
-      setPasswordStatus(error instanceof Error ? error.message : "Password update failed");
+      const errorMessage = error instanceof Error ? error.message : "Password update failed";
+      setPasswordStatus(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsSavingPassword(false);
     }

@@ -4,12 +4,12 @@ import { getImageOrPlaceholder, isBackendUploadImage } from "@/lib/assets";
 describe("public image helpers", () => {
   test("expands backend upload paths to the backend origin", () => {
     expect(getImageOrPlaceholder("/uploads/destinations/qa-test.png", "destination")).toBe(
-      "http://localhost:4000/uploads/destinations/qa-test.png",
+      "http://localhost:5050/uploads/destinations/qa-test.png",
     );
   });
 
   test("detects normalized backend upload URLs", () => {
-    expect(isBackendUploadImage("http://localhost:4000/uploads/destinations/qa-test.png")).toBe(true);
+    expect(isBackendUploadImage("http://localhost:5050/uploads/destinations/qa-test.png")).toBe(true);
   });
 
   test("detects relative backend upload paths", () => {
@@ -21,6 +21,6 @@ describe("public image helpers", () => {
   });
 
   test("returns a real food fallback image when source is missing", () => {
-    expect(getImageOrPlaceholder(null, "food")).toContain("images.unsplash.com");
+    expect(getImageOrPlaceholder(null, "food")).toBe("/images/cafe_interior.jpg");
   });
 });

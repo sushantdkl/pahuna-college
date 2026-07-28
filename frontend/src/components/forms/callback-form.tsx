@@ -90,7 +90,7 @@ export function CallbackForm({ hotelId, hotelName, compact = false }: CallbackFo
           </div>
           <div>
             <h3 className="font-semibold text-sm">Request a Callback</h3>
-            <p className="text-xs text-muted-foreground">We&apos;ll call you â€” no waiting on hold.</p>
+            <p className="text-xs text-muted-foreground">We&apos;ll call you - no waiting on hold.</p>
           </div>
         </div>
       )}

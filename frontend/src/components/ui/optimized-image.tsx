@@ -7,7 +7,7 @@ import { getImageOrPlaceholder } from "@/lib/assets";
 import { cn } from "@/lib/utils";
 
 /**
- * OptimizedImage â€” wraps Next.js Image with:
+ * OptimizedImage - wraps Next.js Image with:
  * - Blur placeholder shimmer while loading
  * - Graceful error fallback
  * - Lazy loading by default

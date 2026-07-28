@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Container } from "@/components/layout/container";
+import { resolveApiAssetUrl } from "@/lib/api/axios-instance";
 import { mainNavigation } from "@/lib/data/navigation";
 import { SITE_CONFIG } from "@/lib/constants";
 import { useAuth } from "@/context/AuthContext";
@@ -330,7 +331,7 @@ function ProfileMenu({
 function resolveProfileImageUrl(path?: string) {
   if (!path) return null;
   if (path.startsWith("http") || path.startsWith("blob:")) return path;
-  return `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}${path.startsWith("/") ? path : `/${path}`}`;
+  return resolveApiAssetUrl(path.startsWith("/") ? path : `/${path}`);
 }
 
 function MobileMenuLink({ href, label, onClick }: { href: string; label: string; onClick: () => void }) {

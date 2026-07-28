@@ -1,4 +1,5 @@
 ﻿// @ts-nocheck
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -79,16 +80,30 @@ interface ServiceCardProps {
 export function ServiceCard({ service, compact = false }: ServiceCardProps) {
   const colors = colorMap[service.color] || colorMap.emerald;
   const Icon = iconMap[service.icon];
+  const image = service.image;
 
   if (compact) {
     return (
       <Card className="overflow-hidden border hover:shadow-lg transition-all duration-300 group h-full flex flex-col">
-        <CardHeader className="pb-3">
-          <div
-            className={`flex h-12 w-12 items-center justify-center rounded-xl ${colors.bg} mb-3`}
-          >
-            <Icon className={`h-6 w-6 ${colors.text}`} />
+        {image ? (
+          <div className="relative h-40 w-full overflow-hidden bg-stone-100">
+            <Image
+              src={image}
+              alt={service.title}
+              fill
+              sizes="(min-width: 1024px) 33vw, 100vw"
+              className="object-cover transition duration-300 group-hover:scale-105"
+            />
           </div>
+        ) : null}
+        <CardHeader className="pb-3">
+          {!image ? (
+            <div
+              className={`flex h-12 w-12 items-center justify-center rounded-xl ${colors.bg} mb-3`}
+            >
+              <Icon className={`h-6 w-6 ${colors.text}`} />
+            </div>
+          ) : null}
           <CardTitle className="text-lg group-hover:text-primary transition-colors">
             {service.title}
           </CardTitle>
@@ -119,17 +134,29 @@ export function ServiceCard({ service, compact = false }: ServiceCardProps) {
       <div className="grid md:grid-cols-[280px_1fr] items-stretch">
         {/* Left panel */}
         <div
-          className={`${colors.bg} p-6 flex flex-col items-center justify-center text-center gap-3`}
+          className={`${colors.bg} relative min-h-[240px] overflow-hidden p-6 flex flex-col items-center justify-center text-center gap-3`}
         >
+          {image ? (
+            <>
+              <Image
+                src={image}
+                alt={service.title}
+                fill
+                sizes="(min-width: 768px) 280px, 100vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-black/35" />
+            </>
+          ) : null}
           <div
-            className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-white/80 shadow-sm`}
+            className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-white/80 shadow-sm"
           >
-            <Icon className={`h-8 w-8 ${colors.text}`} />
+            <Icon className={`h-8 w-8 ${image ? "text-emerald-700" : colors.text}`} />
           </div>
-          <h3 className="font-bold text-lg">{service.title}</h3>
-          <p className="text-xs text-muted-foreground">{service.tagline}</p>
+          <h3 className={`relative font-bold text-lg ${image ? "text-white" : ""}`}>{service.title}</h3>
+          <p className={`relative text-xs ${image ? "text-white/85" : "text-muted-foreground"}`}>{service.tagline}</p>
           {service.isFeatured && (
-            <Badge className={`${colors.badge} text-xs`}>Popular</Badge>
+            <Badge className={`relative ${colors.badge} text-xs`}>Popular</Badge>
           )}
         </div>
 

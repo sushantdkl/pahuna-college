@@ -19,7 +19,7 @@ describe("FoodCard", () => {
   test("renders admin-uploaded image as an unoptimized backend upload", () => {
     render(<FoodCard provider={provider as any} />);
     const image = screen.getByAltText("QA-TEST Cafe");
-    expect(image).toHaveAttribute("src", "http://localhost:4000/uploads/food/qa-test.png");
+    expect(image).toHaveAttribute("src", "http://localhost:5050/uploads/food/qa-test.png");
   });
 
   test("links to the food guide", () => {

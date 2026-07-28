@@ -41,7 +41,7 @@ const categoryEmojis: Record<string, string> = {
 };
 
 /**
- * Interactive Experiences explorer â€” cards + map with category filters,
+ * Interactive Experiences explorer - cards + map with category filters,
  * bidirectional selection, and mobile list/map toggle.
  */
 export function ExperiencesExplorer({
@@ -73,7 +73,7 @@ export function ExperiencesExplorer({
 
   return (
     <div>
-      {/* â”€â”€ Category Filters â”€â”€ */}
+      {/* -- Category Filters -- */}
       <div className="flex flex-wrap justify-center gap-2 mb-6">
         <Badge
           variant={categoryFilter === "ALL" ? "default" : "outline"}
@@ -94,7 +94,7 @@ export function ExperiencesExplorer({
         ))}
       </div>
 
-      {/* â”€â”€ Mobile view toggle â”€â”€ */}
+      {/* -- Mobile view toggle -- */}
       <div className="flex items-center justify-between mb-4 lg:hidden">
         <div className="flex rounded-lg border p-0.5">
           <Button
@@ -122,9 +122,9 @@ export function ExperiencesExplorer({
         )}
       </div>
 
-      {/* â”€â”€ Desktop: side-by-side | Mobile: toggle â”€â”€ */}
+      {/* -- Desktop: side-by-side | Mobile: toggle -- */}
       <div className="lg:grid lg:grid-cols-5 lg:gap-6">
-        {/* Experience cards â€” left panel */}
+        {/* Experience cards - left panel */}
         <div
           className={`lg:col-span-3 ${
             mobileView === "map" ? "hidden lg:block" : ""
@@ -165,7 +165,7 @@ export function ExperiencesExplorer({
           )}
         </div>
 
-        {/* Map â€” right panel (sticky on desktop) */}
+        {/* Map - right panel (sticky on desktop) */}
         <div
           className={`lg:col-span-2 ${
             mobileView === "list" ? "hidden lg:block" : ""

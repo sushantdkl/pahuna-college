@@ -31,7 +31,7 @@ export const adminReplicaNavItems: AdminNavItem[] = [
   { label: "Settings", href: "/dashboard/settings", section: "SE" },
 ];
 
-export function DashboardSidebar() {
+export function DashboardSidebar({ onLogout }: { onLogout?: () => void }) {
   const pathname = usePathname();
 
   return (
@@ -64,10 +64,14 @@ export function DashboardSidebar() {
         </ul>
       </nav>
       <div className="border-t border-stone-200 px-3 py-3">
-        <Link href="/" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-stone-500 hover:bg-stone-100 hover:text-stone-950">
+        <button
+          type="button"
+          onClick={onLogout}
+          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-700 hover:bg-red-50 hover:text-red-800"
+        >
           <span aria-hidden="true">{"<-"}</span>
-          Back to site
-        </Link>
+          Logout
+        </button>
       </div>
     </aside>
   );

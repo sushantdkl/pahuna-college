@@ -113,6 +113,6 @@ describe("site copy contracts", () => {
 
   test("site copy avoids mojibake replacement characters", () => {
     const allCopy = copies.map(([, copy]) => JSON.stringify(copy)).join("\n");
-    expect(allCopy).not.toMatch(/Ã|Â|�/);
+    expect(allCopy).not.toMatch(/[\u00c3\u00c2\ufffd]/);
   });
 });

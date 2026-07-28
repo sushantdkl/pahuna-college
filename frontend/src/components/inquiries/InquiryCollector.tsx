@@ -3,6 +3,7 @@
 
 import { useMemo, useState } from "react";
 import { Loader2, Send } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +24,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/context/AuthContext";
+import { createInquiryApi } from "@/lib/api/inquiries";
 import { cn } from "@/lib/utils";
 
 const SUCCESS_MESSAGE =
@@ -66,6 +69,14 @@ interface InquiryCollectorProps {
 
 type SubmissionState = "idle" | "submitting" | "sent";
 
+function toInquiryType(leadType: InquiryLeadType) {
+  if (leadType === "STAY_INQUIRY") return "HOTEL";
+  if (leadType === "TRIP_PLAN") return "TRAVEL_SUPPORT";
+  if (leadType === "ITINERARY_INQUIRY") return "TRAVEL_SUPPORT";
+  if (leadType === "DESTINATION_INQUIRY") return "GENERAL";
+  return "GENERAL";
+}
+
 export function InquiryCollector({
   open,
   onOpenChange,
@@ -81,6 +92,8 @@ export function InquiryCollector({
   defaultTravelersCount = 2,
   defaultInterests = [],
 }: InquiryCollectorProps) {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const normalizedInterests = useMemo(
     () =>
       defaultInterests
@@ -127,34 +140,43 @@ export function InquiryCollector({
 
   const submit = async () => {
     setError(null);
+
+    if (!isAuthenticated) {
+      router.push(`/login?redirect=${encodeURIComponent(sourcePage || window.location.pathname)}`);
+      return;
+    }
+
     setState("submitting");
 
     try {
-      const response = await fetch("/api/inquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          travelersCount: Number(form.travelersCount),
-          roomsCount: form.roomsCount ? Number(form.roomsCount) : undefined,
-          interests,
-          leadType,
-          sourcePage,
-          leadSource,
-          selectedDestination,
-          selectedStay,
-          selectedItinerary,
-          selectedService,
-          generatedPlanJson,
-        }),
-      });
-      const data = await response.json();
+      const title = `Inquiry for ${selectedLabel}`;
+      const details = [
+        form.fullName ? `Name: ${form.fullName}` : null,
+        form.phone ? `Phone: ${form.phone}` : null,
+        form.email ? `Email: ${form.email}` : null,
+        `Preferred contact: ${form.preferredContactMethod}`,
+        form.travelDate ? `Travel date: ${form.travelDate}` : null,
+        form.flexibleDate ? "Date flexible: yes" : "Date flexible: no",
+        form.travelersCount ? `Travelers: ${Number(form.travelersCount)}` : null,
+        form.roomsCount ? `Rooms: ${Number(form.roomsCount)}` : null,
+        form.budgetRange ? `Budget: ${form.budgetRange}` : null,
+        interests.length ? `Interests: ${interests.join(", ")}` : null,
+        sourcePage ? `Source page: ${sourcePage}` : null,
+        leadSource ? `Lead source: ${leadSource}` : null,
+        selectedDestination ? `Destination: ${selectedDestination}` : null,
+        selectedStay ? `Stay: ${selectedStay}` : null,
+        selectedItinerary ? `Itinerary: ${selectedItinerary}` : null,
+        selectedService ? `Service: ${selectedService}` : null,
+        form.specialRequests ? `Requests: ${form.specialRequests}` : null,
+        generatedPlanJson ? `Generated plan: ${JSON.stringify(generatedPlanJson)}` : null,
+      ].filter(Boolean).join("\n");
 
-      if (!response.ok || !data?.success) {
-        setError(data?.message ?? "Unable to submit inquiry right now.");
-        setState("idle");
-        return;
-      }
+      await createInquiryApi({
+        title,
+        hotelName: selectedStay,
+        inquiryType: toInquiryType(leadType),
+        message: details || title,
+      });
 
       setState("sent");
       toast.success(SUCCESS_MESSAGE);

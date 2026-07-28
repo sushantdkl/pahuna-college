@@ -114,7 +114,7 @@ function RecommendationCard({
                 <MapPin className="h-3.5 w-3.5" />
                 {recommendation.district}
               </span>
-              <span>â€¢</span>
+              <span>*</span>
               <span>{recommendation.area}</span>
             </CardDescription>
           </div>
@@ -135,7 +135,7 @@ function RecommendationCard({
                 Best fit
               </p>
               <p className="mt-1 text-sm text-slate-700">
-                {recommendation.bestFor.slice(0, 2).join(" â€¢ ") || "Flexible stay"}
+                {recommendation.bestFor.slice(0, 2).join(" * ") || "Flexible stay"}
               </p>
             </div>
           </div>
@@ -191,7 +191,7 @@ export function StayRecommenderSection() {
 
   const amenitySummary = useMemo(() => {
     if (form.requiredAmenities.length === 0) return "No amenity preferences yet";
-    return form.requiredAmenities.slice(0, 3).join(" â€¢ ");
+    return form.requiredAmenities.slice(0, 3).join(" * ");
   }, [form.requiredAmenities]);
 
   function updateField<K extends keyof StayRecommenderForm>(key: K, value: StayRecommenderForm[K]) {

@@ -1,6 +1,7 @@
 ﻿// @ts-nocheck
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -79,7 +80,7 @@ const colorMap: Record<string, { bg: string; text: string; badge: string; border
   },
 };
 
-// â”€â”€ Compact Course Card (for grids) â”€â”€
+// -- Compact Course Card (for grids) --
 
 interface CourseCardProps {
   course: TrainingCourse;
@@ -89,14 +90,28 @@ interface CourseCardProps {
 export function CourseCard({ course, compact = false }: CourseCardProps) {
   const colors = colorMap[course.color] || colorMap.amber;
   const Icon = trainingIconMap[course.icon];
+  const image = course.image;
 
   if (compact) {
     return (
       <Card className="overflow-hidden border hover:shadow-lg transition-all duration-300 group h-full flex flex-col">
-        <CardHeader className="pb-3">
-          <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${colors.bg} mb-3`}>
-            <Icon className={`h-6 w-6 ${colors.text}`} />
+        {image ? (
+          <div className="relative h-40 w-full overflow-hidden bg-stone-100">
+            <Image
+              src={image}
+              alt={course.title}
+              fill
+              sizes="(min-width: 1024px) 33vw, 100vw"
+              className="object-cover transition duration-300 group-hover:scale-105"
+            />
           </div>
+        ) : null}
+        <CardHeader className="pb-3">
+          {!image ? (
+            <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${colors.bg} mb-3`}>
+              <Icon className={`h-6 w-6 ${colors.text}`} />
+            </div>
+          ) : null}
           <div className="flex items-center gap-2 mb-1">
             <Badge variant="outline" className={`text-xs ${colors.badge}`}>
               {course.level}
@@ -144,18 +159,30 @@ export function CourseCard({ course, compact = false }: CourseCardProps) {
     );
   }
 
-  // â”€â”€ Full Featured Card (horizontal layout for featured section) â”€â”€
+  // -- Full Featured Card (horizontal layout for featured section) --
   return (
     <Card className={`overflow-hidden border ${colors.border} hover:shadow-xl transition-all duration-300 group`}>
       <div className="grid grid-cols-1 md:grid-cols-[280px_1fr]">
         {/* Left panel */}
-        <div className={`${colors.bg} p-6 flex flex-col items-center justify-center text-center`}>
-          <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-white/80 dark:bg-black/20 mb-4`}>
-            <Icon className={`h-8 w-8 ${colors.text}`} />
+        <div className={`${colors.bg} relative min-h-[240px] overflow-hidden p-6 flex flex-col items-center justify-center text-center`}>
+          {image ? (
+            <>
+              <Image
+                src={image}
+                alt={course.title}
+                fill
+                sizes="(min-width: 768px) 280px, 100vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-black/35" />
+            </>
+          ) : null}
+          <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-white/80 dark:bg-black/20 mb-4">
+            <Icon className={`h-8 w-8 ${image ? "text-emerald-700" : colors.text}`} />
           </div>
-          <h3 className="text-lg font-bold mb-1">{course.title}</h3>
-          <p className="text-xs text-muted-foreground mb-3">{course.tagline}</p>
-          <div className="flex flex-wrap gap-1.5 justify-center">
+          <h3 className={`relative text-lg font-bold mb-1 ${image ? "text-white" : ""}`}>{course.title}</h3>
+          <p className={`relative text-xs mb-3 ${image ? "text-white/85" : "text-muted-foreground"}`}>{course.tagline}</p>
+          <div className="relative flex flex-wrap gap-1.5 justify-center">
             <Badge variant="outline" className={`text-xs ${colors.badge}`}>
               {course.level}
             </Badge>
@@ -163,7 +190,7 @@ export function CourseCard({ course, compact = false }: CourseCardProps) {
               {course.mode}
             </Badge>
           </div>
-          <div className="mt-4 text-sm font-semibold">
+          <div className={`relative mt-4 text-sm font-semibold ${image ? "text-white" : ""}`}>
             {formatPrice(course.fee)}
           </div>
         </div>
@@ -218,7 +245,7 @@ export function CourseCard({ course, compact = false }: CourseCardProps) {
   );
 }
 
-// â”€â”€ Testimonial Card â”€â”€
+// -- Testimonial Card --
 
 interface StudentTestimonialCardProps {
   testimonial: {

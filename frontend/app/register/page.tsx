@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { registerAction } from "@/lib/actions/auth-actions";
 import { images } from "@/lib/pahuna-content";
 import { registerSchema } from "@/schemas/auth.schema";
@@ -38,8 +39,10 @@ export default function RegisterPage() {
     });
 
     if (!parsedData.success) {
+      const validationMessage = parsedData.error.issues[0]?.message || "Invalid register data";
       setStatus("error");
-      setMessage(parsedData.error.issues[0]?.message || "Invalid register data");
+      setMessage(validationMessage);
+      toast.error(validationMessage);
       return;
     }
 
@@ -47,12 +50,16 @@ export default function RegisterPage() {
 
     try {
       const response = await registerAction(parsedData.data);
+      const successMessage = response.message || `${accountType} account created successfully. You can sign in now.`;
       setStatus("success");
-      setMessage(response.message || `${accountType} account created successfully. You can sign in now.`);
+      setMessage(successMessage);
+      toast.success(successMessage);
       router.replace("/login?registered=1");
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Registration failed. Please check your details and try again.";
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Registration failed. Please check your details and try again.");
+      setMessage(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -98,7 +105,7 @@ export default function RegisterPage() {
                 <input id="email" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setStatus("idle"); }} autoComplete="email" className="auth-input" placeholder="you@example.com" />
               </Field>
               <Field label="Phone number" htmlFor="phoneNumber">
-                <input id="phoneNumber" value={phoneNumber} onChange={(event) => { setPhoneNumber(event.target.value); setStatus("idle"); }} autoComplete="tel" className="auth-input" placeholder="Optional phone number" />
+                <input id="phoneNumber" value={phoneNumber} onChange={(event) => { setPhoneNumber(event.target.value); setStatus("idle"); }} autoComplete="tel" className="auth-input" placeholder="" />
               </Field>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Password" htmlFor="password">
