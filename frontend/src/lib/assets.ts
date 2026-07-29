@@ -1,6 +1,6 @@
 export type ImageType = "hero" | "destination" | "food" | "stay" | "route" | "service" | "experience" | "placeholder";
 
-const API_ORIGIN = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000")
+const API_ORIGIN = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050")
   .replace(/\/$/, "")
   .replace(/\/api\/v1$/, "");
 
@@ -12,12 +12,12 @@ export const assets = {
     karnali: "/images/hero/karnali-hero.jpg",
   },
   placeholders: {
-    hero: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80",
-    destination: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    food: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80",
-    stay: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80",
-    route: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
-    service: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80",
+    hero: "/images/hero/surkhet-hero.jpg",
+    destination: "/images/surkhet/bulbule-lake.jpg",
+    food: "/images/cafe_interior.jpg",
+    stay: "/images/hotel_room.jpg",
+    route: "/images/surkhet_road.jpg",
+    service: "/images/karnali_bridge.jpg",
   },
   surkhet: {
     bulbule: "/images/surkhet/bulbule-lake.jpg",

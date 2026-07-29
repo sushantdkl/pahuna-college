@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { getInitials } from "@/lib/utils";
 import type { CaseStudy, ConsultingTestimonial } from "@/lib/services";
 
-// â”€â”€ Case Study Card â”€â”€
+// -- Case Study Card --
 
 interface CaseStudyCardProps {
   study: CaseStudy;
@@ -82,7 +82,7 @@ export function CaseStudyCard({ study }: CaseStudyCardProps) {
   );
 }
 
-// â”€â”€ Testimonial Card â”€â”€
+// -- Testimonial Card --
 
 interface TestimonialCardProps {
   testimonial: ConsultingTestimonial;

@@ -50,7 +50,7 @@ interface ItinerariesExplorerProps {
 }
 
 /**
- * Interactive itineraries explorer â€” trip cards + map with route previews,
+ * Interactive itineraries explorer - trip cards + map with route previews,
  * bidirectional selection, and expandable stop previews.
  */
 export function ItinerariesExplorer({
@@ -73,7 +73,7 @@ export function ItinerariesExplorer({
 
   return (
     <div>
-      {/* â”€â”€ Mobile view toggle â”€â”€ */}
+      {/* -- Mobile view toggle -- */}
       <div className="flex items-center justify-between mb-4 lg:hidden">
         <div className="flex rounded-lg border p-0.5">
           <Button
@@ -95,9 +95,9 @@ export function ItinerariesExplorer({
         </div>
       </div>
 
-      {/* â”€â”€ Desktop: side-by-side | Mobile: toggle â”€â”€ */}
+      {/* -- Desktop: side-by-side | Mobile: toggle -- */}
       <div className="lg:grid lg:grid-cols-5 lg:gap-6">
-        {/* Trip cards â€” left panel */}
+        {/* Trip cards - left panel */}
         <div
           className={`lg:col-span-3 ${
             mobileView === "map" ? "hidden lg:block" : ""
@@ -220,7 +220,7 @@ export function ItinerariesExplorer({
           </div>
         </div>
 
-        {/* Map â€” right panel (sticky on desktop) */}
+        {/* Map - right panel (sticky on desktop) */}
         <div
           className={`lg:col-span-2 ${
             mobileView === "list" ? "hidden lg:block" : ""

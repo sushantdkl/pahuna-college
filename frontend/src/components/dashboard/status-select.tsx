@@ -25,7 +25,7 @@ interface StatusSelectProps {
 }
 
 /**
- * Inline status dropdown â€” calls a server action on change.
+ * Inline status dropdown - calls a server action on change.
  * Shows pending state while updating.
  */
 export function StatusSelect({

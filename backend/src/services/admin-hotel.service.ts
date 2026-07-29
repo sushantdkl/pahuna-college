@@ -228,7 +228,7 @@ export class AdminHotelService {
 
     const updatePayload = cleanPayload({ ...payload });
     const hotel = await HotelModel.findByIdAndUpdate(id, updatePayload, {
-      new: true,
+      returnDocument: "after",
     });
 
     if (!hotel) {

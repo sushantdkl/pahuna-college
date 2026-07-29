@@ -245,7 +245,7 @@ export class AdminDestinationService {
     const destination = await DestinationModel.findByIdAndUpdate(
       id,
       updatePayload,
-      { new: true },
+      { returnDocument: "after" },
     );
 
     if (!destination) {

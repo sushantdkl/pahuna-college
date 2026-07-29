@@ -46,7 +46,16 @@ async function apiRequest<T>(
   options: ApiRequestOptions,
 ): Promise<ApiResponse<T>> {
   const headers = new Headers();
-  const token = options.auth ? getCookie("auth_token") : null;
+  let token: string | null = null;
+
+  if (options.auth) {
+    if (typeof window !== "undefined") {
+      token = getCookie("auth_token");
+    } else {
+      const { cookies } = await import("next/headers");
+      token = (await cookies()).get("auth_token")?.value ?? null;
+    }
+  }
   const isFormData = options.body instanceof FormData;
 
   if (!isFormData) {

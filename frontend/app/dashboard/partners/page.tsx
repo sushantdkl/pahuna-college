@@ -44,13 +44,18 @@ export default function DashboardPartnersPage() {
     hotels: applications.filter((item) => ["HOTEL", "RESORT"].includes(item.partnerType)).length,
   }), [applications]);
 
-  async function updateApplication(id, payload) {
+  async function updateApplication(id, payload, options = {}) {
     setSaving(true);
     setError("");
     try {
       await updateAdminPartnerApplicationAction(id, payload);
       await load();
-      setSelected((current) => current ? { ...current, ...payload } : current);
+      if (options.closeOnSuccess) {
+        setSelected(null);
+        setNotes("");
+      } else {
+        setSelected((current) => current ? { ...current, ...payload } : current);
+      }
     } catch (updateError) {
       setError(updateError instanceof Error ? updateError.message : "Unable to update application");
     } finally {
@@ -80,7 +85,7 @@ export default function DashboardPartnersPage() {
                 <th className="pb-2 pr-4 font-medium text-stone-500">Owner</th>
                 <th className="pb-2 pr-4 font-medium text-stone-500">Type</th>
                 <th className="pb-2 pr-4 font-medium text-stone-500">Status</th>
-                <th className="pb-2 pr-4 font-medium text-stone-500">Open</th>
+                <th className="pb-2 pr-4 font-medium text-stone-500">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -90,7 +95,7 @@ export default function DashboardPartnersPage() {
                   <td className="py-3 pr-4 text-stone-600">{item.ownerName}</td>
                   <td className="py-3 pr-4 text-stone-600">{item.partnerType}</td>
                   <td className="py-3 pr-4"><ReplicaStatusBadge>{item.status}</ReplicaStatusBadge></td>
-                  <td className="py-3 pr-4"><button onClick={() => { setSelected(item); setNotes(item.notes || ""); }} className="font-semibold text-emerald-700 hover:text-emerald-900">Details</button></td>
+                  <td className="py-3 pr-4"><button onClick={() => { setSelected(item); setNotes(item.notes || ""); }} className="font-semibold text-emerald-700 hover:text-emerald-900">Review</button></td>
                 </tr>
               ))}
             </tbody>
@@ -117,7 +122,7 @@ export default function DashboardPartnersPage() {
           </select>
           <label className="mt-4 block text-sm font-semibold text-stone-700">Admin notes</label>
           <textarea value={notes} onChange={(event) => setNotes(event.target.value)} className="mt-2 min-h-28 w-full rounded-xl border border-stone-200 px-4 py-3 text-sm" />
-          <button disabled={saving} onClick={() => updateApplication(selected._id, { notes })} className="mt-4 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Save notes</button>
+          <button disabled={saving} onClick={() => updateApplication(selected._id, { notes }, { closeOnSuccess: true })} className="mt-4 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Save notes</button>
         </DetailPanel>
       ) : null}
     </AdminReplicaFrame>

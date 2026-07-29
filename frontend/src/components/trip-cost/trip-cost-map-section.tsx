@@ -103,7 +103,7 @@ export function TripCostMapSection({
 
   return (
     <div className="space-y-4">
-      {/* â”€â”€ Filter pills â”€â”€ */}
+      {/* -- Filter pills -- */}
       <div className="flex flex-wrap items-center gap-2">
         {COST_FILTERS.map(({ value, label, icon: Icon }) => (
           <Badge
@@ -131,7 +131,7 @@ export function TripCostMapSection({
               center={SURKHET_CENTER}
               zoom={ZOOM.city}
               className="w-full h-[350px] md:h-[400px] rounded-xl overflow-hidden"
-              fallbackLabel="Trip Cost Map â€” Surkhet"
+              fallbackLabel="Trip Cost Map - Surkhet"
             >
               {mappable.map((place) => (
                 <PahunaMarker
@@ -169,19 +169,19 @@ export function TripCostMapSection({
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">ðŸ¨ Hotels</span>
-                  <span className="font-medium">NPR 1,500 â€“ 8,000/night</span>
+                  <span className="font-medium">NPR 1,500 - 8,000/night</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">ðŸ” Attractions</span>
-                  <span className="font-medium">Free â€“ NPR 50</span>
+                  <span className="font-medium">Free - NPR 50</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">ðŸ§­ Experiences</span>
-                  <span className="font-medium">NPR 500 â€“ 2,500</span>
+                  <span className="font-medium">NPR 500 - 2,500</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">ðŸšŒ Transport</span>
-                  <span className="font-medium">NPR 500 â€“ 800/trip</span>
+                  <span className="font-medium">NPR 500 - 800/trip</span>
                 </div>
               </div>
             </CardContent>

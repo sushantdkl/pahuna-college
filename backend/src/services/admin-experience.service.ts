@@ -212,7 +212,7 @@ export class AdminExperienceService {
 
     const updatePayload = cleanPayload({ ...payload });
     const experience = await ExperienceModel.findByIdAndUpdate(id, updatePayload, {
-      new: true,
+      returnDocument: "after",
     });
 
     if (!experience) {

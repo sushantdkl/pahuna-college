@@ -34,7 +34,7 @@ export function BudgetEstimator() {
 
   return (
     <div className="space-y-8">
-      {/* â”€â”€ Tier Selector â”€â”€ */}
+      {/* -- Tier Selector -- */}
       <div className="grid sm:grid-cols-3 gap-4">
         {budgetTiers.map((tier) => {
           const isActive = selectedTier === tier.id;
@@ -58,7 +58,7 @@ export function BudgetEstimator() {
                 </div>
               </div>
               <div className={cn("text-lg font-bold", isActive ? c.text : "")}>
-                {formatPrice(tier.perDayMin)} â€” {formatPrice(tier.perDayMax)}
+                {formatPrice(tier.perDayMin)} - {formatPrice(tier.perDayMax)}
               </div>
               <div className="text-xs text-muted-foreground">per person / day</div>
             </button>
@@ -66,7 +66,7 @@ export function BudgetEstimator() {
         })}
       </div>
 
-      {/* â”€â”€ Trip Params â”€â”€ */}
+      {/* -- Trip Params -- */}
       <div className="grid sm:grid-cols-2 gap-6">
         <Card>
           <CardContent className="p-5">
@@ -125,7 +125,7 @@ export function BudgetEstimator() {
         </Card>
       </div>
 
-      {/* â”€â”€ Result Card â”€â”€ */}
+      {/* -- Result Card -- */}
       <Card className={cn(colors.bg, "border-2", colors.ring.replace("ring-", "border-"))}>
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-4">
@@ -136,7 +136,7 @@ export function BudgetEstimator() {
             <div>
               <div className="text-xs text-muted-foreground mb-1">Per Person ({days} days)</div>
               <div className={cn("text-2xl font-bold", colors.text)}>
-                {formatPrice(tripTotal.min)} â€” {formatPrice(tripTotal.max)}
+                {formatPrice(tripTotal.min)} - {formatPrice(tripTotal.max)}
               </div>
             </div>
             <div>
@@ -144,14 +144,14 @@ export function BudgetEstimator() {
                 Total ({travelers} {travelers === 1 ? "person" : "people"})
               </div>
               <div className={cn("text-2xl font-bold", colors.text)}>
-                {formatPrice(groupTotal.min)} â€” {formatPrice(groupTotal.max)}
+                {formatPrice(groupTotal.min)} - {formatPrice(groupTotal.max)}
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* â”€â”€ Detailed Breakdown â”€â”€ */}
+      {/* -- Detailed Breakdown -- */}
       <div>
         <h3 className="text-xl font-bold mb-4">Cost Breakdown by Category</h3>
         <div className="grid md:grid-cols-2 gap-6">
@@ -177,7 +177,7 @@ export function BudgetEstimator() {
                           </span>
                         </div>
                         <span className={cn("font-medium", colors.text)}>
-                          {formatPrice(range.min)} â€” {formatPrice(range.max)}
+                          {formatPrice(range.min)} - {formatPrice(range.max)}
                         </span>
                       </div>
                     );
@@ -189,7 +189,7 @@ export function BudgetEstimator() {
         </div>
       </div>
 
-      {/* â”€â”€ Tier Description â”€â”€ */}
+      {/* -- Tier Description -- */}
       <Card className="bg-muted/30">
         <CardContent className="p-6">
           <div className="flex items-start gap-4">

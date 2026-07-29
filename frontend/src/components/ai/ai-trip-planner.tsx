@@ -908,7 +908,7 @@ function AIResponseCard({ content, onCopy }: { content: string; onCopy: () => vo
       </div>
       <div className="mt-5 flex flex-wrap gap-2 border-t border-emerald-100 pt-4 text-xs font-semibold text-stone-500">
         <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-800">Prices and availability require confirmation</span>
-        <span className="rounded-full bg-stone-100 px-3 py-1">No fake live availability</span>
+        <span className="rounded-full bg-stone-100 px-3 py-1">Live provider records only</span>
       </div>
     </article>
   );

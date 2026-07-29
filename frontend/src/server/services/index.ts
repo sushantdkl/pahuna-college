@@ -7,7 +7,7 @@ export type ConsultingTestimonial = any;
 export type TripPackage = any;
 export type RoadmapPhase = any;
 
-const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050").replace(/\/$/, "");
 const API_ORIGIN = (process.env.NEXT_PUBLIC_API_URL || API_BASE).replace(/\/api\/v1$/, "");
 const heroFallbackImage = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80";
 
@@ -268,6 +268,7 @@ export const consultingServices: any[] = [
 function toConsultingService(service: any): ConsultingService {
   const title = service.title ?? service.name ?? "Consulting Service";
   const priceValue = service.price ?? service.priceFrom ?? service.startingPrice;
+  const image = assetUrl(service.image ?? service.coverImage ?? service.images?.[0]);
   return {
     ...service,
     id: service.id ?? service._id ?? service.slug,
@@ -300,6 +301,7 @@ function toConsultingService(service: any): ConsultingService {
     priceFrom: Number(service.priceFrom ?? service.price ?? 0) || undefined,
     startingPrice: typeof priceValue === "string" ? priceValue : `NPR ${Number(priceValue ?? 0).toLocaleString("en-IN")}`,
     duration: service.duration ?? "Custom timeline",
+    image,
   };
 }
 
@@ -422,6 +424,7 @@ export const trainingCourses: any[] = [
 function toTrainingCourse(course: any): TrainingCourse {
   const title = course.title ?? course.name ?? "Training Course";
   const fee = Number(course.fee ?? course.price ?? course.priceFrom ?? 0) || 0;
+  const image = assetUrl(course.image ?? course.coverImage ?? course.images?.[0]);
   const modules = Array.isArray(course.modules) && course.modules.length
     ? course.modules
     : Array.isArray(course.curriculum) && course.curriculum.length
@@ -468,6 +471,7 @@ function toTrainingCourse(course: any): TrainingCourse {
     careerOutcomes: course.careerOutcomes ?? [{ role: "Hospitality Professional", description: "Apply practical skills in hospitality roles." }],
     faqs: course.faqs ?? [],
     outcomes: course.outcomes ?? [],
+    image,
   };
 }
 

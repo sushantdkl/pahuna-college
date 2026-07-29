@@ -111,7 +111,7 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* â”€â”€ Section 1: Contact â”€â”€ */}
+      {/* -- Section 1: Contact -- */}
       <div>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em] mb-4">
           Contact Details
@@ -173,7 +173,7 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
 
       <Separator />
 
-      {/* â”€â”€ Section 2: Business Context â”€â”€ */}
+      {/* -- Section 2: Business Context -- */}
       <div>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em] mb-4">
           About Your Business
@@ -245,7 +245,7 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
 
       <Separator />
 
-      {/* â”€â”€ Section 3: Service Requirements â”€â”€ */}
+      {/* -- Section 3: Service Requirements -- */}
       <div>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em] mb-4">
           Service Requirements
@@ -297,7 +297,7 @@ export function ConsultingForm({ defaultService }: ConsultingFormProps) {
           <Label htmlFor="c-budget">Approximate Budget</Label>
           <Input
             id="c-budget"
-            placeholder="e.g. NPR 50,000 â€“ 1,00,000"
+            placeholder="e.g. NPR 50,000 - 1,00,000"
             {...register("budget")}
           />
         </div>

@@ -7,7 +7,7 @@ import {
 } from "@/lib/admin-preview";
 
 function getApiBaseUrl() {
-  const configured = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+  const configured = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050";
   const origin = configured.endsWith("/api/v1")
     ? configured
     : `${configured.replace(/\/$/, "")}/api/v1`;

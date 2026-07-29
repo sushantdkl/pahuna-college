@@ -2,9 +2,9 @@ import { demoDestinations } from "@server/services";
 
 export type PublicDestination = any;
 
-const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+const API_BASE = (process.env.SERVER_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050").replace(/\/$/, "");
 const API_ORIGIN = (process.env.NEXT_PUBLIC_API_URL || API_BASE).replace(/\/api\/v1$/, "");
-const destinationFallbackImage = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80";
+const destinationFallbackImage = "/images/surkhet/bulbule-lake.jpg";
 
 type ApiResponse<T> = {
   success: boolean;

@@ -33,7 +33,10 @@ export async function registerApi(data: RegisterFormData) {
   const { confirmPassword, ...payload } = data;
   void confirmPassword;
 
-  return apiPost<RegisterResponse>("/auth/register", payload);
+  return apiPost<RegisterResponse>("/auth/register", {
+    ...payload,
+    phoneNumber: payload.phoneNumber?.trim() || undefined,
+  });
 }
 
 export async function loginApi(data: LoginFormData) {

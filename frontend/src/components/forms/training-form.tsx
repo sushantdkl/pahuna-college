@@ -127,7 +127,7 @@ export function TrainingForm({ defaultCourse }: TrainingFormProps) {
             <SelectContent>
               {courseOptions.map((course) => (
                 <SelectItem key={course.id} value={course.id}>
-                  {course.title} â€” {course.duration}
+                  {course.title} - {course.duration}
                 </SelectItem>
               ))}
             </SelectContent>

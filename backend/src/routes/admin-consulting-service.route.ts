@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AdminConsultingServiceController } from "../controllers/admin-consulting-service.controller";
 import { adminOnly } from "../middlewares/admin.middleware";
 import { authorized } from "../middlewares/auth.middleware";
+import { uploadConsultingServiceImage } from "../middlewares/upload.middleware";
 
 const adminConsultingServiceRouter = Router();
 const adminConsultingServiceController =
@@ -18,10 +19,12 @@ adminConsultingServiceRouter.get(
 );
 adminConsultingServiceRouter.post(
   "/",
+  uploadConsultingServiceImage.single("imageFile"),
   adminConsultingServiceController.createService,
 );
 adminConsultingServiceRouter.patch(
   "/:id",
+  uploadConsultingServiceImage.single("imageFile"),
   adminConsultingServiceController.updateService,
 );
 adminConsultingServiceRouter.delete(
